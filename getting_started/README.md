@@ -1,7 +1,3 @@
----
-output:
-  html_document: default
----
 # EH6126 - Advanced Clinical Trial Design and Analysis
 
 ## Testing, testing, 1, 2, 3, testing
