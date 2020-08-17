@@ -19,16 +19,15 @@ Use the introductory video to help make this decision. At the time of writing, t
 
 ## Once R and RStudio are installed, check that the following works...
 
-**In RStudio, open the testing_testing R-project file (.Rproj)**
+**In RStudio GUI, open the testing_testing R-project file (.Rproj)**
 
-+ File
-+ Open Project...
-+ testing_testing.Rproj
++ Go to the `File` tab
++ Open the R Project file (`testing_testing.Rproj`)
 
 **Next open and run testing_testing.R R script.**
 
-+ File
-+ Open File...
-+ testing_testing.R
++ Go to the `File` tab
++ `Open File`...
++ Open the `testing_testing.R` file
 
 Click on the run button to run each line of code. If your RStudio session window mirrors that in the `successful_test.png` file located in the `plots` folder, GREAT! You're ready to go.
