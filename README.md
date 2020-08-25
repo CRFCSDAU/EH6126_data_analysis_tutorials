@@ -8,7 +8,7 @@ These are the course materials from our modules (EH6124 and EH6126) on clinical 
 
 [EH 6126 - Advanced Clinical Trial Design and Analysis](https://www.ucc.ie/admin/registrar/modules?mod=EH6126)
 
-These modules are offered as a part of our Postgraduate Programme in Clinical Trials (Certificate, Diploma, and MSc), and delivered by Darren Dahly ([@statsepi](https://twitter.com/statsepi)) and Brendan Palmer ([@b_a_palmer](https://twitter.com/B_A_Palmer)) of the [HRB Clinical Research Facility Cork](https://crfc.ucc.ie/) - [Statistics and Data Analysis Unit](https://crfcsdau.github.io/). 
+These modules are offered as a part of our Postgraduate Programme in Clinical Trials (Certificate, Diploma, and MSc), and delivered by Darren Dahly ([@statsepi](https://twitter.com/statsepi)) and Brendan Palmer ([@B_A_Palmer](https://twitter.com/B_A_Palmer)) of the [HRB Clinical Research Facility Cork](https://crfc.ucc.ie/) - [Statistics and Data Analysis Unit](https://crfcsdau.github.io/). 
 
 ## Purpose
 
