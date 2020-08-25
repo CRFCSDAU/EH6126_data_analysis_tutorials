@@ -1,0 +1,147 @@
+---
+title: "Cluster randomized trials"
+output: 
+  html_document:
+    keep_md: true
+---
+
+```{r setup, include = FALSE}
+
+  knitr::opts_chunk$set(message = FALSE, warning = FALSE)
+
+# Install/load packages
+
+  packs <- c("tidyverse", "knitr", "viridis", "broom", "pwr")
+  install.packages(packs[!packs %in% installed.packages()])
+  lapply(packs, library, character.only = TRUE)
+  
+  set.seed(1209) 
+
+```
+
+```{r independent}
+
+   data_frame(
+     color = rnorm(1000), 
+     x     = rnorm(1000),
+     y     = rnorm(1000)
+   ) %>%
+  ggplot(aes(x, y, color = color)) +
+    geom_point(size = 2) +
+    xlab("") +
+    ylab("") +
+    scale_color_viridis(guide = FALSE)
+
+```
+
+```{r dependent}
+
+  data_frame(
+     x     = rnorm(1000),
+     y     = rnorm(1000), 
+     color = x + y,
+   ) %>%
+  ggplot(aes(x, y, color = color)) +
+    geom_point(size = 2) +
+    xlab("") +
+    ylab("") +
+    scale_color_viridis(guide = FALSE)
+
+```
+
+```{r clustered_data_1}
+
+  df <- data_frame(
+    cluster = rep(1:10, each = 100), 
+    y = rnorm(1000)
+  ) 
+
+```
+
+```{r clustered_icc_1}
+
+  tab_model(lmer(y ~ (1|cluster), data = df))
+# summary(lmer(y ~ (1|cluster), data = df))
+
+```
+
+```{r clustered_plot_1}
+
+  ggplot(df, aes(x = cluster, y = y, color = y)) +
+    geom_point(size = 3, alpha = 0.6) +
+    geom_line(aes(group = cluster), color = "grey50") +
+    scale_color_viridis(guide = FALSE) +
+    ylab("Outcome") +
+    xlab("Cluster") +
+    ggtitle("ICC = ~0")
+
+```
+
+```{r clustered_data_2}
+
+  df_2 <- data_frame(
+    mean = rep(rnorm(10, 0, 2), each = 100),
+    cluster = rep(1:10, each = 100), 
+    y = rnorm(1000) + mean
+  ) 
+
+```
+
+```{r clustered_icc_2}
+
+  tab_model(lmer(y ~ (1|cluster), data = df_2))
+# summary(lmer(y ~ (1|cluster), data = df_2))
+
+```
+
+```{r clustered_plot_2}
+```
+
+
+```{r clustered_plot_2}
+ggplot(df_2, aes(x = cluster, y = y, color = y)) +
+    geom_point(size = 3, alpha = 0.6) +
+    geom_line(aes(group = cluster), color = "grey50") +
+    scale_color_viridis(guide = FALSE) +
+    ylab("Outcome") +
+    xlab("Cluster") +
+    ggtitle("ICC = 0.58")
+
+```
+
+```{r simple_power}
+
+   pwr.t.test(d = 0.5, sig.level = .05, power = 0.90)
+
+```
+```{r sim_sample_data}
+
+  sample <- data_frame(
+    rho = rep(c(0.01, 0.02, 0.05), each = 20), 
+    m = rep(seq(5, 100, by = 5), times = 3),
+    de = 1 + (m - 1)*rho, 
+    n = 190,
+    clusters = n * de / m, 
+    samp = n * de
+  )
+
+```
+
+```{r de_plot}
+
+  ggplot(sample, aes(y = samp, x = m, color = clusters, group = rho, 
+                     shape = factor(rho))) +
+    geom_line() +
+    geom_point(size = 3) +
+    theme_minimal() +
+    scale_shape("ICC") +
+    scale_x_continuous(breaks = seq(5, 100, by = 5)) +
+    scale_color_viridis("Clusters needed", direction = -1) +
+    ggtitle("Randomized design n = 100") +
+    ylab("Cluster RCT n") +
+    xlab("Average cluster size") +
+    theme(panel.grid.minor.x = element_blank())
+  
+```
+
+

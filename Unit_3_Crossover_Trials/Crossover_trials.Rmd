@@ -1,0 +1,325 @@
+---
+title: "Crossover Trials"
+output: 
+  html_document:
+    keep_md: true
+---
+
+# Crossover trials
+
+For this tutorial we will be working with a dataset from a standard 2 period, 2 intervention AB:BA crossover trial of a treatment aimed at lowering blood pressure in people who usually have mildly-evaluated values. In other words, each person in the trial gets exposured to each intervention (active vs placebo), but in one of two possible sequences (active first vs placebo first). 
+
+As usual, we will first load the neccessary packages and bring in the dataset. 
+
+```{r setup, include = FALSE}
+
+  knitr::opts_chunk$set(message = FALSE, warning = FALSE)
+
+# Install/load packages
+
+  packs <- c("tidyverse", "knitr", "viridis", "broom", "lme4", "sjPlot", 
+             "summarytools")
+  install.packages(packs[!packs %in% installed.packages()])
+  lapply(packs, library, character.only = TRUE)
+  
+
+  data <- read_csv("data/data.csv")
+  
+```
+
+Have a look at the dataset. 
+
+```{r inspect_data_1}
+
+# View(data)
+
+```
+
+
+```{r dfsummary_table1, eval = knitr::opts_knit$get("rmarkdown.pandoc.to") == "html"}
+
+  print(summarytools::dfSummary(data, style = "grid", plain.ascii = FALSE), 
+    method = "render")
+
+```
+
+We can see there are 4 SBP values per patient (row). These are the start and end values for each of the two periods. To visualize and analyze these data correctly, we need to convert the dataset so that it's "long", i.e. one row for each time point
+
+```{r reshape}
+
+# Reshape the data on 4 SBP values in order to plot the within period changes
+# by tx group, get missing values. See functions.R
+
+  data_long <- gather(data, time, value, starts_with("sbp")) %>%
+    select(sequence, treatment_p1, treatment_p2, time, value, subj_id, sex, 
+           everything()) %>%
+    mutate(sequence = factor(sequence), treatment_p1 = factor(treatment_p1),
+           treatment_p2 = factor(treatment_p2))
+
+# view(dfSummary(data_long))
+
+```
+
+Now you can see there are five timepoints (screening, plus the start and end values for each of the two periods), each with 83 observations, which is the number of study participants. 
+
+Now let's clean up the data a bit. 
+
+```{r clean}
+
+  data_long$time <- gsub("sbp__|sbp", "", data_long$time) # remove extraneous info
+
+# Just reordering the levels so they mactch time. This will help when we plot
+# the data. 
+  times <- c("b_p1", "ep_p1", "b_p2", "ep_p2")
+
+  data_long <- mutate(data_long, time = factor(time, levels = times)) 
+# table(data_long$time)
+
+# Create a new variable to reflect the period  
+  data_long$period[grepl("_p1", data_long$time)] <- "First"
+  data_long$period[grepl("_p2", data_long$time)] <- "Second"
+
+# Create a new variable to reflect start (baseline) or end of period  
+  bp <- grepl("b_p",  data_long$time) # Baseline times
+  ep <- grepl("ep_p", data_long$time) # End times
+
+  data_long$timing[bp] <- "Baseline"
+  data_long$timing[ep] <- "EoP"
+  
+# with(data_long, table(period, timing))  
+
+# These are the same info but we'll use them in the models below where I'll 
+# explain why we want them split into 2 columns like this.   
+  data_long$bl[bp] <- data_long$value[bp] # Baseline SBPs
+  data_long$ep[ep] <- data_long$value[ep] # End SBPs
+
+# Treatment indicator  
+  p1 <- data_long$period == "First"  & !is.na(data_long$period)
+  p2 <- data_long$period == "Second" & !is.na(data_long$period)
+  data_long$tx[p1] <- data_long$treatment_p1[p1]
+  data_long$tx[p2] <- data_long$treatment_p2[p2]
+
+  data_long <- filter(data_long, !is.na(time)) %>%
+    arrange(subj_id, period, timing) %>%
+    select(subj_id, sequence, period, timing, tx, value, everything()) %>%
+    mutate(period = factor(period),
+           timing = factor(timing),
+           tx  = factor(tx))
+
+  data_long$time2 <- factor(data_long$time, labels = c("p1_b", "p1_ep",
+                                         "p2_b", "p2_ep"))
+
+# View(data_long)
+  
+# view(dfSummary(data_long))
+
+```
+
+```{r cross_over_plot}
+
+  ggplot(data_long, aes(x = time2, y = value, group = subj_id)) +
+    geom_line(data = filter(data_long, as.numeric(time) < 3), alpha = 0.2,
+              aes(color = treatment_p1)) +
+    geom_smooth(data = filter(data_long, as.numeric(time) < 3), method = "lm",
+                aes(color = treatment_p1, linetype = treatment_p1,
+                group = treatment_p1),
+                se = FALSE, size = 2) +
+    geom_line(data = filter(data_long, as.numeric(time) > 2), alpha = 0.2,
+              aes(color = treatment_p2)) +
+    geom_smooth(data = filter(data_long, as.numeric(time) > 2), method = "lm",
+                aes(color = treatment_p2, linetype = treatment_p2,
+                    group = treatment_p2),
+                se = FALSE, size = 2) +
+    scale_linetype(guide = FALSE) +
+    theme_minimal() +
+    scale_color_brewer("Tx", palette = "Set1") +
+    theme(panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank()) +
+    scale_x_discrete(labels = c("Start P1", "End P1", "Start P2", "End P2")) +
+    xlab("") +
+    ylab("SBP mmHg")
+
+```
+
+```{r distribution_plot}
+
+# Distribution plot
+
+  ggplot(data_long, aes(x = value, fill = tx, color = tx)) +
+    geom_density(alpha = 0.7) +
+    geom_rug() +
+    scale_fill_brewer("Tx", palette = "Set1") +
+    scale_color_brewer("Tx", palette = "Set1") +
+    facet_wrap(~period + timing) +
+    theme_minimal() +
+    theme(panel.grid.major = element_blank(),
+          panel.grid.minor = element_blank()) +
+    ylab("") +
+    xlab("SBP mmHg")
+
+```
+
+## Modelling
+
+Now we can model the effect of the treatment, though I suspect that you already have some idea of what it might be! Below, we'll use a set of models to make different adjustments for things like prognostic covariates (sex), period specific effects, and period-specific baseline (start) values. 
+
+```{r models}
+
+# Models
+
+# Re-configure the data so we can adjust for period-specific baselines if we
+# want to. 
+
+  me_sbp_df <- full_join(
+    select(data_long, subj_id, sex, period, bl, tx) %>% filter(!is.na(bl)),
+    select(data_long, subj_id, sex, period, ep, tx) %>% filter(!is.na(ep)),
+    by = c("subj_id", "period", "tx", "sex")
+  ) %>%
+    mutate(bl = scale(bl, scale = FALSE))
+
+
+# 4 models. Adjust for sex; + period; +tx*period interaction; +bl
+  me_sbp     <- lmer(ep ~ tx + sex +               (1 | subj_id),
+                     data = me_sbp_df)
+  me_sbp_p   <- lmer(ep ~ tx + sex + period +      (1 | subj_id),
+                     data = me_sbp_df)
+  me_sbp_int <- lmer(ep ~ tx * period +  sex +     (1 | subj_id),
+                     data = me_sbp_df)
+  me_sbp_bl  <- lmer(ep ~ tx + sex + period + bl + (1 | subj_id),
+                     data = me_sbp_df)
+
+  labs <- c("Intercept", "Treatment", "Sex", "Period")
+
+  tab_model(
+    me_sbp, me_sbp_p, me_sbp_bl,
+    p.val = "kr",
+    file = "table_me_sbp.html",
+    pred.labels = c(labs, "SBP Baseline"),
+    dv.labels = c("Unadjusted", "+ Period effect", "+ Baselines")
+    )
+
+```
+
+So that confirms what we probably should have expected from the plotting, which is that there was no appreciable effect on the outcome. But just for fun, now we will add an effect. We are going to make is pretty big, equal to -10 mmHg (almost a full SD of the observed SBP values), and add it to the active tx values. 
+
+```{r}
+
+  effect <- -3
+
+  data_long$value_2 <- data_long$value
+
+  tar <- data_long$tx == 2 & data_long$timing == "EoP"
+
+  data_long$value_2[tar] <- data_long$value_2[tar] + effect
+  
+  data_long$ep_2 <- data_long$ep
+  
+  data_long$ep_2[tar] <- data_long$ep_2[tar] + effect
+
+```
+
+Now just repeat everything we did before, replacing value_2 for value. 
+ 
+```{r cross_over_plot_2}
+
+  ggplot(data_long, aes(x = time2, y = value_2, group = subj_id)) +
+    geom_line(data = filter(data_long, as.numeric(time) < 3), alpha = 0.2,
+              aes(color = treatment_p1)) +
+    geom_smooth(data = filter(data_long, as.numeric(time) < 3), method = "lm",
+                aes(color = treatment_p1, linetype = treatment_p1,
+                group = treatment_p1),
+                se = FALSE, size = 2) +
+    geom_line(data = filter(data_long, as.numeric(time) > 2), alpha = 0.2,
+              aes(color = treatment_p2)) +
+    geom_smooth(data = filter(data_long, as.numeric(time) > 2), method = "lm",
+                aes(color = treatment_p2, linetype = treatment_p2,
+                    group = treatment_p2),
+                se = FALSE, size = 2) +
+    scale_linetype(guide = FALSE) +
+    theme_minimal() +
+    scale_color_brewer("Tx", palette = "Set1") +
+    theme(panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank()) +
+    scale_x_discrete(labels = c("Start P1", "End P1", "Start P2", "End P2")) +
+    xlab("") +
+    ylab("SBP mmHg")
+
+```
+
+
+```{r distribution_plot_2}
+
+  ggplot(data_long, aes(x = value_2, fill = tx, color = tx)) +
+    geom_density(alpha = 0.7) +
+    geom_rug() +
+    scale_fill_brewer("Tx", palette = "Set1") +
+    scale_color_brewer("Tx", palette = "Set1") +
+    facet_wrap(~period + timing) +
+    theme_minimal() +
+    theme(panel.grid.major = element_blank(),
+          panel.grid.minor = element_blank()) +
+    ylab("") +
+    xlab("SBP mmHg")
+
+```
+
+
+```{r models_2}
+
+# Models
+
+# Re-configure the data so we can adjust for period-specific baselines if we
+# want to. 
+
+  me_sbp_df <- full_join(
+    select(data_long, subj_id, sex, period, bl, tx) %>%   filter(!is.na(bl)),
+    select(data_long, subj_id, sex, period, ep_2, tx) %>% filter(!is.na(ep_2)),
+    by = c("subj_id", "period", "tx", "sex")
+  ) %>%
+    mutate(bl = scale(bl, scale = FALSE))
+
+
+# 4 models. Adjust for sex; + period; +tx*period interaction; +bl
+  me_sbp     <- lmer(ep_2 ~ tx + sex +               (1 | subj_id),
+                     data = me_sbp_df)
+  me_sbp_p   <- lmer(ep_2 ~ tx + sex + period +      (1 | subj_id),
+                     data = me_sbp_df)
+  me_sbp_int <- lmer(ep_2 ~ tx * period +  sex +     (1 | subj_id),
+                     data = me_sbp_df)
+  me_sbp_bl  <- lmer(ep_2 ~ tx + sex + period + bl + (1 | subj_id),
+                     data = me_sbp_df)
+
+  labs <- c("Intercept", "Treatment", "Sex", "Period")
+
+  tab_model(
+    me_sbp, me_sbp_p, me_sbp_bl,
+    p.val = "kr",
+    file = "table_me_sbp.html",
+    pred.labels = c(labs, "SBP Baseline"),
+    dv.labels = c("Unadjusted", "+ Period effect", "+ Baselines")
+    )
+
+```
+
+```{r naive_test}
+
+  m_1 <- lm(ep_2 ~ tx, data = me_sbp_df)
+  summary(m_1)
+
+```
+
+```{r within_person_fixed}
+
+  m_paired_fixed <- lm(ep_2 ~ tx + subj_id, data = me_sbp_df)
+  summary(m_paired_fixed)
+  
+```
+
+```{r}
+
+  m_paired <- lmer(ep_2 ~ tx + (1 | subj_id), data = me_sbp_df)
+
+  summary(m_paired)
+  
+```
+
