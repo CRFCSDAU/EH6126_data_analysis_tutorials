@@ -20,5 +20,14 @@ Each of the two modules consists of eight units. The introductory module focuses
 
 Generally the units include some required reading (papers, book chapters, blog-posts), usually some additional reading, and one or more video lectures covering the key points for that unit. To help learners understand key concepts, we also use R/RStudio to run simulations and analyse trial data, and provide data analysis exercises for the learners to do on their own. This is the material that will make up the bulk of the material on this course page. 
 
+Shield: [![CC BY-SA 4.0][cc-by-sa-shield]][cc-by-sa]
 
+This work is licensed under a
+[Creative Commons Attribution-ShareAlike 4.0 International License][cc-by-sa].
+
+[![CC BY-SA 4.0][cc-by-sa-image]][cc-by-sa]
+
+[cc-by-sa]: http://creativecommons.org/licenses/by-sa/4.0/
+[cc-by-sa-image]: https://licensebuttons.net/l/by-sa/4.0/88x31.png
+[cc-by-sa-shield]: https://img.shields.io/badge/License-CC%20BY--SA%204.0-lightgrey.svg
 
