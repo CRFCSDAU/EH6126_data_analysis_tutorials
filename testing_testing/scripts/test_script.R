@@ -9,7 +9,9 @@
 
 list.of.packages <- c('tidyverse', 'cowplot', 'datapasta', 'janitor', 
                       'igraph', 'installr', 'knitr', 'kableExtra', 'MASS', 
-                      'plotly', 'patchwork', 'reprex', 'summarytools') 
+                      'plotly', 'patchwork', 'reprex', 'summarytools', 
+                      'viridis', 'pwr', 'ggbeeswarm', 'TOSTER', 'lme4',
+                      'sjPlot') 
 
 # Now we will check to see if any of the packages required are not yet on our system
 
