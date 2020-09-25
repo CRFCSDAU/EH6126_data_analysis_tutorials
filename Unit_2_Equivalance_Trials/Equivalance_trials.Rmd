@@ -407,11 +407,13 @@ And finally, a table of results.
     dplyr::select(-ll, -ul, -median, -upperq, -lowerq, -se) %>%
     dplyr::select(arm, time, n, mean, sd)
 
-# Split the data by arm and cbind into dataset. 
-  table_data <- cbind(
-    filter(pain_df_wide, arm == "Fentanyl"), 
-    filter(pain_df_wide, arm == "Morphine")
-  ) %>% 
+# Split the data by arm and cbind into dataset.
+
+  df1 <- filter(pain_df_wide, arm == "Fentanyl") 
+  df2 <-  filter(pain_df_wide, arm == "Morphine")
+  names(df2) <- paste0(names(df2), "1")
+  
+  table_data <- bind_cols(df1, df2) %>% 
     ungroup() %>%
     dplyr::select(-arm, -arm1, -time1)
   

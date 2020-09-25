@@ -469,11 +469,13 @@ And finally, a table of results.
     dplyr::select(-ll, -ul, -median, -upperq, -lowerq, -se) %>%
     dplyr::select(arm, time, n, mean, sd)
 
-# Split the data by arm and cbind into dataset. 
-  table_data <- cbind(
-    filter(pain_df_wide, arm == "Fentanyl"), 
-    filter(pain_df_wide, arm == "Morphine")
-  ) %>% 
+# Split the data by arm and cbind into dataset.
+
+  df1 <- filter(pain_df_wide, arm == "Fentanyl") 
+  df2 <-  filter(pain_df_wide, arm == "Morphine")
+  names(df2) <- paste0(names(df2), "1")
+  
+  table_data <- bind_cols(df1, df2) %>% 
     ungroup() %>%
     dplyr::select(-arm, -arm1, -time1)
   
@@ -503,16 +505,16 @@ And finally, a table of results.
 
 
 
-Time (+min)    N     Mean     SD     N     Mean     SD     Mean Difference (95%CI) 
-------------  ----  ------  ------  ----  ------  ------  -------------------------
-0              15    8.20    1.26    16    8.38    0.96     -0.18 (-1.01 to 0.66)  
-5              15    6.47    1.92    16    7.00    1.67     -0.53 (-1.86 to 0.8)   
-10             15    4.60    1.55    16    6.00    1.75     -1.4 (-2.61 to -0.19)  
-15             15    3.67    1.91    16    5.50    2.25     -1.83 (-3.37 to -0.3)  
-20             15    3.20    1.93    16    5.06    2.17    -1.86 (-3.37 to -0.35)  
-30             15    2.53    1.85    16    4.81    2.29     -2.28 (-3.8 to -0.76)  
-60             15    1.93    1.49    16    3.81    2.37    -1.88 (-3.33 to -0.43)  
-120            15    1.67    1.72    16    3.31    1.96      -1.65 (-3 to -0.29)   
+|Time (+min) | N  | Mean |  SD  | N  | Mean |  SD  | Mean Difference (95%CI) |
+|:-----------|:--:|:----:|:----:|:--:|:----:|:----:|:-----------------------:|
+|0           | 15 | 8.20 | 1.26 | 16 | 8.38 | 0.96 |  -0.18 (-1.01 to 0.66)  |
+|5           | 15 | 6.47 | 1.92 | 16 | 7.00 | 1.67 |  -0.53 (-1.86 to 0.8)   |
+|10          | 15 | 4.60 | 1.55 | 16 | 6.00 | 1.75 |  -1.4 (-2.61 to -0.19)  |
+|15          | 15 | 3.67 | 1.91 | 16 | 5.50 | 2.25 |  -1.83 (-3.37 to -0.3)  |
+|20          | 15 | 3.20 | 1.93 | 16 | 5.06 | 2.17 | -1.86 (-3.37 to -0.35)  |
+|30          | 15 | 2.53 | 1.85 | 16 | 4.81 | 2.29 |  -2.28 (-3.8 to -0.76)  |
+|60          | 15 | 1.93 | 1.49 | 16 | 3.81 | 2.37 | -1.88 (-3.33 to -0.43)  |
+|120         | 15 | 1.67 | 1.72 | 16 | 3.31 | 1.96 |   -1.65 (-3 to -0.29)   |
 
 ### Challenge
 
