@@ -5,7 +5,7 @@
 ###########################################################################
 
 
-# Here's an example using the graphics packages that comes with ba --------
+# Example using the graphics packages that comes with base R --------------
 # Consider the following...
 
 set.seed(27)
