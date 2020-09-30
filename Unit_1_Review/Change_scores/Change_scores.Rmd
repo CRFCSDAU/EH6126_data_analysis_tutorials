@@ -11,27 +11,21 @@ output:
 
 # Install/load packages
 
-  packs <- c("tidyverse", "knitr", "viridis", "faux", "sjPlot")
+  packs <- c("tidyverse", "knitr", "viridis", "faux", "sjPlot", "patchwork")
   install.packages(packs[!packs %in% installed.packages()])
   lapply(packs, library, character.only = TRUE)
   
 ```
 
-Clinical trials are used to estimate the average effect of some treatment. This estimate is derived by comparing one or more groups with respect to some important *outcome*, where the groups are thought to be *comparable* because they were randomized. 
+Clinical trials are primarily used to test for, or estimate, the effects of treatments or interventions. This estimate is derived by comparing one or more groups with respect to some important outcome, where the groups are assumed to be *comparable* because they were randomized to receive different interventions. When we talk about *comparability* like this, what we really mean is that the distribution of the outcome measured at the end of the study would have been the same in all the groups had we *not* exposed any of them to the treatment being tested (i.e. as if everyone was on the current standard-of-care). 
 
-However, while we know that randomization will result in groups that are comparable on average, over many hypothetical trials, we don't actually run many hypothetical trials - we just have the one trial that we actually ran. And for that one trial we might actually have a situation where there really are important differences between the groups (i.e. they aren't that comparable after all) that could lead to errors of inferences (e.g. concluding the treatment is beneficial when it isn't).
-
-When we talk about *comparability* like this, what we really mean is that in the *absence* of any intervention, the distribution of the outcome measured at the end of the study will be the same in all the groups. 
-
-A key challenge is that we can never truly *know* how comparable our groups are - we have to assume it. This is because we can't observe the distribution of future outcomes in the absence of any intervention for every group, because we will always have at least one group where we intervened (or else what's the point in running the trial?).
-
-However, we can use what we know about the outcome, and in particular what factors predict it, and then use measurements of those factors measured at baseline to predict future outcomes. Of all of these predictors, one of the strongest is called *the* baseline, which is a measure of the outcome measured at the start of the study, usually just before randomization. 
+However, we can never truly *know* how comparable our groups are - instead we make assumptions about comparability. This is because we can't observe the distribution of future outcomes in the absence of any intervention, since at least one group *will* receive the treatment under test (and we can't rewind time). Further, while we know that randomization will result in groups that are comparable "on average" over many hypothetical trials, we don't actually run many hypothetical trials - we just have the one trial that we actually ran. And for that one trial there really could be important differences between the groups at baseline that could lead to errors of inferences (e.g. concluding the treatment is beneficial when it isn't).
 
 For example, say we have a trial for a blood pressure medication. The outcome then is continuously measured blood pressure, and we are hoping that the medication will lower patients' BP values. So we set up the trial, recruit some patients and randomize them into two groups. Then we give one group the new medication we are testing, and the other gets standard of care. At the end of the study we compare the mean blood pressure of the two groups and find that the active group had a blood pressure that was 3 mmHg lower, on average, than the values seen in the control group. We might thus conclude that the treatment worked. 
 
-However, what if it just so happened that the active group also had a similarly lower mean blood pressure (vs the other group) before the study even started? Again, randomization means that on average, across many hypothetical randomization this won't be the case - the groups should usually have very similar distributions of blood pressures at baseline. But you can always get "unlucky" with any one particular randomization, and wind up with a baseline difference that could throw off your conclusions. How to best deal with this situation is one of the most common topics for discussion and debate among clinical trialists. 
+However, what if it just so happened that the active group also had a similarly lower mean blood pressure (vs the other group) measured at baseline, before the intervention? Again, randomization means that on average, across many hypothetical randomizations, this won't be the case - the groups should usually have very similar distributions of blood pressures at baseline. But you can always get "unlucky" with any one particular randomization, and wind up with a baseline difference that could throw off your conclusions. How to best deal with this situation is one of the most common topics for discussion and debate among clinical trialists. 
 
-One very commonly employed tactic for dealing with this problem is to analyze change scores. This means that you subtract the baseline value of the outcome from the value measured at the end of the study and use that difference for your statistical tests or models. THe apparent logic is that by taking the difference between the baseline and end of study outcome measurements, you are accounting for any important differences between the groups at baseline. Let's see if that actually works in practice. 
+One very commonly employed tactic for dealing with this problem is to analyze change scores. This means that you subtract the baseline value of the outcome from the value measured at the end of the study and use that difference for your statistical tests or models. The apparent logic is that by taking the difference between the baseline and end of study outcome measurements, you are accounting for any important differences between the groups at baseline. Let's see if that actually works in practice. 
 
 First, let's simulate some data when we know there is no treatment effect. 
 
@@ -99,6 +93,53 @@ Finally, let's see if there is a difference in either blood pressure values betw
 
 The models both confirm what we already knew - that there is essentially no difference in mean blood pressure, measured at baseline or the end of study, between the two groups. 
 
+Here is a plot of the data that similar reflects what the regression tells us. 
+
+```{r}
+
+  g1 <- ggplot(sbp, aes(y = sbp_eos, x = arm, color = arm)) +
+    geom_jitter(alpha = 0.2, size = 0.5, width = 0.2) +
+    geom_boxplot(alpha = 0.6, width = 0.45, outlier.alpha = 0, size = 2) +
+    geom_hline(data = group_by(sbp, arm) %>% summarise(mean = mean(sbp_eos)), 
+               aes(yintercept = mean)) +
+    ylab("SBP mmHG") +
+    xlab("") +
+    ggtitle("End of Study") +
+    scale_color_viridis(guide = FALSE, discrete = TRUE, end = 0.8) +
+    ylim(50, 200)
+
+  g2 <- ggplot(sbp, aes(y = sbp_bl, x = arm, color = arm)) +
+    geom_jitter(alpha = 0.2, size = 0.5, width = 0.2) +
+    geom_boxplot(alpha = 0.6, width = 0.45, outlier.alpha = 0, size = 2) +
+    geom_hline(data = group_by(sbp, arm) %>% summarise(mean = mean(sbp_bl)), 
+               aes(yintercept = mean)) +
+    ylab("") +
+    xlab("") +
+    ggtitle("Baseline") +
+    scale_color_viridis(guide = FALSE, discrete = TRUE, end = 0.8)  +
+    ylim(50, 200)
+  
+  g1 + g2
+
+```
+The horizontal line spanning the width of the plots is actually 2 lines. They are just overlapped because they are the group specific means, and there is no difference between the means, which is what the regression model tells us. If we wanted we could zoom in closer to see the tiny difference. 
+
+```{r}
+
+  ggplot(sbp, aes(y = sbp_eos, x = arm, color = arm)) +
+    geom_jitter(alpha = 0.7, size = 1, width = 0.2) +
+    geom_boxplot(alpha = 0.6, width = 0.45, outlier.alpha = 0, size = 2) +
+    geom_hline(data = group_by(sbp, arm) %>% summarise(mean = mean(sbp_eos)), 
+               aes(yintercept = mean, color = arm)) +
+    ylab("SBP mmHG") +
+    xlab("") +
+    ggtitle("End of Study") +
+    scale_color_viridis(guide = FALSE, discrete = TRUE, end = 0.8) +
+    coord_cartesian(ylim = c(124.0, 125.0)) # Zoom in with coord_car
+
+
+```
+
 Given the large number of observations we just simulated, it shouldn't come as a surprise that we didn't see differences between the two groups. After all, as the sample size increases, the probability of any particular randomization having a sizable "imbalance" plummets. To better understand this, let's repeat the simulation but now with a much smaller sample size. 
 
 ```{r}
@@ -128,26 +169,61 @@ Given the large number of observations we just simulated, it shouldn't come as a
 
 ```
 
-Look! The p-values are still large, but the estimates (i.e. the difference in mean values between arms) are now much much larger. Let's take a closer look at imbalances in the baseline measures as a function of sample size. We'll do this by simulating many datasets with different sample sizes, each time calculating the mean difference in baseline SBP between the groups, and then plotting those differences.   
+Look! The p-values are still large, but the estimates (i.e. the difference in mean values between arms) are now much much larger. 
 
 ```{r}
 
-# Make a function to simulate the data, and then the difference in means
+  g1 <- ggplot(sbp, aes(y = sbp_eos, x = arm, color = arm)) +
+    geom_jitter(alpha = 0.8, size = 3, width = 0.1) +
+    geom_boxplot(alpha = 0.3, width = 0.45, outlier.alpha = 0, size = 0.5) +
+    geom_hline(data = group_by(sbp, arm) %>% summarise(mean = mean(sbp_eos)), 
+               aes(yintercept = mean, color = arm)) +
+    ylab("SBP mmHG") +
+    xlab("") +
+    ggtitle("End of Study") +
+    scale_color_viridis(guide = FALSE, discrete = TRUE, end = 0.8) +
+    ylim(50, 200)
 
-  gen_diffs <- function(n){
+  g2 <- ggplot(sbp, aes(y = sbp_bl, x = arm, color = arm)) +
+    geom_jitter(alpha = 0.8, size = 3, width = 0.1) +
+    geom_boxplot(alpha = 0.3, width = 0.45, outlier.alpha = 0, size = 0.5) +
+    geom_hline(data = group_by(sbp, arm) %>% summarise(mean = mean(sbp_bl)), 
+               aes(yintercept = mean, color = arm)) +
+    ylab("") +
+    xlab("") +
+    ggtitle("Baseline") +
+    scale_color_viridis(guide = FALSE, discrete = TRUE, end = 0.8)  +
+    ylim(50, 200)
+  
+  g1 + g2
+
+```
+
+Let's take a closer look at imbalances in the baseline measures as a function of sample size. We'll do this by simulating many datasets with different sample sizes, each time calculating the mean difference in baseline SBP between the groups, and then plotting those differences.   
+
+```{r}
+
+# Make a function to simulate the data
+
+  gen_diffs <- function(x, y){
     
-    data <- data_frame(                           
-      sbp_bl = rnorm(n, 124.5, 18),  
-      arm = factor(
-        sample(c("Active", "Control"), size = n, replace = TRUE), 
-        levels = c("Control", "Active")
-        )
-      )
+    data <- rnorm_multi(                           # Generate the SBP measures
+      n = x, # Variable
+      mu = rep(124.5, 2),
+      sd = rep(18, 2),
+      r = c(0.5),
+      varnames = c("sbp_eos", "sbp_bl"),
+      empirical = FALSE
+      ) %>%
+    mutate(size = x, rep = y, arm = factor(
+      sample(c("Active", "Control"), size = x, replace = TRUE), 
+      levels = c("Control", "Active")
+      ))
     
-    diff <- mean(data$sbp_bl[data$arm == "Active"]) -  
+    data$diff_bl <- mean(data$sbp_bl[data$arm == "Active"]) - 
       mean(data$sbp_bl[data$arm == "Control"])
     
-    return(diff)
+    return(data)
   }
 
 ```
@@ -155,24 +231,27 @@ Look! The p-values are still large, but the estimates (i.e. the difference in me
 ```{r}
 
 # Use that function repeatedly to make all the different simulated samples
+# This chunk may take a moment to run as it is making 7000 different datasets. 
 
-  sizes = c(10, 20, 50, 100, 200, 500, 1000)
-  names(sizes) <- sizes
+  sizes <- c(10, 20, 50, 100, 200, 500, 1000)
+  names(sizes) <- as.character(sizes)
 
-  diffs <- map_df(
-    sizes, 
-    function(x) replicate(1000, gen_diffs(x))
+  diffs <- map2_dfr(
+    rep(sizes, each = 1000), 
+    rep(1:1000, times = length(sizes)),
+    gen_diffs
     )
-
+  
 ```
 
 
 ```{r}
 
   diffs %>%
-    gather(n, Difference) %>%
-    mutate(n = factor(n, levels = as.character(sizes))) %>%
-  ggplot(aes(y = Difference, x = n, color = n)) +
+    select(size, rep, diff_bl) %>%
+    distinct() %>%
+    mutate(size = factor(size)) %>%
+  ggplot(aes(y = diff_bl, x = size, color = size)) +
     geom_boxplot(outlier.alpha = 0) +
     geom_jitter(alpha = 0.1) +
     scale_color_viridis(guide = FALSE, discrete = TRUE) +
@@ -180,5 +259,24 @@ Look! The p-values are still large, but the estimates (i.e. the difference in me
     
 
 ```
+So when we have small samples sizes, the observed mean difference fluctuates considerabley, even though we *know* the data are simulated from a model where there is *no difference* in the distribution of SBP between the groups. These differences are just pure sampling *variability*. 
+
+
+Let's now set up a "worst-case" scenario where we happen to get a sample with a sizable baseline difference. To do this, I'll make a few simulations, and just pick one out that fits the bill. 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+However, we can use what we know about the outcome, and in particular what factors predict it, and then use measurements of those factors measured at baseline to predict future outcomes. Of all of these predictors, one of the strongest is called *the* baseline, which is a measure of the outcome measured at the start of the study, usually just before randomization. 
 
 
