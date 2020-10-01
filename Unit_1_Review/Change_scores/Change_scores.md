@@ -151,7 +151,12 @@ Finally, let's see if there is a difference in either blood pressure values (end
 
 
 ```r
-  m1_eos <- lm(sbp_eos ~ arm, data = sbp)
+# Here we estaimte 2 linear regression models, and display the results with
+# tab_model()
+
+# Estimate the between arm difference in mean blood pressure at the end of the study
+  m1_eos <- lm(sbp_eos ~ arm, data = sbp)  
+# Estimate the between arm difference in mean blood pressure at baseline
   m1_bl  <- lm(sbp_bl  ~ arm, data = sbp)
   
   tab_model(m1_eos, m1_bl)
@@ -238,7 +243,7 @@ Here is a plot of the data that similar reflects what the regression tells us.
 
 ![](Change_scores_files/figure-html/unnamed-chunk-11-1.png)<!-- -->
 
-The horizontal line spanning the width of the plots is actually 2 lines. They are just overlapping because they are the group specific means, and there is no difference between the means, which is what the regression model tells us. If we wanted we could zoom in closer to see the tiny difference. 
+The horizontal line spanning the width of the plots is actually 2 lines. They are just overlapping because they are the group specific means, and there is essentially no difference between the means, which is what the regression model tells us. If we wanted we could zoom in closer to see the tiny difference. 
 
 
 ```r
@@ -251,7 +256,7 @@ The horizontal line spanning the width of the plots is actually 2 lines. They ar
     xlab("") +
     ggtitle("End of Study") +
     scale_color_viridis(guide = FALSE, discrete = TRUE, end = 0.8) +
-    coord_cartesian(ylim = c(124.0, 124.7)) # Zoom in with coord_car
+    coord_cartesian(ylim = c(124.0, 124.7)) # Zoom in with + coord_cartesian()
 ```
 
 ![](Change_scores_files/figure-html/unnamed-chunk-12-1.png)<!-- -->
@@ -337,7 +342,7 @@ We can "see" this by plotting the data again.
 
 
 ```r
-  g1 <- ggplot(sbp, aes(y = sbp_eos, x = arm, color = arm)) +
+  g1 <- ggplot(sbp_2, aes(y = sbp_eos, x = arm, color = arm)) +
     geom_jitter(alpha = 0.8, size = 3, width = 0.1) +
     geom_boxplot(alpha = 0.3, width = 0.45, outlier.alpha = 0, size = 0.5) +
     geom_hline(data = group_by(sbp, arm) %>% summarise(mean = mean(sbp_eos)), 
@@ -348,7 +353,7 @@ We can "see" this by plotting the data again.
     scale_color_viridis(guide = FALSE, discrete = TRUE, end = 0.8) +
     ylim(50, 200)
 
-  g2 <- ggplot(sbp, aes(y = sbp_bl, x = arm, color = arm)) +
+  g2 <- ggplot(sbp_2, aes(y = sbp_bl, x = arm, color = arm)) +
     geom_jitter(alpha = 0.8, size = 3, width = 0.1) +
     geom_boxplot(alpha = 0.3, width = 0.45, outlier.alpha = 0, size = 0.5) +
     geom_hline(data = group_by(sbp, arm) %>% summarise(mean = mean(sbp_bl)), 
@@ -387,6 +392,7 @@ Let's take a closer look at imbalances in the baseline measures as a function of
       levels = c("Control", "Active")
       ))
     
+    # calculate the between arm baseline difference for the sample. 
     data$diff_bl <- mean(data$sbp_bl[data$arm == "Active"]) - 
       mean(data$sbp_bl[data$arm == "Control"])
     
@@ -400,7 +406,7 @@ Let's take a closer look at imbalances in the baseline measures as a function of
 # chunk may take a moment to run as it is making thousands of different
 # datasets.
 
-  set.seed(0092)
+  set.seed(0092) 
 
   sizes <- c(10, 20, 50, 100, 200, 500, 1000)
   names(sizes) <- as.character(sizes)
