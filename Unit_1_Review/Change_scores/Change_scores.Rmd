@@ -235,7 +235,7 @@ We can "see" this by plotting the data again.
   g1 <- ggplot(sbp_2, aes(y = sbp_eos, x = arm, color = arm)) +
     geom_jitter(alpha = 0.8, size = 3, width = 0.1) +
     geom_boxplot(alpha = 0.3, width = 0.45, outlier.alpha = 0, size = 0.5) +
-    geom_hline(data = group_by(sbp, arm) %>% summarise(mean = mean(sbp_eos)), 
+    geom_hline(data = group_by(sbp_2, arm) %>% summarise(mean = mean(sbp_eos)), 
                aes(yintercept = mean, color = arm)) +
     ylab("SBP mmHG") +
     xlab("") +
@@ -246,7 +246,7 @@ We can "see" this by plotting the data again.
   g2 <- ggplot(sbp_2, aes(y = sbp_bl, x = arm, color = arm)) +
     geom_jitter(alpha = 0.8, size = 3, width = 0.1) +
     geom_boxplot(alpha = 0.3, width = 0.45, outlier.alpha = 0, size = 0.5) +
-    geom_hline(data = group_by(sbp, arm) %>% summarise(mean = mean(sbp_bl)), 
+    geom_hline(data = group_by(sbp_2, arm) %>% summarise(mean = mean(sbp_bl)), 
                aes(yintercept = mean, color = arm)) +
     ylab("") +
     xlab("") +
@@ -257,6 +257,7 @@ We can "see" this by plotting the data again.
   g1 + g2
 
 ```
+
 Now we can clearly see the gap between the arm-specific means indicated by the horizontal lines. 
 
 
@@ -371,7 +372,9 @@ We want to see if the type 1 error rate is controlled at 5% (when p for the esti
       rep = 1:1000
       ), 
     by = "rep"
-  )
+  ) %>% 
+    select(starts_with("p_value")) %>%
+    distinct()
   
 
 ```
@@ -391,7 +394,7 @@ Here are the distributions of those p-values. They are (fairly) uniform, as expe
 
 ```
 
-And now we can get the actually calcuate the observed % of p-values for each model that are < 0.05. 
+And now we can get the actually calculate the observed % of p-values for each model that are < 0.05. 
 
 ```{r}
 

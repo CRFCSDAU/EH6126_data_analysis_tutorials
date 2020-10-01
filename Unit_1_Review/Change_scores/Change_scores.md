@@ -345,7 +345,7 @@ We can "see" this by plotting the data again.
   g1 <- ggplot(sbp_2, aes(y = sbp_eos, x = arm, color = arm)) +
     geom_jitter(alpha = 0.8, size = 3, width = 0.1) +
     geom_boxplot(alpha = 0.3, width = 0.45, outlier.alpha = 0, size = 0.5) +
-    geom_hline(data = group_by(sbp, arm) %>% summarise(mean = mean(sbp_eos)), 
+    geom_hline(data = group_by(sbp_2, arm) %>% summarise(mean = mean(sbp_eos)), 
                aes(yintercept = mean, color = arm)) +
     ylab("SBP mmHG") +
     xlab("") +
@@ -356,7 +356,7 @@ We can "see" this by plotting the data again.
   g2 <- ggplot(sbp_2, aes(y = sbp_bl, x = arm, color = arm)) +
     geom_jitter(alpha = 0.8, size = 3, width = 0.1) +
     geom_boxplot(alpha = 0.3, width = 0.45, outlier.alpha = 0, size = 0.5) +
-    geom_hline(data = group_by(sbp, arm) %>% summarise(mean = mean(sbp_bl)), 
+    geom_hline(data = group_by(sbp_2, arm) %>% summarise(mean = mean(sbp_bl)), 
                aes(yintercept = mean, color = arm)) +
     ylab("") +
     xlab("") +
@@ -368,6 +368,7 @@ We can "see" this by plotting the data again.
 ```
 
 ![](Change_scores_files/figure-html/unnamed-chunk-14-1.png)<!-- -->
+
 Now we can clearly see the gap between the arm-specific means indicated by the horizontal lines. 
 
 
@@ -480,7 +481,9 @@ We want to see if the type 1 error rate is controlled at 5% (when p for the esti
       rep = 1:1000
       ), 
     by = "rep"
-  )
+  ) %>% 
+    select(starts_with("p_value")) %>%
+    distinct()
 ```
 
 Here are the distributions of those p-values. They are (fairly) uniform, as expected when the data are indeed generated under the null hypothesis of no effect (see the [unit 1 review on frequentist inference](https://github.com/CRFCSDAU/EH6126_data_analysis_tutorials/blob/master/Unit_1_Review/Frequentist_inference.md) if needed. 
@@ -498,7 +501,7 @@ Here are the distributions of those p-values. They are (fairly) uniform, as expe
 
 ![](Change_scores_files/figure-html/unnamed-chunk-19-1.png)<!-- -->
 
-And now we can get the actually calcuate the observed % of p-values for each model that are < 0.05. 
+And now we can get the actually calculate the observed % of p-values for each model that are < 0.05. 
 
 
 ```r
@@ -506,7 +509,7 @@ And now we can get the actually calcuate the observed % of p-values for each mod
 ```
 
 ```
-## [1] 5.5
+## [1] 0.055
 ```
 
 ```r
@@ -514,7 +517,7 @@ And now we can get the actually calcuate the observed % of p-values for each mod
 ```
 
 ```
-## [1] 4.8
+## [1] 0.048
 ```
 
 ```r
@@ -522,7 +525,7 @@ And now we can get the actually calcuate the observed % of p-values for each mod
 ```
 
 ```
-## [1] 5.5
+## [1] 0.055
 ```
 
 They are all about the same, and close to 5%. So what does this tell us? It means that if the null is true (there is no effect of the tested treatment), regardless of how I analyze the data (using the *end-of-study measure*, using the *change score*, or using the *baseline adjusted end-of-study measure*), I will observe a p < 0.05 right at 5% of the time (with some simulation error here since we can't simulate millions of datasets without tying up our computers for hours and days). This means that the type 1 error (false positive) probability is preserved (or controlled) at the same level for each approach. So in this regard it doesn't make a difference which we use. 
