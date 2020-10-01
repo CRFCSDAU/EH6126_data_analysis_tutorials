@@ -489,7 +489,7 @@ The key thing to look at here are the standard errors of the effect estimates. Y
 # Same code as above, but tweeking the models to use the updated outcomes with
 # the tx effect added.
 
-  data <- full_join( 
+  data_2 <- full_join( 
     filter(diffs, size == 100), 
     data_frame(
       p_value_eos =                                  # Model 1
@@ -507,7 +507,7 @@ The key thing to look at here are the standard errors of the effect estimates. Y
 
 ```{r}
 
-  gather(data, type, p_value, starts_with("p_value")) %>%
+  gather(data_2, type, p_value, starts_with("p_value")) %>%
   ggplot(aes(x = p_value, fill = type)) +
     geom_histogram() +
     facet_wrap(~type, nrow = 1) +
@@ -524,9 +524,9 @@ Finally, let's get the actual % of p-values for each model that are < 0.05 for e
 
 ```{r}
 
-  length(data$p_value_eos[data$p_value_eos < 0.05])/1000 # End of study outcome
-  length(data$p_value_chg[data$p_value_chg < 0.05])/1000 # Change score
-  length(data$p_value_bla[data$p_value_bla < 0.05])/1000 # Baseline adjusted
+  length(data_2$p_value_eos[data$p_value_eos < 0.05])/1000 # End of study outcome
+  length(data_2$p_value_chg[data$p_value_chg < 0.05])/1000 # Change score
+  length(data_2$p_value_bla[data$p_value_bla < 0.05])/1000 # Baseline adjusted
 
 ```
 
@@ -563,8 +563,6 @@ To get another look at this, we can calculate the residuals for each person. Thi
 
 ```{r}
 
-  data <-  filter(diffs, size == 100 & rep == 1)
-  
   m6 <- lm(sbp_eos_plus ~ scale(sbp_bl, scale = FALSE), data = data)
 
   data$residuals <- residuals(m6) + mean(data$sbp_eos)

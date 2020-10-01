@@ -710,7 +710,7 @@ The key thing to look at here are the standard errors of the effect estimates. Y
 # Same code as above, but tweeking the models to use the updated outcomes with
 # the tx effect added.
 
-  data <- full_join( 
+  data_2 <- full_join( 
     filter(diffs, size == 100), 
     data_frame(
       p_value_eos =                                  # Model 1
@@ -727,7 +727,7 @@ The key thing to look at here are the standard errors of the effect estimates. Y
 
 
 ```r
-  gather(data, type, p_value, starts_with("p_value")) %>%
+  gather(data_2, type, p_value, starts_with("p_value")) %>%
   ggplot(aes(x = p_value, fill = type)) +
     geom_histogram() +
     facet_wrap(~type, nrow = 1) +
@@ -744,27 +744,27 @@ Finally, let's get the actual % of p-values for each model that are < 0.05 for e
 
 
 ```r
-  length(data$p_value_eos[data$p_value_eos < 0.05])/1000 # End of study outcome
+  length(data_2$p_value_eos[data$p_value_eos < 0.05])/1000 # End of study outcome
 ```
 
 ```
-## [1] 85.3
-```
-
-```r
-  length(data$p_value_chg[data$p_value_chg < 0.05])/1000 # Change score
-```
-
-```
-## [1] 85.5
+## [1] 0
 ```
 
 ```r
-  length(data$p_value_bla[data$p_value_bla < 0.05])/1000 # Baseline adjusted
+  length(data_2$p_value_chg[data$p_value_chg < 0.05])/1000 # Change score
 ```
 
 ```
-## [1] 92.6
+## [1] 0
+```
+
+```r
+  length(data_2$p_value_bla[data$p_value_bla < 0.05])/1000 # Baseline adjusted
+```
+
+```
+## [1] 0
 ```
 
 Viola! The observed power for models 1 and 2 were indeed 85%, but almost 93% for the baseline adjusted model! Huzzah! 
@@ -910,14 +910,12 @@ Take note that the R2 for model 1 is 0.068, while for the R2 for model 2 is 0.39
 
 It's 24 % (off a bit due to a bit of simulation error). 
 
-Returning to our smaller dataset, we can see that 7% + 25% = 32% is pretty close to the 39% we actually observed. They aren't exactly the same simply because of sampling error, so that the observed correlation between SBP measures in this sample of n = 100 is 0.5, and since the actual correlation between the outcome and study arm is 0 instead of zero. 
+Returning to our smaller dataset, we can see that 7% + 25% = 32% is pretty close to the 39% we actually observed. They aren't exactly the same simply because of sampling error, so that the observed correlation between SBP measures in this sample of n = 100 is 0.58, and since the actual correlation between the outcome and study arm is 0.03 instead of zero. 
 
 To get another look at this, we can calculate the residuals for each person. This is their observed SBP value at the end of the study, minus their model predicted values. We can then compare the variability of those residuals to the variability of the SBP measured at the end of the study.  
 
 
 ```r
-  data <-  filter(diffs, size == 100 & rep == 1)
-  
   m6 <- lm(sbp_eos_plus ~ scale(sbp_bl, scale = FALSE), data = data)
 
   data$residuals <- residuals(m6) + mean(data$sbp_eos)
