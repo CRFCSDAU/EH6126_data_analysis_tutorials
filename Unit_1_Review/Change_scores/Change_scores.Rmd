@@ -379,7 +379,7 @@ We want to see if the type 1 error rate is controlled at 5% (when p for the esti
 
 ```
 
-Here are the distributions of those p-values. They are (fairly) uniform, as expected when the data are indeed generated under the null hypothesis of no effect (see the [unit 1 review on frequentist inference](https://github.com/CRFCSDAU/EH6126_data_analysis_tutorials/blob/master/Unit_1_Review/Frequentist_inference.md) if needed. 
+Here are the distributions of those p-values. They are (fairly) uniform, as expected when the data are indeed generated under the null hypothesis of no effect (see the [unit 1 review on frequentist inference](https://github.com/CRFCSDAU/EH6126_data_analysis_tutorials/blob/master/Unit_1_Review/Frequentist_inference.md) if needed). 
 
 ```{r}
 
@@ -494,7 +494,7 @@ Finally, let's test for (or estimate) our new treatment effect in the 3 models w
 
 ```
 
-The key thing to look at here are the standard errors of the effect estimates. You can see that the smallest SE is for the third model, which is the baseline adjusted model. This is a fair bit smaller than the SEs for the treatment effect estimates from the other 2 models. Smaller SEs means less uncertainly in the estimates, and this more power to detect effects *when they do exist*. So, finally, let's have a look at the power to detect our known effect using the 3 models. 
+The key thing to look at here are the standard errors of the effect estimates. You can see that the smallest SE is for the third model, which is the baseline adjusted model. This is a fair bit smaller than the SEs for the treatment effect estimates from the other 2 models. Smaller SEs means less uncertainly in the estimates, and thus more power to detect effects *when they do exist*. So, finally, let's have a look at the power to detect our known effect using the 3 models. 
 
 ```{r}
 
@@ -598,7 +598,7 @@ When you adjust for baseline SBP, it's like trying to estimate your effect in te
 
 ```
 
-So our baseline adjusted model is just like first regressing the outcome on the baseline (and removing the outcome variance predicted by the baseline), taking the residual, and the regressing that on treatment arm. 
+The first model in the table above includes both study arm and baseline SBP. The other two models can be thought of a sequential: first regress the outcome on the baseline (the middle model); then calculate the resulting residual, and regress that on study arm (the right hand model) to get the same result as the first model. 
 
 One final, final point, is that once you have decided to adjust for baseline SBP, it no longer matters whether you use the end-of-study SBP or the change score as your outcome. Have a look for yourself:
 
@@ -608,6 +608,7 @@ One final, final point, is that once you have decided to adjust for baseline SBP
   m8 <- lm(change_sbp_plus ~ arm + scale(sbp_bl, scale = FALSE), 
            data = example_data)
 
+# Now compare that to the end-of-study measure adjusted for baseline
   tab_model(m3, m8)
 
 ```

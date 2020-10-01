@@ -842,7 +842,7 @@ R<sup>2</sup> / R<sup>2</sup> adjusted
   ) %&gt;% 
     select(starts_with(&quot;p_value&quot;)) %&gt;%
     distinct()</code></pre>
-<p>Here are the distributions of those p-values. They are (fairly) uniform, as expected when the data are indeed generated under the null hypothesis of no effect (see the <a href="https://github.com/CRFCSDAU/EH6126_data_analysis_tutorials/blob/master/Unit_1_Review/Frequentist_inference.md">unit 1 review on frequentist inference</a> if needed.</p>
+<p>Here are the distributions of those p-values. They are (fairly) uniform, as expected when the data are indeed generated under the null hypothesis of no effect (see the <a href="https://github.com/CRFCSDAU/EH6126_data_analysis_tutorials/blob/master/Unit_1_Review/Frequentist_inference.md">unit 1 review on frequentist inference</a> if needed).</p>
 <pre class="r"><code>  gather(data, type, p_value, starts_with(&quot;p_value&quot;)) %&gt;%
   ggplot(aes(x = p_value, fill = type)) +
     geom_histogram() +
@@ -1129,7 +1129,7 @@ R<sup>2</sup> / R<sup>2</sup> adjusted
 </td>
 </tr>
 </table>
-<p>The key thing to look at here are the standard errors of the effect estimates. You can see that the smallest SE is for the third model, which is the baseline adjusted model. This is a fair bit smaller than the SEs for the treatment effect estimates from the other 2 models. Smaller SEs means less uncertainly in the estimates, and this more power to detect effects <em>when they do exist</em>. So, finally, let’s have a look at the power to detect our known effect using the 3 models.</p>
+<p>The key thing to look at here are the standard errors of the effect estimates. You can see that the smallest SE is for the third model, which is the baseline adjusted model. This is a fair bit smaller than the SEs for the treatment effect estimates from the other 2 models. Smaller SEs means less uncertainly in the estimates, and thus more power to detect effects <em>when they do exist</em>. So, finally, let’s have a look at the power to detect our known effect using the 3 models.</p>
 <pre class="r"><code># Same code as above, but tweaking the models to use the updated outcomes with
 # the tx effect added.
 
@@ -1684,12 +1684,13 @@ R<sup>2</sup> / R<sup>2</sup> adjusted
 </td>
 </tr>
 </table>
-<p>So our baseline adjusted model is just like first regressing the outcome on the baseline (and removing the outcome variance predicted by the baseline), taking the residual, and the regressing that on treatment arm.</p>
+<p>The first model in the table above includes both study arm and baseline SBP. The other two models can be thought of a sequential: first regress the outcome on the baseline (the middle model); then calculate the resulting residual, and regress that on study arm (the right hand model) to get the same result as the first model.</p>
 <p>One final, final point, is that once you have decided to adjust for baseline SBP, it no longer matters whether you use the end-of-study SBP or the change score as your outcome. Have a look for yourself:</p>
 <pre class="r"><code># Change score outcome, adjusted for baseline
   m8 &lt;- lm(change_sbp_plus ~ arm + scale(sbp_bl, scale = FALSE), 
            data = example_data)
 
+# Now compare that to the end-of-study measure adjusted for baseline
   tab_model(m3, m8)</code></pre>
 <table style="border-collapse:collapse; border:none;">
 <tr>
