@@ -139,7 +139,11 @@ Finally, let's see if there is a difference in either blood pressure values (end
 # Estimate the between arm difference in mean blood pressure at baseline
   m1_bl  <- lm(sbp_bl  ~ arm, data = sbp)
   
-  tab_model(m1_eos, m1_bl)
+  tab_model(
+    m1_eos, m1_bl, 
+    dv.labels = c("SBP EoS", "SBP Baseline"), 
+    pred.labels = c("Intercept", "Active (vs Control)")
+    )
 
 ```
 
@@ -221,7 +225,11 @@ Given the large number of observations we just simulated, it shouldn't come as a
   m1_eos_2 <- lm(sbp_eos ~ arm, data = sbp_20)
   m1_bl_2  <- lm(sbp_bl  ~ arm, data = sbp_20)
   
-  tab_model(m1_eos_2, m1_bl_2)
+  tab_model(
+    m1_eos_2, m1_bl_2, 
+    dv.labels = c("SBP EoS", "SBP Baseline"), 
+    pred.labels = c("Intercept", "Active (vs Control)")
+    )
 
 
 ```
@@ -384,8 +392,15 @@ Here are the distributions of those p-values. They are (fairly) uniform, as expe
 ```{r}
 
   gather(data, type, p_value, starts_with("p_value")) %>%
+  mutate(
+      type = factor(
+        type, 
+        labels = c("Baseline adjusted values", "Change scores", 
+                   "End-of-study values")
+        )
+      ) %>%
   ggplot(aes(x = p_value, fill = type)) +
-    geom_histogram() +
+    geom_histogram(bins = 10) +
     facet_wrap(~type, nrow = 1) +
     scale_fill_viridis(guide = FALSE, discrete = TRUE, end = 0.8) +
     xlab("P-value") +
@@ -490,7 +505,11 @@ Finally, let's test for (or estimate) our new treatment effect in the 3 models w
 # End of study outcome, adjusted for baseline  
   m3 <- lm(sbp_eos_plus ~ arm + scale(sbp_bl, scale = FALSE), data = example_data) 
   
-  tab_model(m1, m2, m3, show.se = TRUE)
+  tab_model(
+    m1, m2, m3, 
+    show.se = TRUE, 
+    dv.labels = c("SBP EoS", "Change scores", "SBP EoS, Baseline adjusted"), 
+    pred.labels = c("Intercept", "Active (vs Control)", "Baseline SBP"))
 
 ```
 
@@ -522,6 +541,13 @@ The key thing to look at here are the standard errors of the effect estimates. Y
 ```{r}
 
   gather(data_2, type, p_value, starts_with("p_value")) %>%
+    mutate(
+      type = factor(
+        type, 
+        labels = c("Baseline adjusted values", "Change scores", 
+                   "End-of-study values")
+        )
+      ) %>%
   ggplot(aes(x = p_value, fill = type)) +
     geom_histogram() +
     facet_wrap(~type, nrow = 1) +
@@ -554,7 +580,12 @@ First, let's return to models 1 (end of study outcome) and 3 (plus baseline adju
 
 ```{r}
 
-  tab_model(m1, m3, show.se = TRUE)
+  tab_model(
+    m1, m3, 
+    show.se = TRUE, 
+    dv.labels = c("SBP EoS", "SBP EoS, Baseline adjusted"), 
+    pred.labels = c("Intercept", "Active (vs Control)", "Baseline SBP")
+    )
 
 ```
 
@@ -565,7 +596,12 @@ Take note that the R2 for model 1 is 0.068, while for the R2 for model 2 is 0.39
   m4 <- lm(sbp_eos ~ arm, data = sbp)
   m5 <- lm(sbp_eos  ~ arm + scale(sbp_bl, scale = FALSE), data = sbp)
   
-  tab_model(m4, m5, show.se = TRUE)
+  tab_model(
+    m4, m5, 
+    show.se = TRUE, 
+    dv.labels = c("SBP EoS", "SBP EoS, Baseline adjusted"), 
+    pred.labels = c("Intercept", "Active (vs Control)", "Baseline SBP")
+    )
 
 ```
 
@@ -594,7 +630,12 @@ When you adjust for baseline SBP, it's like trying to estimate your effect in te
 
   m7 <- lm(residuals ~ arm, data = example_data) 
 
-  tab_model(m3, m6, m7, show.se = TRUE)
+  tab_model(
+    m3, m6, m7, show.se = TRUE, 
+    dv.labels = c("SBP EoS, Baseline adjusted", 
+                  "Step 1:SBP EoS regressed on Baseline", 
+                  "Step 2:Residuals regressed on treatment arm"), 
+    pred.labels = c("Intercept", "Active (vs Control)", "Baseline SBP"))
 
 ```
 
@@ -609,7 +650,12 @@ One final, final point, is that once you have decided to adjust for baseline SBP
            data = example_data)
 
 # Now compare that to the end-of-study measure adjusted for baseline
-  tab_model(m3, m8)
+  tab_model(
+    m3, m8, 
+    dv.labels = c("SBP EoS, Baseline adjusted", 
+                  "Change scores, baseline adjusted"), 
+    pred.labels = c("Intercept", "Active (vs Control)", "Baseline SBP")
+    )
 
 ```
 

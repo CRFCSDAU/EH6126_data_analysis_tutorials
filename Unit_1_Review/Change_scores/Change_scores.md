@@ -159,14 +159,18 @@ Finally, let's see if there is a difference in either blood pressure values (end
 # Estimate the between arm difference in mean blood pressure at baseline
   m1_bl  <- lm(sbp_bl  ~ arm, data = sbp)
   
-  tab_model(m1_eos, m1_bl)
+  tab_model(
+    m1_eos, m1_bl, 
+    dv.labels = c("SBP EoS", "SBP Baseline"), 
+    pred.labels = c("Intercept", "Active (vs Control)")
+    )
 ```
 
 <table style="border-collapse:collapse; border:none;">
 <tr>
 <th style="border-top: double; text-align:center; font-style:normal; font-weight:bold; padding:0.2cm;  text-align:left; ">&nbsp;</th>
-<th colspan="3" style="border-top: double; text-align:center; font-style:normal; font-weight:bold; padding:0.2cm; ">sbp eos</th>
-<th colspan="3" style="border-top: double; text-align:center; font-style:normal; font-weight:bold; padding:0.2cm; ">sbp bl</th>
+<th colspan="3" style="border-top: double; text-align:center; font-style:normal; font-weight:bold; padding:0.2cm; ">SBP EoS</th>
+<th colspan="3" style="border-top: double; text-align:center; font-style:normal; font-weight:bold; padding:0.2cm; ">SBP Baseline</th>
 </tr>
 <tr>
 <td style=" text-align:center; border-bottom:1px solid; font-style:italic; font-weight:normal;  text-align:left; ">Predictors</td>
@@ -178,7 +182,7 @@ Finally, let's see if there is a difference in either blood pressure values (end
 <td style=" text-align:center; border-bottom:1px solid; font-style:italic; font-weight:normal;  col7">p</td>
 </tr>
 <tr>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">(Intercept)</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">Intercept</td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">124.34</td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">123.84&nbsp;&ndash;&nbsp;124.84</td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "><strong>&lt;0.001</td>
@@ -187,7 +191,7 @@ Finally, let's see if there is a difference in either blood pressure values (end
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  col7"><strong>&lt;0.001</td>
 </tr>
 <tr>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">arm [Active]</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">Active (vs Control)</td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">0.24</td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-0.46&nbsp;&ndash;&nbsp;0.95</td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">0.499</td>
@@ -287,14 +291,18 @@ Given the large number of observations we just simulated, it shouldn't come as a
   m1_eos_2 <- lm(sbp_eos ~ arm, data = sbp_20)
   m1_bl_2  <- lm(sbp_bl  ~ arm, data = sbp_20)
   
-  tab_model(m1_eos_2, m1_bl_2)
+  tab_model(
+    m1_eos_2, m1_bl_2, 
+    dv.labels = c("SBP EoS", "SBP Baseline"), 
+    pred.labels = c("Intercept", "Active (vs Control)")
+    )
 ```
 
 <table style="border-collapse:collapse; border:none;">
 <tr>
 <th style="border-top: double; text-align:center; font-style:normal; font-weight:bold; padding:0.2cm;  text-align:left; ">&nbsp;</th>
-<th colspan="3" style="border-top: double; text-align:center; font-style:normal; font-weight:bold; padding:0.2cm; ">sbp eos</th>
-<th colspan="3" style="border-top: double; text-align:center; font-style:normal; font-weight:bold; padding:0.2cm; ">sbp bl</th>
+<th colspan="3" style="border-top: double; text-align:center; font-style:normal; font-weight:bold; padding:0.2cm; ">SBP EoS</th>
+<th colspan="3" style="border-top: double; text-align:center; font-style:normal; font-weight:bold; padding:0.2cm; ">SBP Baseline</th>
 </tr>
 <tr>
 <td style=" text-align:center; border-bottom:1px solid; font-style:italic; font-weight:normal;  text-align:left; ">Predictors</td>
@@ -306,7 +314,7 @@ Given the large number of observations we just simulated, it shouldn't come as a
 <td style=" text-align:center; border-bottom:1px solid; font-style:italic; font-weight:normal;  col7">p</td>
 </tr>
 <tr>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">(Intercept)</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">Intercept</td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">119.83</td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">108.60&nbsp;&ndash;&nbsp;131.06</td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "><strong>&lt;0.001</td>
@@ -315,7 +323,7 @@ Given the large number of observations we just simulated, it shouldn't come as a
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  col7"><strong>&lt;0.001</td>
 </tr>
 <tr>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">arm [Active]</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">Active (vs Control)</td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">5.12</td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-10.03&nbsp;&ndash;&nbsp;20.26</td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">0.487</td>
@@ -491,8 +499,15 @@ Here are the distributions of those p-values. They are (fairly) uniform, as expe
 
 ```r
   gather(data, type, p_value, starts_with("p_value")) %>%
+  mutate(
+      type = factor(
+        type, 
+        labels = c("Baseline adjusted values", "Change scores", 
+                   "End-of-study values")
+        )
+      ) %>%
   ggplot(aes(x = p_value, fill = type)) +
-    geom_histogram() +
+    geom_histogram(bins = 10) +
     facet_wrap(~type, nrow = 1) +
     scale_fill_viridis(guide = FALSE, discrete = TRUE, end = 0.8) +
     xlab("P-value") +
@@ -630,15 +645,19 @@ Finally, let's test for (or estimate) our new treatment effect in the 3 models w
 # End of study outcome, adjusted for baseline  
   m3 <- lm(sbp_eos_plus ~ arm + scale(sbp_bl, scale = FALSE), data = example_data) 
   
-  tab_model(m1, m2, m3, show.se = TRUE)
+  tab_model(
+    m1, m2, m3, 
+    show.se = TRUE, 
+    dv.labels = c("SBP EoS", "Change scores", "SBP EoS, Baseline adjusted"), 
+    pred.labels = c("Intercept", "Active (vs Control)", "Baseline SBP"))
 ```
 
 <table style="border-collapse:collapse; border:none;">
 <tr>
 <th style="border-top: double; text-align:center; font-style:normal; font-weight:bold; padding:0.2cm;  text-align:left; ">&nbsp;</th>
-<th colspan="4" style="border-top: double; text-align:center; font-style:normal; font-weight:bold; padding:0.2cm; ">sbp eos plus</th>
-<th colspan="4" style="border-top: double; text-align:center; font-style:normal; font-weight:bold; padding:0.2cm; ">change sbp plus</th>
-<th colspan="4" style="border-top: double; text-align:center; font-style:normal; font-weight:bold; padding:0.2cm; ">sbp eos plus</th>
+<th colspan="4" style="border-top: double; text-align:center; font-style:normal; font-weight:bold; padding:0.2cm; ">SBP EoS</th>
+<th colspan="4" style="border-top: double; text-align:center; font-style:normal; font-weight:bold; padding:0.2cm; ">Change scores</th>
+<th colspan="4" style="border-top: double; text-align:center; font-style:normal; font-weight:bold; padding:0.2cm; ">SBP EoS, Baseline adjusted</th>
 </tr>
 <tr>
 <td style=" text-align:center; border-bottom:1px solid; font-style:italic; font-weight:normal;  text-align:left; ">Predictors</td>
@@ -656,7 +675,7 @@ Finally, let's test for (or estimate) our new treatment effect in the 3 models w
 <td style=" text-align:center; border-bottom:1px solid; font-style:italic; font-weight:normal;  3">p</td>
 </tr>
 <tr>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">(Intercept)</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">Intercept</td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">122.81</td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">2.48</td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">117.89&nbsp;&ndash;&nbsp;127.72</td>
@@ -671,7 +690,7 @@ Finally, let's test for (or estimate) our new treatment effect in the 3 models w
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  3"><strong>&lt;0.001</td>
 </tr>
 <tr>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">arm [Active]</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">Active (vs Control)</td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-10.01</td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">3.74</td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-17.42&nbsp;&ndash;&nbsp;-2.59</td>
@@ -686,7 +705,7 @@ Finally, let's test for (or estimate) our new treatment effect in the 3 models w
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  3"><strong>0.003</strong></td>
 </tr>
 <tr>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">scale(sbp_bl, scale =<br>FALSE)</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">Baseline SBP</td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "></td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "></td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "></td>
@@ -742,6 +761,13 @@ The key thing to look at here are the standard errors of the effect estimates. Y
 
 ```r
   gather(data_2, type, p_value, starts_with("p_value")) %>%
+    mutate(
+      type = factor(
+        type, 
+        labels = c("Baseline adjusted values", "Change scores", 
+                   "End-of-study values")
+        )
+      ) %>%
   ggplot(aes(x = p_value, fill = type)) +
     geom_histogram() +
     facet_wrap(~type, nrow = 1) +
@@ -791,14 +817,19 @@ First, let's return to models 1 (end of study outcome) and 3 (plus baseline adju
 
 
 ```r
-  tab_model(m1, m3, show.se = TRUE)
+  tab_model(
+    m1, m3, 
+    show.se = TRUE, 
+    dv.labels = c("SBP EoS", "SBP EoS, Baseline adjusted"), 
+    pred.labels = c("Intercept", "Active (vs Control)", "Baseline SBP")
+    )
 ```
 
 <table style="border-collapse:collapse; border:none;">
 <tr>
 <th style="border-top: double; text-align:center; font-style:normal; font-weight:bold; padding:0.2cm;  text-align:left; ">&nbsp;</th>
-<th colspan="4" style="border-top: double; text-align:center; font-style:normal; font-weight:bold; padding:0.2cm; ">sbp eos plus</th>
-<th colspan="4" style="border-top: double; text-align:center; font-style:normal; font-weight:bold; padding:0.2cm; ">sbp eos plus</th>
+<th colspan="4" style="border-top: double; text-align:center; font-style:normal; font-weight:bold; padding:0.2cm; ">SBP EoS</th>
+<th colspan="4" style="border-top: double; text-align:center; font-style:normal; font-weight:bold; padding:0.2cm; ">SBP EoS, Baseline adjusted</th>
 </tr>
 <tr>
 <td style=" text-align:center; border-bottom:1px solid; font-style:italic; font-weight:normal;  text-align:left; ">Predictors</td>
@@ -812,7 +843,7 @@ First, let's return to models 1 (end of study outcome) and 3 (plus baseline adju
 <td style=" text-align:center; border-bottom:1px solid; font-style:italic; font-weight:normal;  col9">p</td>
 </tr>
 <tr>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">(Intercept)</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">Intercept</td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">122.81</td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">2.48</td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">117.89&nbsp;&ndash;&nbsp;127.72</td>
@@ -823,7 +854,7 @@ First, let's return to models 1 (end of study outcome) and 3 (plus baseline adju
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  col9"><strong>&lt;0.001</td>
 </tr>
 <tr>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">arm [Active]</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">Active (vs Control)</td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-10.01</td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">3.74</td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-17.42&nbsp;&ndash;&nbsp;-2.59</td>
@@ -834,7 +865,7 @@ First, let's return to models 1 (end of study outcome) and 3 (plus baseline adju
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  col9"><strong>0.003</strong></td>
 </tr>
 <tr>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">scale(sbp_bl, scale =<br>FALSE)</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">Baseline SBP</td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "></td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "></td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "></td>
@@ -864,14 +895,19 @@ Take note that the R2 for model 1 is 0.068, while for the R2 for model 2 is 0.39
   m4 <- lm(sbp_eos ~ arm, data = sbp)
   m5 <- lm(sbp_eos  ~ arm + scale(sbp_bl, scale = FALSE), data = sbp)
   
-  tab_model(m4, m5, show.se = TRUE)
+  tab_model(
+    m4, m5, 
+    show.se = TRUE, 
+    dv.labels = c("SBP EoS", "SBP EoS, Baseline adjusted"), 
+    pred.labels = c("Intercept", "Active (vs Control)", "Baseline SBP")
+    )
 ```
 
 <table style="border-collapse:collapse; border:none;">
 <tr>
 <th style="border-top: double; text-align:center; font-style:normal; font-weight:bold; padding:0.2cm;  text-align:left; ">&nbsp;</th>
-<th colspan="4" style="border-top: double; text-align:center; font-style:normal; font-weight:bold; padding:0.2cm; ">sbp eos</th>
-<th colspan="4" style="border-top: double; text-align:center; font-style:normal; font-weight:bold; padding:0.2cm; ">sbp eos</th>
+<th colspan="4" style="border-top: double; text-align:center; font-style:normal; font-weight:bold; padding:0.2cm; ">SBP EoS</th>
+<th colspan="4" style="border-top: double; text-align:center; font-style:normal; font-weight:bold; padding:0.2cm; ">SBP EoS, Baseline adjusted</th>
 </tr>
 <tr>
 <td style=" text-align:center; border-bottom:1px solid; font-style:italic; font-weight:normal;  text-align:left; ">Predictors</td>
@@ -885,7 +921,7 @@ Take note that the R2 for model 1 is 0.068, while for the R2 for model 2 is 0.39
 <td style=" text-align:center; border-bottom:1px solid; font-style:italic; font-weight:normal;  col9">p</td>
 </tr>
 <tr>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">(Intercept)</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">Intercept</td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">124.34</td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">0.26</td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">123.84&nbsp;&ndash;&nbsp;124.84</td>
@@ -896,7 +932,7 @@ Take note that the R2 for model 1 is 0.068, while for the R2 for model 2 is 0.39
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  col9"><strong>&lt;0.001</td>
 </tr>
 <tr>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">arm [Active]</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">Active (vs Control)</td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">0.24</td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">0.36</td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-0.46&nbsp;&ndash;&nbsp;0.95</td>
@@ -907,7 +943,7 @@ Take note that the R2 for model 1 is 0.068, while for the R2 for model 2 is 0.39
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  col9">0.620</td>
 </tr>
 <tr>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">scale(sbp_bl, scale =<br>FALSE)</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">Baseline SBP</td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "></td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "></td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "></td>
@@ -956,15 +992,20 @@ When you adjust for baseline SBP, it's like trying to estimate your effect in te
 ```r
   m7 <- lm(residuals ~ arm, data = example_data) 
 
-  tab_model(m3, m6, m7, show.se = TRUE)
+  tab_model(
+    m3, m6, m7, show.se = TRUE, 
+    dv.labels = c("SBP EoS, Baseline adjusted", 
+                  "Step 1:SBP EoS regressed on Baseline", 
+                  "Step 2:Residuals regressed on treatment arm"), 
+    pred.labels = c("Intercept", "Active (vs Control)", "Baseline SBP"))
 ```
 
 <table style="border-collapse:collapse; border:none;">
 <tr>
 <th style="border-top: double; text-align:center; font-style:normal; font-weight:bold; padding:0.2cm;  text-align:left; ">&nbsp;</th>
-<th colspan="4" style="border-top: double; text-align:center; font-style:normal; font-weight:bold; padding:0.2cm; ">sbp eos plus</th>
-<th colspan="4" style="border-top: double; text-align:center; font-style:normal; font-weight:bold; padding:0.2cm; ">sbp eos plus</th>
-<th colspan="4" style="border-top: double; text-align:center; font-style:normal; font-weight:bold; padding:0.2cm; ">residuals</th>
+<th colspan="4" style="border-top: double; text-align:center; font-style:normal; font-weight:bold; padding:0.2cm; ">SBP EoS, Baseline adjusted</th>
+<th colspan="4" style="border-top: double; text-align:center; font-style:normal; font-weight:bold; padding:0.2cm; ">Step 1:SBP EoS regressed on Baseline</th>
+<th colspan="4" style="border-top: double; text-align:center; font-style:normal; font-weight:bold; padding:0.2cm; ">Step 2:Residuals regressed on treatment arm</th>
 </tr>
 <tr>
 <td style=" text-align:center; border-bottom:1px solid; font-style:italic; font-weight:normal;  text-align:left; ">Predictors</td>
@@ -982,7 +1023,7 @@ When you adjust for baseline SBP, it's like trying to estimate your effect in te
 <td style=" text-align:center; border-bottom:1px solid; font-style:italic; font-weight:normal;  3">p</td>
 </tr>
 <tr>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">(Intercept)</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">Intercept</td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">122.47</td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">2.02</td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">118.46&nbsp;&ndash;&nbsp;126.47</td>
@@ -997,7 +1038,7 @@ When you adjust for baseline SBP, it's like trying to estimate your effect in te
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  3"><strong>&lt;0.001</td>
 </tr>
 <tr>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">arm [Active]</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">Active (vs Control)</td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-9.23</td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">3.04</td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-15.28&nbsp;&ndash;&nbsp;-3.19</td>
@@ -1012,7 +1053,7 @@ When you adjust for baseline SBP, it's like trying to estimate your effect in te
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  3"><strong>0.003</strong></td>
 </tr>
 <tr>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">scale(sbp_bl, scale =<br>FALSE)</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">Baseline SBP</td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">0.53</td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">0.07</td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">0.38&nbsp;&ndash;&nbsp;0.67</td>
@@ -1052,14 +1093,19 @@ One final, final point, is that once you have decided to adjust for baseline SBP
            data = example_data)
 
 # Now compare that to the end-of-study measure adjusted for baseline
-  tab_model(m3, m8)
+  tab_model(
+    m3, m8, 
+    dv.labels = c("SBP EoS, Baseline adjusted", 
+                  "Change scores, baseline adjusted"), 
+    pred.labels = c("Intercept", "Active (vs Control)", "Baseline SBP")
+    )
 ```
 
 <table style="border-collapse:collapse; border:none;">
 <tr>
 <th style="border-top: double; text-align:center; font-style:normal; font-weight:bold; padding:0.2cm;  text-align:left; ">&nbsp;</th>
-<th colspan="3" style="border-top: double; text-align:center; font-style:normal; font-weight:bold; padding:0.2cm; ">sbp eos plus</th>
-<th colspan="3" style="border-top: double; text-align:center; font-style:normal; font-weight:bold; padding:0.2cm; ">change sbp plus</th>
+<th colspan="3" style="border-top: double; text-align:center; font-style:normal; font-weight:bold; padding:0.2cm; ">SBP EoS, Baseline adjusted</th>
+<th colspan="3" style="border-top: double; text-align:center; font-style:normal; font-weight:bold; padding:0.2cm; ">Change scores, baseline adjusted</th>
 </tr>
 <tr>
 <td style=" text-align:center; border-bottom:1px solid; font-style:italic; font-weight:normal;  text-align:left; ">Predictors</td>
@@ -1071,7 +1117,7 @@ One final, final point, is that once you have decided to adjust for baseline SBP
 <td style=" text-align:center; border-bottom:1px solid; font-style:italic; font-weight:normal;  col7">p</td>
 </tr>
 <tr>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">(Intercept)</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">Intercept</td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">122.47</td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">118.46&nbsp;&ndash;&nbsp;126.47</td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "><strong>&lt;0.001</td>
@@ -1080,7 +1126,7 @@ One final, final point, is that once you have decided to adjust for baseline SBP
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  col7">0.110</td>
 </tr>
 <tr>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">arm [Active]</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">Active (vs Control)</td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-9.23</td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-15.28&nbsp;&ndash;&nbsp;-3.19</td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "><strong>0.003</strong></td>
@@ -1089,7 +1135,7 @@ One final, final point, is that once you have decided to adjust for baseline SBP
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  col7"><strong>0.003</strong></td>
 </tr>
 <tr>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">scale(sbp_bl, scale =<br>FALSE)</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">Baseline SBP</td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">0.53</td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">0.38&nbsp;&ndash;&nbsp;0.67</td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "><strong>&lt;0.001</td>
