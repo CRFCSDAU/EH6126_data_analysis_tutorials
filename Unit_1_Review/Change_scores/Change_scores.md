@@ -25,7 +25,7 @@ First, let's simulate some data when we know there is no treatment effect.
 
 
 ```r
-# Set the seed for the random number generator to preserve reproducability
+# Set the seed for the random number generator so you will get the same results
   set.seed(1207) 
 
 # Now generate baseline and end-of-study SBP for 10000 people where the mean is
@@ -151,7 +151,7 @@ Finally, let's see if there is a difference in either blood pressure values (end
 
 
 ```r
-# Here we estaimte 2 linear regression models, and display the results with
+# Here we esimate 2 linear regression models, and display the results with
 # tab_model()
 
 # Estimate the between arm difference in mean blood pressure at the end of the study
@@ -268,7 +268,7 @@ Given the large number of observations we just simulated, it shouldn't come as a
 
 ```r
 # Data
-  sbp_2 <- rnorm_multi(                        # Generate the SBP measures
+  sbp_20 <- rnorm_multi(                        # Generate the SBP measures
     n = 20, # Smaller sample size
     mu = rep(124.5, 2),
     sd = rep(18, 2),
@@ -284,8 +284,8 @@ Given the large number of observations we just simulated, it shouldn't come as a
     )
 
 # Models
-  m1_eos_2 <- lm(sbp_eos ~ arm, data = sbp_2)
-  m1_bl_2  <- lm(sbp_bl  ~ arm, data = sbp_2)
+  m1_eos_2 <- lm(sbp_eos ~ arm, data = sbp_20)
+  m1_bl_2  <- lm(sbp_bl  ~ arm, data = sbp_20)
   
   tab_model(m1_eos_2, m1_bl_2)
 ```
@@ -342,10 +342,10 @@ We can "see" this by plotting the data again.
 
 
 ```r
-  g1 <- ggplot(sbp_2, aes(y = sbp_eos, x = arm, color = arm)) +
+  g1 <- ggplot(sbp_20, aes(y = sbp_eos, x = arm, color = arm)) +
     geom_jitter(alpha = 0.8, size = 3, width = 0.1) +
     geom_boxplot(alpha = 0.3, width = 0.45, outlier.alpha = 0, size = 0.5) +
-    geom_hline(data = group_by(sbp_2, arm) %>% summarise(mean = mean(sbp_eos)), 
+    geom_hline(data = group_by(sbp_20, arm) %>% summarise(mean = mean(sbp_eos)), 
                aes(yintercept = mean, color = arm)) +
     ylab("SBP mmHG") +
     xlab("") +
@@ -353,10 +353,10 @@ We can "see" this by plotting the data again.
     scale_color_viridis(guide = FALSE, discrete = TRUE, end = 0.8) +
     ylim(50, 200)
 
-  g2 <- ggplot(sbp_2, aes(y = sbp_bl, x = arm, color = arm)) +
+  g2 <- ggplot(sbp_20, aes(y = sbp_bl, x = arm, color = arm)) +
     geom_jitter(alpha = 0.8, size = 3, width = 0.1) +
     geom_boxplot(alpha = 0.3, width = 0.45, outlier.alpha = 0, size = 0.5) +
-    geom_hline(data = group_by(sbp_2, arm) %>% summarise(mean = mean(sbp_bl)), 
+    geom_hline(data = group_by(sbp_20, arm) %>% summarise(mean = mean(sbp_bl)), 
                aes(yintercept = mean, color = arm)) +
     ylab("") +
     xlab("") +
@@ -621,11 +621,14 @@ Finally, let's test for (or estimate) our new treatment effect in the 3 models w
 
 
 ```r
-  data <-  filter(diffs, size == 100 & rep == 1)
+  example_data <-  filter(diffs, size == 100 & rep == 1)
 
-  m1 <- lm(sbp_eos_plus ~ arm, data = data) 
-  m2 <- lm(change_sbp_plus ~ arm, data = data) 
-  m3 <- lm(sbp_eos_plus ~ arm + scale(sbp_bl, scale = FALSE), data = data) 
+# End of study outcome
+  m1 <- lm(sbp_eos_plus ~ arm, data = example_data) 
+# Change score outcome  
+  m2 <- lm(change_sbp_plus ~ arm, data = example_data) 
+# End of study outcome, adjusted for baseline  
+  m3 <- lm(sbp_eos_plus ~ arm + scale(sbp_bl, scale = FALSE), data = example_data) 
   
   tab_model(m1, m2, m3, show.se = TRUE)
 ```
@@ -716,7 +719,7 @@ The key thing to look at here are the standard errors of the effect estimates. Y
 
 
 ```r
-# Same code as above, but tweeking the models to use the updated outcomes with
+# Same code as above, but tweaking the models to use the updated outcomes with
 # the tx effect added.
 
   data_2 <- full_join( 
@@ -731,7 +734,9 @@ The key thing to look at here are the standard errors of the effect estimates. Y
       rep = 1:1000
       ), 
     by = "rep"
-  )
+  ) %>%
+  select(starts_with("p_value")) %>%
+  distinct()
 ```
 
 
@@ -753,27 +758,27 @@ Finally, let's get the actual % of p-values for each model that are < 0.05 for e
 
 
 ```r
-  length(data_2$p_value_eos[data$p_value_eos < 0.05])/1000 # End of study outcome
+  length(data_2$p_value_eos[data_2$p_value_eos < 0.05])/1000 # End of study outcome
 ```
 
 ```
-## [1] 0
-```
-
-```r
-  length(data_2$p_value_chg[data$p_value_chg < 0.05])/1000 # Change score
-```
-
-```
-## [1] 0
+## [1] 0.853
 ```
 
 ```r
-  length(data_2$p_value_bla[data$p_value_bla < 0.05])/1000 # Baseline adjusted
+  length(data_2$p_value_chg[data_2$p_value_chg < 0.05])/1000 # Change score
 ```
 
 ```
-## [1] 0
+## [1] 0.855
+```
+
+```r
+  length(data_2$p_value_bla[data_2$p_value_bla < 0.05])/1000 # Baseline adjusted
+```
+
+```
+## [1] 0.926
 ```
 
 Viola! The observed power for models 1 and 2 were indeed 85%, but almost 93% for the baseline adjusted model! Huzzah! 
@@ -782,7 +787,7 @@ So, why does adjusting for baseline SBP help improve the efficiency of our study
 
 When we adjust for a variable that is correlated with the outcome, we are removing the outcome variability predicted by that variable. Reducing the outcome variability like this (the "noise") then makes it easier to see the effect (the "signal"). 
 
-First, let's return to models 1 and 3 from before. 
+First, let's return to models 1 (end of study outcome) and 3 (plus baseline adjustment) from before. 
 
 
 ```r
@@ -852,67 +857,75 @@ First, let's return to models 1 and 3 from before.
 
 </table>
 
-Take note that the R2 for model 1 is 0.068, while for the R2 for model 2 is 0.39. These R2 values are typically interpreted as the % of the outcome variability "explained" by the model. In the first model, there is only one predictor, the treatment arm, which we can now say explains about 7% of the variance in SBP measured at the end of the study. In the second model, we added baseline SBP, and now the model explains 39% of the variance. If you recall when we simulated these data, we did that assuming a correlation between the two SBP measures = 0.5. If we squared that (R2), we get 0.25, which is to say that baseline SBP explains 25% of the variability in SBP measured at the end of the study. Just to confirm that, let's go back to the very first dataset we simulated with 10k observations, and check the R2 for the baseline adjusted model. 
+Take note that the R2 for model 1 is 0.068, while for the R2 for model 2 is 0.39. These R2 values are typically interpreted as the % of the outcome variability "explained" by the model. In the first model, there is only one predictor, the treatment arm, which we can now say explains about 7% of the variance in SBP measured at the end of the study. In the second model, we added baseline SBP, and now the model explains 39% of the variance. If you recall when we simulated these data, we did that assuming a correlation between the two SBP measures = 0.5. If we squared that (R2), we get 0.25, which is to say that baseline SBP explains 25% of the variability in SBP measured at the end of the study. Just to confirm that, let's go back to the very first dataset we simulated with 10k observations (the object called sbp), and check the R2 for the baseline adjusted model. 
 
 
 ```r
   m4 <- lm(sbp_eos ~ arm, data = sbp)
   m5 <- lm(sbp_eos  ~ arm + scale(sbp_bl, scale = FALSE), data = sbp)
   
-  tab_model(m4, m5)
+  tab_model(m4, m5, show.se = TRUE)
 ```
 
 <table style="border-collapse:collapse; border:none;">
 <tr>
 <th style="border-top: double; text-align:center; font-style:normal; font-weight:bold; padding:0.2cm;  text-align:left; ">&nbsp;</th>
-<th colspan="3" style="border-top: double; text-align:center; font-style:normal; font-weight:bold; padding:0.2cm; ">sbp eos</th>
-<th colspan="3" style="border-top: double; text-align:center; font-style:normal; font-weight:bold; padding:0.2cm; ">sbp eos</th>
+<th colspan="4" style="border-top: double; text-align:center; font-style:normal; font-weight:bold; padding:0.2cm; ">sbp eos</th>
+<th colspan="4" style="border-top: double; text-align:center; font-style:normal; font-weight:bold; padding:0.2cm; ">sbp eos</th>
 </tr>
 <tr>
 <td style=" text-align:center; border-bottom:1px solid; font-style:italic; font-weight:normal;  text-align:left; ">Predictors</td>
 <td style=" text-align:center; border-bottom:1px solid; font-style:italic; font-weight:normal;  ">Estimates</td>
+<td style=" text-align:center; border-bottom:1px solid; font-style:italic; font-weight:normal;  ">std. Error</td>
 <td style=" text-align:center; border-bottom:1px solid; font-style:italic; font-weight:normal;  ">CI</td>
 <td style=" text-align:center; border-bottom:1px solid; font-style:italic; font-weight:normal;  ">p</td>
 <td style=" text-align:center; border-bottom:1px solid; font-style:italic; font-weight:normal;  ">Estimates</td>
-<td style=" text-align:center; border-bottom:1px solid; font-style:italic; font-weight:normal;  ">CI</td>
-<td style=" text-align:center; border-bottom:1px solid; font-style:italic; font-weight:normal;  col7">p</td>
+<td style=" text-align:center; border-bottom:1px solid; font-style:italic; font-weight:normal;  col7">std. Error</td>
+<td style=" text-align:center; border-bottom:1px solid; font-style:italic; font-weight:normal;  col8">CI</td>
+<td style=" text-align:center; border-bottom:1px solid; font-style:italic; font-weight:normal;  col9">p</td>
 </tr>
 <tr>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">(Intercept)</td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">124.34</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">0.26</td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">123.84&nbsp;&ndash;&nbsp;124.84</td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "><strong>&lt;0.001</td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">124.39</td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">123.95&nbsp;&ndash;&nbsp;124.82</td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  col7"><strong>&lt;0.001</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  col7">0.22</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  col8">123.95&nbsp;&ndash;&nbsp;124.82</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  col9"><strong>&lt;0.001</td>
 </tr>
 <tr>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">arm [Active]</td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">0.24</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">0.36</td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-0.46&nbsp;&ndash;&nbsp;0.95</td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">0.499</td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">0.16</td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-0.46&nbsp;&ndash;&nbsp;0.77</td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  col7">0.620</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  col7">0.31</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  col8">-0.46&nbsp;&ndash;&nbsp;0.77</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  col9">0.620</td>
 </tr>
 <tr>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">scale(sbp_bl, scale =<br>FALSE)</td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "></td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "></td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "></td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "></td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">0.49</td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">0.47&nbsp;&ndash;&nbsp;0.51</td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  col7"><strong>&lt;0.001</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  col7">0.01</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  col8">0.47&nbsp;&ndash;&nbsp;0.51</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  col9"><strong>&lt;0.001</td>
 </tr>
 <tr>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; padding-top:0.1cm; padding-bottom:0.1cm; border-top:1px solid;">Observations</td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left; border-top:1px solid;" colspan="3">10000</td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left; border-top:1px solid;" colspan="3">10000</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left; border-top:1px solid;" colspan="4">10000</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left; border-top:1px solid;" colspan="4">10000</td>
 </tr>
 <tr>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; padding-top:0.1cm; padding-bottom:0.1cm;">R<sup>2</sup> / R<sup>2</sup> adjusted</td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left;" colspan="3">0.000 / -0.000</td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left;" colspan="3">0.238 / 0.237</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left;" colspan="4">0.000 / -0.000</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left;" colspan="4">0.238 / 0.237</td>
 </tr>
 
 </table>
@@ -925,11 +938,11 @@ To get another look at this, we can calculate the residuals for each person. Thi
 
 
 ```r
-  m6 <- lm(sbp_eos_plus ~ scale(sbp_bl, scale = FALSE), data = data)
+  m6 <- lm(sbp_eos_plus ~ scale(sbp_bl, scale = FALSE), data = example_data)
 
-  data$residuals <- residuals(m6) + mean(data$sbp_eos)
+  example_data$residuals <- residuals(m6) + mean(example_data$sbp_eos)
 
-  gather(data, type, value, sbp_eos, residuals) %>%
+  gather(example_data, type, value, sbp_eos, residuals) %>%
   ggplot(aes(x = value, fill = type)) +
     geom_density(alpha = 0.5) +
     scale_fill_viridis("", discrete = TRUE, end = 0.9)
@@ -941,7 +954,7 @@ When you adjust for baseline SBP, it's like trying to estimate your effect in te
 
 
 ```r
-  m7 <- lm(residuals ~ arm, data = data) 
+  m7 <- lm(residuals ~ arm, data = example_data) 
 
   tab_model(m3, m6, m7, show.se = TRUE)
 ```
@@ -1034,7 +1047,9 @@ One final, final point, is that once you have decided to adjust for baseline SBP
 
 
 ```r
-  m8 <- lm(change_sbp_plus ~ arm + scale(sbp_bl, scale = FALSE), data = data)
+# Change score outcome, adjusted for baseline
+  m8 <- lm(change_sbp_plus ~ arm + scale(sbp_bl, scale = FALSE), 
+           data = example_data)
 
   tab_model(m3, m8)
 ```
