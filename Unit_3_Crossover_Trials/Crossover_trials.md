@@ -5,11 +5,13 @@ output:
     keep_md: true
 ---
 
-# Crossover trials
+# Introduction 
 
-For this tutorial we will be working with a dataset from a standard 2 period, 2 intervention AB:BA crossover trial of a treatment aimed at lowering blood pressure in people who usually have mildly-evaluated values. In other words, each person in the trial gets exposured to each intervention (active vs placebo), but in one of two possible sequences (active first vs placebo first). 
+For this tutorial we will be working with a dataset from a standard 2-period, 2-treatment AB:BA crossover trial of a treatment aimed at lowering blood pressure in people who usually have mildly-evaluated values. In other words, each person in the trial gets exposed to each intervention (active vs placebo), but in one of two possible sequences (active first vs placebo first). 
 
-As usual, we will first load the neccessary packages and bring in the dataset. 
+# Getting the data ready
+
+As usual, we will first load the necessary packages and bring in the dataset. 
 
 
 
@@ -18,6 +20,8 @@ Have a look at the dataset.
 
 ```r
 # View(data)
+
+# view(dfSummary(data))
 ```
 
 
@@ -36,13 +40,13 @@ Have a look at the dataset.
 <table class="table table-striped table-bordered st-table st-table-striped st-table-bordered st-multiline ">
   <thead>
     <tr>
-      <th align="center" class="no st-protect-top-border"><strong>No</strong></th>
-      <th align="center" class="variable st-protect-top-border"><strong>Variable</strong></th>
-      <th align="center" class="stats.values st-protect-top-border"><strong>Stats / Values</strong></th>
-      <th align="center" class="freqs.pct.valid st-protect-top-border"><strong>Freqs (% of Valid)</strong></th>
-      <th align="center" class="graph st-protect-top-border"><strong>Graph</strong></th>
-      <th align="center" class="valid st-protect-top-border"><strong>Valid</strong></th>
-      <th align="center" class="missing st-protect-top-border"><strong>Missing</strong></th>
+      <th align="center" class="st-protect-top-border"><strong>No</strong></th>
+      <th align="center" class="st-protect-top-border"><strong>Variable</strong></th>
+      <th align="center" class="st-protect-top-border"><strong>Stats / Values</strong></th>
+      <th align="center" class="st-protect-top-border"><strong>Freqs (% of Valid)</strong></th>
+      <th align="center" class="st-protect-top-border"><strong>Graph</strong></th>
+      <th align="center" class="st-protect-top-border"><strong>Valid</strong></th>
+      <th align="center" class="st-protect-top-border"><strong>Missing</strong></th>
     </tr>
   </thead>
   <tbody>
@@ -62,7 +66,7 @@ Have a look at the dataset.
 10. R010
 [ 73 others ]</td>
       <td align="left" style="padding:0;vertical-align:middle"><table style="border-collapse:collapse;border:none;margin:0"><tr style="background-color:transparent"><td style="padding:0 5px 0 7px;margin:0;border:0" align="right">1</td><td style="padding:0 2px 0 0;border:0;" align="left">(</td><td style="padding:0;border:0" align="right">1.2%</td><td style="padding:0 4px 0 2px;border:0" align="left">)</td></tr><tr style="background-color:transparent"><td style="padding:0 5px 0 7px;margin:0;border:0" align="right">1</td><td style="padding:0 2px 0 0;border:0;" align="left">(</td><td style="padding:0;border:0" align="right">1.2%</td><td style="padding:0 4px 0 2px;border:0" align="left">)</td></tr><tr style="background-color:transparent"><td style="padding:0 5px 0 7px;margin:0;border:0" align="right">1</td><td style="padding:0 2px 0 0;border:0;" align="left">(</td><td style="padding:0;border:0" align="right">1.2%</td><td style="padding:0 4px 0 2px;border:0" align="left">)</td></tr><tr style="background-color:transparent"><td style="padding:0 5px 0 7px;margin:0;border:0" align="right">1</td><td style="padding:0 2px 0 0;border:0;" align="left">(</td><td style="padding:0;border:0" align="right">1.2%</td><td style="padding:0 4px 0 2px;border:0" align="left">)</td></tr><tr style="background-color:transparent"><td style="padding:0 5px 0 7px;margin:0;border:0" align="right">1</td><td style="padding:0 2px 0 0;border:0;" align="left">(</td><td style="padding:0;border:0" align="right">1.2%</td><td style="padding:0 4px 0 2px;border:0" align="left">)</td></tr><tr style="background-color:transparent"><td style="padding:0 5px 0 7px;margin:0;border:0" align="right">1</td><td style="padding:0 2px 0 0;border:0;" align="left">(</td><td style="padding:0;border:0" align="right">1.2%</td><td style="padding:0 4px 0 2px;border:0" align="left">)</td></tr><tr style="background-color:transparent"><td style="padding:0 5px 0 7px;margin:0;border:0" align="right">1</td><td style="padding:0 2px 0 0;border:0;" align="left">(</td><td style="padding:0;border:0" align="right">1.2%</td><td style="padding:0 4px 0 2px;border:0" align="left">)</td></tr><tr style="background-color:transparent"><td style="padding:0 5px 0 7px;margin:0;border:0" align="right">1</td><td style="padding:0 2px 0 0;border:0;" align="left">(</td><td style="padding:0;border:0" align="right">1.2%</td><td style="padding:0 4px 0 2px;border:0" align="left">)</td></tr><tr style="background-color:transparent"><td style="padding:0 5px 0 7px;margin:0;border:0" align="right">1</td><td style="padding:0 2px 0 0;border:0;" align="left">(</td><td style="padding:0;border:0" align="right">1.2%</td><td style="padding:0 4px 0 2px;border:0" align="left">)</td></tr><tr style="background-color:transparent"><td style="padding:0 5px 0 7px;margin:0;border:0" align="right">1</td><td style="padding:0 2px 0 0;border:0;" align="left">(</td><td style="padding:0;border:0" align="right">1.2%</td><td style="padding:0 4px 0 2px;border:0" align="left">)</td></tr><tr style="background-color:transparent"><td style="padding:0 5px 0 7px;margin:0;border:0" align="right">73</td><td style="padding:0 2px 0 0;border:0;" align="left">(</td><td style="padding:0;border:0" align="right">87.9%</td><td style="padding:0 4px 0 2px;border:0" align="left">)</td></tr></table></td>
-      <td align="left" style="vertical-align:middle;padding:0;background-color:transparent"><img style="border:none;background-color:transparent;padding:0" src="data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAJAAAAESBAMAAADgZ0HsAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAAD1BMVEX////9/v2mpqb39/f///+DdZCQAAAAAnRSTlMAAHaTzTgAAAABYktHRACIBR1IAAAAB3RJTUUH4wofBxMuprjGPAAAALZJREFUeNrt1cENwkAMBMC0kBIIHUD/vfGBJyHShZXPmS1gHl7JuyxyJNttHcwbuoNAIBDo39BpP3uUuQJkIEEgEGgeyEAGb1SvfhAIBGoH2bUgZCBBIBBoHshABm9Ur34QCARqB9m14I3q1Q8CgUCgb5CBDN6oXv0gEAjUDrJrwRvVqx8EAoHaQXYtCBlIEAgEmgcykMEb1asfBAKB2kF2LQhtw/nU/xzMAwQCgUA/oNN+tuznBcZ8WB+HO60AAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDE5LTEwLTMxVDA3OjE5OjQ2KzAwOjAw6/UlzgAAACV0RVh0ZGF0ZTptb2RpZnkAMjAxOS0xMC0zMVQwNzoxOTo0NiswMDowMJqonXIAAAAASUVORK5CYII="></td>
+      <td align="left" style="vertical-align:middle;padding:0;background-color:transparent"><img style="border:none;background-color:transparent;padding:0" src="data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAJAAAAESBAMAAADgZ0HsAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAAD1BMVEX////9/v2mpqb39/f///+DdZCQAAAAAnRSTlMAAHaTzTgAAAABYktHRACIBR1IAAAAB3RJTUUH5AoFABYILiwmQgAAALZJREFUeNrt1cENwkAMBMC0kBIIHUD/vfGBJyHShZXPmS1gHl7JuyxyJNttHcwbuoNAIBDo39BpP3uUuQJkIEEgEGgeyEAGb1SvfhAIBGoH2bUgZCBBIBBoHshABm9Ur34QCARqB9m14I3q1Q8CgUCgb5CBDN6oXv0gEAjUDrJrwRvVqx8EAoHaQXYtCBlIEAgEmgcykMEb1asfBAKB2kF2LQhtw/nU/xzMAwQCgUA/oNN+tuznBcZ8WB+HO60AAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDIwLTEwLTA0VDIzOjIyOjA4KzAxOjAwNqT5rgAAACV0RVh0ZGF0ZTptb2RpZnkAMjAyMC0xMC0wNFQyMzoyMjowOCswMTowMEf5QRIAAAAASUVORK5CYII="></td>
       <td align="center">83
 (100%)</td>
       <td align="center">0
@@ -76,7 +80,7 @@ Have a look at the dataset.
 Mean : 0.5
 Max : 1</td>
       <td align="left" style="padding:0;vertical-align:middle"><table style="border-collapse:collapse;border:none;margin:0"><tr style="background-color:transparent"><td style="padding:0 0 0 7px;margin:0;border:0" align="right">0</td><td style="padding:0 2px;border:0;" align="left">:</td><td style="padding:0 4px 0 6px;margin:0;border:0" align="right">42</td><td style="padding:0;border:0" align="left">(</td><td style="padding:0 2px;margin:0;border:0" align="right">50.6%</td><td style="padding:0 4px 0 0;border:0" align="left">)</td></tr><tr style="background-color:transparent"><td style="padding:0 0 0 7px;margin:0;border:0" align="right">1</td><td style="padding:0 2px;border:0;" align="left">:</td><td style="padding:0 4px 0 6px;margin:0;border:0" align="right">41</td><td style="padding:0;border:0" align="left">(</td><td style="padding:0 2px;margin:0;border:0" align="right">49.4%</td><td style="padding:0 4px 0 0;border:0" align="left">)</td></tr></table></td>
-      <td align="left" style="vertical-align:middle;padding:0;background-color:transparent"><img style="border:none;background-color:transparent;padding:0" src="data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAFgAAAA4BAMAAACLTyJdAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAAD1BMVEX////9/v2mpqb39/f///+DdZCQAAAAAnRSTlMAAHaTzTgAAAABYktHRACIBR1IAAAAB3RJTUUH4wofBxMuprjGPAAAADtJREFUSMdjYBiaQIkoAFWsbEwEMBpVPKp4VDGtFJOUYQWJAoNLMVH+UyQl6EYVjyoeVUwzxSRl2KEGAC/KSSrrn0bWAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDE5LTEwLTMxVDA3OjE5OjQ2KzAwOjAw6/UlzgAAACV0RVh0ZGF0ZTptb2RpZnkAMjAxOS0xMC0zMVQwNzoxOTo0NiswMDowMJqonXIAAAAASUVORK5CYII="></td>
+      <td align="left" style="vertical-align:middle;padding:0;background-color:transparent"><img style="border:none;background-color:transparent;padding:0" src="data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAFgAAAA4BAMAAACLTyJdAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAAD1BMVEX////9/v2mpqb39/f///+DdZCQAAAAAnRSTlMAAHaTzTgAAAABYktHRACIBR1IAAAAB3RJTUUH5AoFABYILiwmQgAAADtJREFUSMdjYBiaQIkoAFWsbEwEMBpVPKp4VDGtFJOUYQWJAoNLMVH+UyQl6EYVjyoeVUwzxSRl2KEGAC/KSSrrn0bWAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDIwLTEwLTA0VDIzOjIyOjA4KzAxOjAwNqT5rgAAACV0RVh0ZGF0ZTptb2RpZnkAMjAyMC0xMC0wNFQyMzoyMjowOCswMTowMEf5QRIAAAAASUVORK5CYII="></td>
       <td align="center">83
 (100%)</td>
       <td align="center">0
@@ -90,7 +94,7 @@ Max : 1</td>
 Mean : 0.5
 Max : 1</td>
       <td align="left" style="padding:0;vertical-align:middle"><table style="border-collapse:collapse;border:none;margin:0"><tr style="background-color:transparent"><td style="padding:0 0 0 7px;margin:0;border:0" align="right">0</td><td style="padding:0 2px;border:0;" align="left">:</td><td style="padding:0 4px 0 6px;margin:0;border:0" align="right">42</td><td style="padding:0;border:0" align="left">(</td><td style="padding:0 2px;margin:0;border:0" align="right">50.6%</td><td style="padding:0 4px 0 0;border:0" align="left">)</td></tr><tr style="background-color:transparent"><td style="padding:0 0 0 7px;margin:0;border:0" align="right">1</td><td style="padding:0 2px;border:0;" align="left">:</td><td style="padding:0 4px 0 6px;margin:0;border:0" align="right">41</td><td style="padding:0;border:0" align="left">(</td><td style="padding:0 2px;margin:0;border:0" align="right">49.4%</td><td style="padding:0 4px 0 0;border:0" align="left">)</td></tr></table></td>
-      <td align="left" style="vertical-align:middle;padding:0;background-color:transparent"><img style="border:none;background-color:transparent;padding:0" src="data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAFgAAAA4BAMAAACLTyJdAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAAD1BMVEX////9/v2mpqb39/f///+DdZCQAAAAAnRSTlMAAHaTzTgAAAABYktHRACIBR1IAAAAB3RJTUUH4wofBxMuprjGPAAAADtJREFUSMdjYBiaQIkoAFWsbEwEMBpVPKp4VDGtFJOUYQWJAoNLMVH+UyQl6EYVjyoeVUwzxSRl2KEGAC/KSSrrn0bWAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDE5LTEwLTMxVDA3OjE5OjQ2KzAwOjAw6/UlzgAAACV0RVh0ZGF0ZTptb2RpZnkAMjAxOS0xMC0zMVQwNzoxOTo0NiswMDowMJqonXIAAAAASUVORK5CYII="></td>
+      <td align="left" style="vertical-align:middle;padding:0;background-color:transparent"><img style="border:none;background-color:transparent;padding:0" src="data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAFgAAAA4BAMAAACLTyJdAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAAD1BMVEX////9/v2mpqb39/f///+DdZCQAAAAAnRSTlMAAHaTzTgAAAABYktHRACIBR1IAAAAB3RJTUUH5AoFABYILiwmQgAAADtJREFUSMdjYBiaQIkoAFWsbEwEMBpVPKp4VDGtFJOUYQWJAoNLMVH+UyQl6EYVjyoeVUwzxSRl2KEGAC/KSSrrn0bWAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDIwLTEwLTA0VDIzOjIyOjA4KzAxOjAwNqT5rgAAACV0RVh0ZGF0ZTptb2RpZnkAMjAyMC0xMC0wNFQyMzoyMjowOCswMTowMEf5QRIAAAAASUVORK5CYII="></td>
       <td align="center">83
 (100%)</td>
       <td align="center">0
@@ -104,7 +108,7 @@ Max : 1</td>
 Mean : 0.5
 Max : 1</td>
       <td align="left" style="padding:0;vertical-align:middle"><table style="border-collapse:collapse;border:none;margin:0"><tr style="background-color:transparent"><td style="padding:0 0 0 7px;margin:0;border:0" align="right">0</td><td style="padding:0 2px;border:0;" align="left">:</td><td style="padding:0 4px 0 6px;margin:0;border:0" align="right">41</td><td style="padding:0;border:0" align="left">(</td><td style="padding:0 2px;margin:0;border:0" align="right">49.4%</td><td style="padding:0 4px 0 0;border:0" align="left">)</td></tr><tr style="background-color:transparent"><td style="padding:0 0 0 7px;margin:0;border:0" align="right">1</td><td style="padding:0 2px;border:0;" align="left">:</td><td style="padding:0 4px 0 6px;margin:0;border:0" align="right">42</td><td style="padding:0;border:0" align="left">(</td><td style="padding:0 2px;margin:0;border:0" align="right">50.6%</td><td style="padding:0 4px 0 0;border:0" align="left">)</td></tr></table></td>
-      <td align="left" style="vertical-align:middle;padding:0;background-color:transparent"><img style="border:none;background-color:transparent;padding:0" src="data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAFgAAAA4BAMAAACLTyJdAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAAD1BMVEX////9/v2mpqb39/f///+DdZCQAAAAAnRSTlMAAHaTzTgAAAABYktHRACIBR1IAAAAB3RJTUUH4wofBxMuprjGPAAAADxJREFUSMdjYBiaQIkYoAhVrGxMBBhVPKp4VDHNFJOUYQWJAoNLMVEeVCIl6IxGFY8qHlVMK8UkZdihBgAUZEkqMlG4MQAAACV0RVh0ZGF0ZTpjcmVhdGUAMjAxOS0xMC0zMVQwNzoxOTo0NiswMDowMOv1Jc4AAAAldEVYdGRhdGU6bW9kaWZ5ADIwMTktMTAtMzFUMDc6MTk6NDYrMDA6MDCaqJ1yAAAAAElFTkSuQmCC"></td>
+      <td align="left" style="vertical-align:middle;padding:0;background-color:transparent"><img style="border:none;background-color:transparent;padding:0" src="data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAFgAAAA4BAMAAACLTyJdAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAAD1BMVEX////9/v2mpqb39/f///+DdZCQAAAAAnRSTlMAAHaTzTgAAAABYktHRACIBR1IAAAAB3RJTUUH5AoFABYILiwmQgAAADxJREFUSMdjYBiaQIkYoAhVrGxMBBhVPKp4VDHNFJOUYQWJAoNLMVEeVCIl6IxGFY8qHlVMK8UkZdihBgAUZEkqMlG4MQAAACV0RVh0ZGF0ZTpjcmVhdGUAMjAyMC0xMC0wNFQyMzoyMjowOCswMTowMDak+a4AAAAldEVYdGRhdGU6bW9kaWZ5ADIwMjAtMTAtMDRUMjM6MjI6MDgrMDE6MDBH+UESAAAAAElFTkSuQmCC"></td>
       <td align="center">83
 (100%)</td>
       <td align="center">0
@@ -118,7 +122,7 @@ Max : 1</td>
 Mean : 0.4
 Max : 1</td>
       <td align="left" style="padding:0;vertical-align:middle"><table style="border-collapse:collapse;border:none;margin:0"><tr style="background-color:transparent"><td style="padding:0 0 0 7px;margin:0;border:0" align="right">0</td><td style="padding:0 2px;border:0;" align="left">:</td><td style="padding:0 4px 0 6px;margin:0;border:0" align="right">46</td><td style="padding:0;border:0" align="left">(</td><td style="padding:0 2px;margin:0;border:0" align="right">55.4%</td><td style="padding:0 4px 0 0;border:0" align="left">)</td></tr><tr style="background-color:transparent"><td style="padding:0 0 0 7px;margin:0;border:0" align="right">1</td><td style="padding:0 2px;border:0;" align="left">:</td><td style="padding:0 4px 0 6px;margin:0;border:0" align="right">37</td><td style="padding:0;border:0" align="left">(</td><td style="padding:0 2px;margin:0;border:0" align="right">44.6%</td><td style="padding:0 4px 0 0;border:0" align="left">)</td></tr></table></td>
-      <td align="left" style="vertical-align:middle;padding:0;background-color:transparent"><img style="border:none;background-color:transparent;padding:0" src="data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAGAAAAA4BAMAAADwa+CRAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAAD1BMVEX////9/v2mpqb39/f///+DdZCQAAAAAnRSTlMAAHaTzTgAAAABYktHRACIBR1IAAAAB3RJTUUH4wofBxMuprjGPAAAAD5JREFUSMdjYBgeQIloANWgbEwkMBrVMKphVMNQ0EByISBINBi8Ggj6VRFNA8FgHdUwqmFUw5DSQHIhMNQBAMlRVeqKXNlIAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDE5LTEwLTMxVDA3OjE5OjQ2KzAwOjAw6/UlzgAAACV0RVh0ZGF0ZTptb2RpZnkAMjAxOS0xMC0zMVQwNzoxOTo0NiswMDowMJqonXIAAAAASUVORK5CYII="></td>
+      <td align="left" style="vertical-align:middle;padding:0;background-color:transparent"><img style="border:none;background-color:transparent;padding:0" src="data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAGAAAAA4BAMAAADwa+CRAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAAD1BMVEX////9/v2mpqb39/f///+DdZCQAAAAAnRSTlMAAHaTzTgAAAABYktHRACIBR1IAAAAB3RJTUUH5AoFABYILiwmQgAAAD5JREFUSMdjYBgeQIloANWgbEwkMBrVMKphVMNQ0EByISBINBi8Ggj6VRFNA8FgHdUwqmFUw5DSQHIhMNQBAMlRVeqKXNlIAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDIwLTEwLTA0VDIzOjIyOjA4KzAxOjAwNqT5rgAAACV0RVh0ZGF0ZTptb2RpZnkAMjAyMC0xMC0wNFQyMzoyMjowOCswMTowMEf5QRIAAAAASUVORK5CYII="></td>
       <td align="center">83
 (100%)</td>
       <td align="center">0
@@ -133,7 +137,7 @@ min < med < max:
 45 < 57 < 70
 IQR (CV) : 10.5 (0.1)</td>
       <td align="left" style="vertical-align:middle">25 distinct values</td>
-      <td align="left" style="vertical-align:middle;padding:0;background-color:transparent"><img style="border:none;background-color:transparent;padding:0" src="data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAJgAAABuBAMAAAApJ8cWAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAAD1BMVEX////9/v2mpqby8vL///8shn5hAAAAAnRSTlMAAHaTzTgAAAABYktHRACIBR1IAAAAB3RJTUUH4wofBxMuprjGPAAAAHBJREFUaN7t1MsJgDAQQMG0YAuxA9N/b15dhMV8EMF5t0B2yCFsKRppS6qh7OYDbG+XDhjsDSz7wt1YS94Jg8FgX8PiApzEwniDwWCw32LJbu3HknEYDAaD9WJxQ09i8QSDwWAwGAwGg8HuWF1S0UgnVepv7B3eQQYAAAAldEVYdGRhdGU6Y3JlYXRlADIwMTktMTAtMzFUMDc6MTk6NDYrMDA6MDDr9SXOAAAAJXRFWHRkYXRlOm1vZGlmeQAyMDE5LTEwLTMxVDA3OjE5OjQ2KzAwOjAwmqidcgAAAABJRU5ErkJggg=="></td>
+      <td align="left" style="vertical-align:middle;padding:0;background-color:transparent"><img style="border:none;background-color:transparent;padding:0" src="data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAJgAAABuBAMAAAApJ8cWAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAAD1BMVEX////9/v2mpqby8vL///8shn5hAAAAAnRSTlMAAHaTzTgAAAABYktHRACIBR1IAAAAB3RJTUUH5AoFABYILiwmQgAAAHBJREFUaN7t1MsJgDAQQMG0YAuxA9N/b15dhMV8EMF5t0B2yCFsKRppS6qh7OYDbG+XDhjsDSz7wt1YS94Jg8FgX8PiApzEwniDwWCw32LJbu3HknEYDAaD9WJxQ09i8QSDwWAwGAwGg8HuWF1S0UgnVepv7B3eQQYAAAAldEVYdGRhdGU6Y3JlYXRlADIwMjAtMTAtMDRUMjM6MjI6MDgrMDE6MDA2pPmuAAAAJXRFWHRkYXRlOm1vZGlmeQAyMDIwLTEwLTA0VDIzOjIyOjA4KzAxOjAwR/lBEgAAAABJRU5ErkJggg=="></td>
       <td align="center">83
 (100%)</td>
       <td align="center">0
@@ -148,7 +152,7 @@ min < med < max:
 34 < 42 < 68
 IQR (CV) : 1 (0.1)</td>
       <td align="left" style="vertical-align:middle">19 distinct values</td>
-      <td align="left" style="vertical-align:middle;padding:0;background-color:transparent"><img style="border:none;background-color:transparent;padding:0" src="data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAJgAAABuBAMAAAApJ8cWAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAAD1BMVEX////9/v2mpqby8vL///8shn5hAAAAAnRSTlMAAHaTzTgAAAABYktHRACIBR1IAAAAB3RJTUUH4wofBxMuprjGPAAAAH1JREFUaN7t2bENgCAQQFFW0A2EDWT/3WyQAmNyQQqL9xsL4ouQYHMpaaZtbM+tY4v3itUWDAaDwWAwGAwGg8FgMBgMBoPBYDAY7Indg5m8AivtecaxPE6GvmBlPKL/YX2/K7D+LgwWxQI3Po7Vt0/sE9+8Ausr41/jU0kzXXeQgRDkVJrYAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDE5LTEwLTMxVDA3OjE5OjQ2KzAwOjAw6/UlzgAAACV0RVh0ZGF0ZTptb2RpZnkAMjAxOS0xMC0zMVQwNzoxOTo0NiswMDowMJqonXIAAAAASUVORK5CYII="></td>
+      <td align="left" style="vertical-align:middle;padding:0;background-color:transparent"><img style="border:none;background-color:transparent;padding:0" src="data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAJgAAABuBAMAAAApJ8cWAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAAD1BMVEX////9/v2mpqby8vL///8shn5hAAAAAnRSTlMAAHaTzTgAAAABYktHRACIBR1IAAAAB3RJTUUH5AoFABYILiwmQgAAAH1JREFUaN7t2bENgCAQQFFW0A2EDWT/3WyQAmNyQQqL9xsL4ouQYHMpaaZtbM+tY4v3itUWDAaDwWAwGAwGg8FgMBgMBoPBYDAY7Indg5m8AivtecaxPE6GvmBlPKL/YX2/K7D+LgwWxQI3Po7Vt0/sE9+8Ausr41/jU0kzXXeQgRDkVJrYAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDIwLTEwLTA0VDIzOjIyOjA4KzAxOjAwNqT5rgAAACV0RVh0ZGF0ZTptb2RpZnkAMjAyMC0xMC0wNFQyMzoyMjowOCswMTowMEf5QRIAAAAASUVORK5CYII="></td>
       <td align="center">83
 (100%)</td>
       <td align="center">0
@@ -163,7 +167,7 @@ min < med < max:
 33 < 42 < 50
 IQR (CV) : 2 (0.1)</td>
       <td align="left" style="vertical-align:middle">17 distinct values</td>
-      <td align="left" style="vertical-align:middle;padding:0;background-color:transparent"><img style="border:none;background-color:transparent;padding:0" src="data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAJgAAABuBAMAAAApJ8cWAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAAD1BMVEX////9/v2mpqby8vL///8shn5hAAAAAnRSTlMAAHaTzTgAAAABYktHRACIBR1IAAAAB3RJTUUH4wofBxMuprjGPAAAAIxJREFUaN7t2M0NgCAMhmFW0A2EDez+u5kYeqABf7BGo+93JOWhSXsiBNKTYTsxZ6fsGJZkzQwGBgYGBgYGBgYGBgYGBgYGBgYGBvYhzPwk24/lc5iUHdqGwf6D6SK5YLlawF6GmSHr0PuwxnEdG8unL2JlNdjtmG7K5IHpLVdMO3TBUrX6SSy6JJCeLLtyteWn755XAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDE5LTEwLTMxVDA3OjE5OjQ2KzAwOjAw6/UlzgAAACV0RVh0ZGF0ZTptb2RpZnkAMjAxOS0xMC0zMVQwNzoxOTo0NiswMDowMJqonXIAAAAASUVORK5CYII="></td>
+      <td align="left" style="vertical-align:middle;padding:0;background-color:transparent"><img style="border:none;background-color:transparent;padding:0" src="data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAJgAAABuBAMAAAApJ8cWAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAAD1BMVEX////9/v2mpqby8vL///8shn5hAAAAAnRSTlMAAHaTzTgAAAABYktHRACIBR1IAAAAB3RJTUUH5AoFABYILiwmQgAAAIxJREFUaN7t2M0NgCAMhmFW0A2EDez+u5kYeqABf7BGo+93JOWhSXsiBNKTYTsxZ6fsGJZkzQwGBgYGBgYGBgYGBgYGBgYGBgYGBvYhzPwk24/lc5iUHdqGwf6D6SK5YLlawF6GmSHr0PuwxnEdG8unL2JlNdjtmG7K5IHpLVdMO3TBUrX6SSy6JJCeLLtyteWn755XAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDIwLTEwLTA0VDIzOjIyOjA4KzAxOjAwNqT5rgAAACV0RVh0ZGF0ZTptb2RpZnkAMjAyMC0xMC0wNFQyMzoyMjowOCswMTowMEf5QRIAAAAASUVORK5CYII="></td>
       <td align="center">82
 (98.8%)</td>
       <td align="center">1
@@ -178,7 +182,7 @@ min < med < max:
 1.5 < 1.7 < 1.9
 IQR (CV) : 0.2 (0.1)</td>
       <td align="left" style="vertical-align:middle">34 distinct values</td>
-      <td align="left" style="vertical-align:middle;padding:0;background-color:transparent"><img style="border:none;background-color:transparent;padding:0" src="data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAJgAAABuBAMAAAApJ8cWAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAAD1BMVEX////9/v2mpqby8vL///8shn5hAAAAAnRSTlMAAHaTzTgAAAABYktHRACIBR1IAAAAB3RJTUUH4wofBxMuprjGPAAAAJNJREFUaN7t2UEKgCAQhWGvYDdoukHe/24t9BFKG0cpg/9txEG/jQqWIRBPYlc2y9mbug9LOWBgYP1YOYs2BTvy5BPsZUyrKEx9F1aQJCzVLRgYGBgYGBjYb7DmqjuGqQwW7y/6OVg9GgwMDAwMDAxsIczqh4wxTLPAPsaaf6dj2PE4GmxxTHtgCqYymBuzKQnEkwsEPsVg7EbpQwAAACV0RVh0ZGF0ZTpjcmVhdGUAMjAxOS0xMC0zMVQwNzoxOTo0NiswMDowMOv1Jc4AAAAldEVYdGRhdGU6bW9kaWZ5ADIwMTktMTAtMzFUMDc6MTk6NDYrMDA6MDCaqJ1yAAAAAElFTkSuQmCC"></td>
+      <td align="left" style="vertical-align:middle;padding:0;background-color:transparent"><img style="border:none;background-color:transparent;padding:0" src="data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAJgAAABuBAMAAAApJ8cWAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAAD1BMVEX////9/v2mpqby8vL///8shn5hAAAAAnRSTlMAAHaTzTgAAAABYktHRACIBR1IAAAAB3RJTUUH5AoFABYILiwmQgAAAJNJREFUaN7t2UEKgCAQhWGvYDdoukHe/24t9BFKG0cpg/9txEG/jQqWIRBPYlc2y9mbug9LOWBgYP1YOYs2BTvy5BPsZUyrKEx9F1aQJCzVLRgYGBgYGBjYb7DmqjuGqQwW7y/6OVg9GgwMDAwMDAxsIczqh4wxTLPAPsaaf6dj2PE4GmxxTHtgCqYymBuzKQnEkwsEPsVg7EbpQwAAACV0RVh0ZGF0ZTpjcmVhdGUAMjAyMC0xMC0wNFQyMzoyMjowOCswMTowMDak+a4AAAAldEVYdGRhdGU6bW9kaWZ5ADIwMjAtMTAtMDRUMjM6MjI6MDgrMDE6MDBH+UESAAAAAElFTkSuQmCC"></td>
       <td align="center">83
 (100%)</td>
       <td align="center">0
@@ -193,7 +197,7 @@ min < med < max:
 53.5 < 80.9 < 106.3
 IQR (CV) : 20.4 (0.2)</td>
       <td align="left" style="vertical-align:middle">76 distinct values</td>
-      <td align="left" style="vertical-align:middle;padding:0;background-color:transparent"><img style="border:none;background-color:transparent;padding:0" src="data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAJgAAABuBAMAAAApJ8cWAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAAD1BMVEX////9/v2mpqby8vL///8shn5hAAAAAnRSTlMAAHaTzTgAAAABYktHRACIBR1IAAAAB3RJTUUH4wofBxMuprjGPAAAAKlJREFUaN7t2NENgCAMRVFW0A2EDXT/3YzUxIpSBYmJ8b5PS0/8aIDgHKlJd5nex5hr7mPTkhEMLEZma2iDhSiAgb2NmVtkKWb+H9gfMDlzTUztnFdY7DIxVQQDK8XWK6KJpROdx1RXDkuLYD/F1OA9x0LKgIGBgYGBgYGBfRA7XBFvYPo9Z4eF8/UmJkUwsExRpq0RJp/BwGzMbw8yz7FMFxiYbxJHajIDVcPmRg/VwyEAAAAldEVYdGRhdGU6Y3JlYXRlADIwMTktMTAtMzFUMDc6MTk6NDYrMDA6MDDr9SXOAAAAJXRFWHRkYXRlOm1vZGlmeQAyMDE5LTEwLTMxVDA3OjE5OjQ2KzAwOjAwmqidcgAAAABJRU5ErkJggg=="></td>
+      <td align="left" style="vertical-align:middle;padding:0;background-color:transparent"><img style="border:none;background-color:transparent;padding:0" src="data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAJgAAABuBAMAAAApJ8cWAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAAD1BMVEX////9/v2mpqby8vL///8shn5hAAAAAnRSTlMAAHaTzTgAAAABYktHRACIBR1IAAAAB3RJTUUH5AoFABYILiwmQgAAAKlJREFUaN7t2NENgCAMRVFW0A2EDXT/3YzUxIpSBYmJ8b5PS0/8aIDgHKlJd5nex5hr7mPTkhEMLEZma2iDhSiAgb2NmVtkKWb+H9gfMDlzTUztnFdY7DIxVQQDK8XWK6KJpROdx1RXDkuLYD/F1OA9x0LKgIGBgYGBgYGBfRA7XBFvYPo9Z4eF8/UmJkUwsExRpq0RJp/BwGzMbw8yz7FMFxiYbxJHajIDVcPmRg/VwyEAAAAldEVYdGRhdGU6Y3JlYXRlADIwMjAtMTAtMDRUMjM6MjI6MDgrMDE6MDA2pPmuAAAAJXRFWHRkYXRlOm1vZGlmeQAyMDIwLTEwLTA0VDIzOjIyOjA4KzAxOjAwR/lBEgAAAABJRU5ErkJggg=="></td>
       <td align="center">83
 (100%)</td>
       <td align="center">0
@@ -208,7 +212,7 @@ min < med < max:
 20.4 < 27.9 < 37.2
 IQR (CV) : 4.9 (0.1)</td>
       <td align="left" style="vertical-align:middle">83 distinct values</td>
-      <td align="left" style="vertical-align:middle;padding:0;background-color:transparent"><img style="border:none;background-color:transparent;padding:0" src="data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAJgAAABuBAMAAAApJ8cWAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAAD1BMVEX////9/v2mpqby8vL///8shn5hAAAAAnRSTlMAAHaTzTgAAAABYktHRACIBR1IAAAAB3RJTUUH4wofBxMuprjGPAAAAI5JREFUaN7t2FEKgCAQRVG3UDvIdpD731sQMx8KaekUlvf9COIcRBhBnSM1mfLxksKya9gajmxgYGBgL2J6j5lgggQwsLGwOW6jRixGwMDAwHrACs+ee1jI73BMTE/YBEuqwMB+g0mfLCaYjGBgYGBgYGB9YelPZRN2UgX2FKYfZN4E02kwsK9i3iSO1GQHZ6ySJfehWDoAAAAldEVYdGRhdGU6Y3JlYXRlADIwMTktMTAtMzFUMDc6MTk6NDYrMDA6MDDr9SXOAAAAJXRFWHRkYXRlOm1vZGlmeQAyMDE5LTEwLTMxVDA3OjE5OjQ2KzAwOjAwmqidcgAAAABJRU5ErkJggg=="></td>
+      <td align="left" style="vertical-align:middle;padding:0;background-color:transparent"><img style="border:none;background-color:transparent;padding:0" src="data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAJgAAABuBAMAAAApJ8cWAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAAD1BMVEX////9/v2mpqby8vL///8shn5hAAAAAnRSTlMAAHaTzTgAAAABYktHRACIBR1IAAAAB3RJTUUH5AoFABYILiwmQgAAAI5JREFUaN7t2FEKgCAQRVG3UDvIdpD731sQMx8KaekUlvf9COIcRBhBnSM1mfLxksKya9gajmxgYGBgL2J6j5lgggQwsLGwOW6jRixGwMDAwHrACs+ee1jI73BMTE/YBEuqwMB+g0mfLCaYjGBgYGBgYGB9YelPZRN2UgX2FKYfZN4E02kwsK9i3iSO1GQHZ6ySJfehWDoAAAAldEVYdGRhdGU6Y3JlYXRlADIwMjAtMTAtMDRUMjM6MjI6MDgrMDE6MDA2pPmuAAAAJXRFWHRkYXRlOm1vZGlmeQAyMDIwLTEwLTA0VDIzOjIyOjA4KzAxOjAwR/lBEgAAAABJRU5ErkJggg=="></td>
       <td align="center">83
 (100%)</td>
       <td align="center">0
@@ -223,7 +227,7 @@ min < med < max:
 124 < 140 < 171
 IQR (CV) : 13.5 (0.1)</td>
       <td align="left" style="vertical-align:middle">35 distinct values</td>
-      <td align="left" style="vertical-align:middle;padding:0;background-color:transparent"><img style="border:none;background-color:transparent;padding:0" src="data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAJgAAABuBAMAAAApJ8cWAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAAD1BMVEX////9/v2mpqby8vL///8shn5hAAAAAnRSTlMAAHaTzTgAAAABYktHRACIBR1IAAAAB3RJTUUH4wofBxMuprjGPAAAAJZJREFUaN7t2EEKgCAQQFGvYDdovEHe/26RuhgXYo7mIv5fDswjCENyjiz5Voek/Ku6WHy6wDZi5QWea7C0H8HAwJZh+YTKGixkBgwMzIQd6jjOY2ofDAzsI0xfc6exPAIDAwP7C9b7RA5hofN8YGBgYGBgYGAbsOo/6ghWXYwK1tzsYdUIbAsmumpkwEJzBGbGZEmOLN15Amt4meYYrgAAACV0RVh0ZGF0ZTpjcmVhdGUAMjAxOS0xMC0zMVQwNzoxOTo0NiswMDowMOv1Jc4AAAAldEVYdGRhdGU6bW9kaWZ5ADIwMTktMTAtMzFUMDc6MTk6NDYrMDA6MDCaqJ1yAAAAAElFTkSuQmCC"></td>
+      <td align="left" style="vertical-align:middle;padding:0;background-color:transparent"><img style="border:none;background-color:transparent;padding:0" src="data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAJgAAABuBAMAAAApJ8cWAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAAD1BMVEX////9/v2mpqby8vL///8shn5hAAAAAnRSTlMAAHaTzTgAAAABYktHRACIBR1IAAAAB3RJTUUH5AoFABYILiwmQgAAAJZJREFUaN7t2EEKgCAQQFGvYDdovEHe/26RuhgXYo7mIv5fDswjCENyjiz5Voek/Ku6WHy6wDZi5QWea7C0H8HAwJZh+YTKGixkBgwMzIQd6jjOY2ofDAzsI0xfc6exPAIDAwP7C9b7RA5hofN8YGBgYGBgYGAbsOo/6ghWXYwK1tzsYdUIbAsmumpkwEJzBGbGZEmOLN15Amt4meYYrgAAACV0RVh0ZGF0ZTpjcmVhdGUAMjAyMC0xMC0wNFQyMzoyMjowOCswMTowMDak+a4AAAAldEVYdGRhdGU6bW9kaWZ5ADIwMjAtMTAtMDRUMjM6MjI6MDgrMDE6MDBH+UESAAAAAElFTkSuQmCC"></td>
       <td align="center">83
 (100%)</td>
       <td align="center">0
@@ -238,7 +242,7 @@ min < med < max:
 67 < 89 < 112
 IQR (CV) : 11.5 (0.1)</td>
       <td align="left" style="vertical-align:middle">34 distinct values</td>
-      <td align="left" style="vertical-align:middle;padding:0;background-color:transparent"><img style="border:none;background-color:transparent;padding:0" src="data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAJgAAABuBAMAAAApJ8cWAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAAD1BMVEX////9/v2mpqby8vL///8shn5hAAAAAnRSTlMAAHaTzTgAAAABYktHRACIBR1IAAAAB3RJTUUH4wofBxMuprjGPAAAAI5JREFUaN7t1sEJwCAMQFFXcAW7Qd1/t1L0EghRU1so+f/i7ZGDRFMiT9motPK4CeyodycYGBgY2NvYxPaex+p4QDAwMDCwRawv6j1YUyoY2M8x6/+yjFkDgoGBRcXE6/sUE0poTN3eXkwdEAwMDAzsW0x7MN2YpoCBbcOM22piRdQxQzExecTCypYSeboAx7k/oE1/GMcAAAAldEVYdGRhdGU6Y3JlYXRlADIwMTktMTAtMzFUMDc6MTk6NDYrMDA6MDDr9SXOAAAAJXRFWHRkYXRlOm1vZGlmeQAyMDE5LTEwLTMxVDA3OjE5OjQ2KzAwOjAwmqidcgAAAABJRU5ErkJggg=="></td>
+      <td align="left" style="vertical-align:middle;padding:0;background-color:transparent"><img style="border:none;background-color:transparent;padding:0" src="data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAJgAAABuBAMAAAApJ8cWAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAAD1BMVEX////9/v2mpqby8vL///8shn5hAAAAAnRSTlMAAHaTzTgAAAABYktHRACIBR1IAAAAB3RJTUUH5AoFABYILiwmQgAAAI5JREFUaN7t1sEJwCAMQFFXcAW7Qd1/t1L0EghRU1so+f/i7ZGDRFMiT9motPK4CeyodycYGBgY2NvYxPaex+p4QDAwMDCwRawv6j1YUyoY2M8x6/+yjFkDgoGBRcXE6/sUE0poTN3eXkwdEAwMDAzsW0x7MN2YpoCBbcOM22piRdQxQzExecTCypYSeboAx7k/oE1/GMcAAAAldEVYdGRhdGU6Y3JlYXRlADIwMjAtMTAtMDRUMjM6MjI6MDgrMDE6MDA2pPmuAAAAJXRFWHRkYXRlOm1vZGlmeQAyMDIwLTEwLTA0VDIzOjIyOjA4KzAxOjAwR/lBEgAAAABJRU5ErkJggg=="></td>
       <td align="center">83
 (100%)</td>
       <td align="center">0
@@ -253,7 +257,7 @@ min < med < max:
 109 < 137.5 < 167
 IQR (CV) : 13.8 (0.1)</td>
       <td align="left" style="vertical-align:middle">38 distinct values</td>
-      <td align="left" style="vertical-align:middle;padding:0;background-color:transparent"><img style="border:none;background-color:transparent;padding:0" src="data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAJgAAABuBAMAAAApJ8cWAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAAD1BMVEX////9/v2mpqby8vL///8shn5hAAAAAnRSTlMAAHaTzTgAAAABYktHRACIBR1IAAAAB3RJTUUH4wofBxMuprjGPAAAAIFJREFUaN7t1rENgDAMBdGswAphA7z/bjQobswXMS4guqtSRE9uErk1yrTJ+kjfe4TtdnWAgYGBgYGBrYDpRWESMzkjGBjYDebvsAAbhIGBgYG9x6JFIY1FM4KBgYGBgf0ACxb2PBYQYGBgYKWYf1oFmJ8+j8nPehaTxDpYL6lRphNAZ3V88/Og/AAAACV0RVh0ZGF0ZTpjcmVhdGUAMjAxOS0xMC0zMVQwNzoxOTo0NiswMDowMOv1Jc4AAAAldEVYdGRhdGU6bW9kaWZ5ADIwMTktMTAtMzFUMDc6MTk6NDYrMDA6MDCaqJ1yAAAAAElFTkSuQmCC"></td>
+      <td align="left" style="vertical-align:middle;padding:0;background-color:transparent"><img style="border:none;background-color:transparent;padding:0" src="data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAJgAAABuBAMAAAApJ8cWAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAAD1BMVEX////9/v2mpqby8vL///8shn5hAAAAAnRSTlMAAHaTzTgAAAABYktHRACIBR1IAAAAB3RJTUUH5AoFABYILiwmQgAAAIFJREFUaN7t1rENgDAMBdGswAphA7z/bjQobswXMS4guqtSRE9uErk1yrTJ+kjfe4TtdnWAgYGBgYGBrYDpRWESMzkjGBjYDebvsAAbhIGBgYG9x6JFIY1FM4KBgYGBgf0ACxb2PBYQYGBgYKWYf1oFmJ8+j8nPehaTxDpYL6lRphNAZ3V88/Og/AAAACV0RVh0ZGF0ZTpjcmVhdGUAMjAyMC0xMC0wNFQyMzoyMjowOCswMTowMDak+a4AAAAldEVYdGRhdGU6bW9kaWZ5ADIwMjAtMTAtMDRUMjM6MjI6MDgrMDE6MDBH+UESAAAAAElFTkSuQmCC"></td>
       <td align="center">82
 (98.8%)</td>
       <td align="center">1
@@ -268,7 +272,7 @@ min < med < max:
 106 < 136 < 178
 IQR (CV) : 16.8 (0.1)</td>
       <td align="left" style="vertical-align:middle">44 distinct values</td>
-      <td align="left" style="vertical-align:middle;padding:0;background-color:transparent"><img style="border:none;background-color:transparent;padding:0" src="data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAJgAAABuBAMAAAApJ8cWAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAAD1BMVEX////9/v2mpqby8vL///8shn5hAAAAAnRSTlMAAHaTzTgAAAABYktHRACIBR1IAAAAB3RJTUUH4wofBxMuprjGPAAAAI1JREFUaN7t2MEJwCAMQFFXsBtUN2j2362HNrmIWmKgCP+fiuJDehFNiTzlbkXL86ZYlacLDAwMDAzMgR16KBn24ZjqYq8hhsl8i2BgYGBgYGBgYGBgYFtjeoc6IzD9AANzY3atj8CatWBg/2Lts9UCZjP7YKV5yFvAanctmA7YD4/AbAYMbIyVkBJ5ugG2qG8uBc3pqgAAACV0RVh0ZGF0ZTpjcmVhdGUAMjAxOS0xMC0zMVQwNzoxOTo0NiswMDowMOv1Jc4AAAAldEVYdGRhdGU6bW9kaWZ5ADIwMTktMTAtMzFUMDc6MTk6NDYrMDA6MDCaqJ1yAAAAAElFTkSuQmCC"></td>
+      <td align="left" style="vertical-align:middle;padding:0;background-color:transparent"><img style="border:none;background-color:transparent;padding:0" src="data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAJgAAABuBAMAAAApJ8cWAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAAD1BMVEX////9/v2mpqby8vL///8shn5hAAAAAnRSTlMAAHaTzTgAAAABYktHRACIBR1IAAAAB3RJTUUH5AoFABYILiwmQgAAAI1JREFUaN7t2MEJwCAMQFFXsBtUN2j2362HNrmIWmKgCP+fiuJDehFNiTzlbkXL86ZYlacLDAwMDAzMgR16KBn24ZjqYq8hhsl8i2BgYGBgYGBgYGBgYFtjeoc6IzD9AANzY3atj8CatWBg/2Lts9UCZjP7YKV5yFvAanctmA7YD4/AbAYMbIyVkBJ5ugG2qG8uBc3pqgAAACV0RVh0ZGF0ZTpjcmVhdGUAMjAyMC0xMC0wNFQyMzoyMjowOCswMTowMDak+a4AAAAldEVYdGRhdGU6bW9kaWZ5ADIwMjAtMTAtMDRUMjM6MjI6MDgrMDE6MDBH+UESAAAAAElFTkSuQmCC"></td>
       <td align="center">82
 (98.8%)</td>
       <td align="center">1
@@ -283,7 +287,7 @@ min < med < max:
 112 < 135 < 170
 IQR (CV) : 17.8 (0.1)</td>
       <td align="left" style="vertical-align:middle">38 distinct values</td>
-      <td align="left" style="vertical-align:middle;padding:0;background-color:transparent"><img style="border:none;background-color:transparent;padding:0" src="data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAJgAAABuBAMAAAApJ8cWAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAAD1BMVEX////9/v2mpqby8vL///8shn5hAAAAAnRSTlMAAHaTzTgAAAABYktHRACIBR1IAAAAB3RJTUUH4wofBxMuprjGPAAAAHtJREFUaN7t1rsVgCAQRNFtATsQO3D7781MJ1D5rIHoexGB3ENgMGbUUzovS6ncPbb43goGBgYGBgY2EjbJJIhjB+A/xCrmVT3m5VeCgYGBgYGBgY2G6V4KYxe3wMAaMfkr5zAmZzAwMDAwMLAvYDpgw5h+8nosP5JRTxu8ksD5moHWjwAAACV0RVh0ZGF0ZTpjcmVhdGUAMjAxOS0xMC0zMVQwNzoxOTo0NiswMDowMOv1Jc4AAAAldEVYdGRhdGU6bW9kaWZ5ADIwMTktMTAtMzFUMDc6MTk6NDYrMDA6MDCaqJ1yAAAAAElFTkSuQmCC"></td>
+      <td align="left" style="vertical-align:middle;padding:0;background-color:transparent"><img style="border:none;background-color:transparent;padding:0" src="data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAJgAAABuBAMAAAApJ8cWAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAAD1BMVEX////9/v2mpqby8vL///8shn5hAAAAAnRSTlMAAHaTzTgAAAABYktHRACIBR1IAAAAB3RJTUUH5AoFABYILiwmQgAAAHtJREFUaN7t1rsVgCAQRNFtATsQO3D7781MJ1D5rIHoexGB3ENgMGbUUzovS6ncPbb43goGBgYGBgY2EjbJJIhjB+A/xCrmVT3m5VeCgYGBgYGBgY2G6V4KYxe3wMAaMfkr5zAmZzAwMDAwMLAvYDpgw5h+8nosP5JRTxu8ksD5moHWjwAAACV0RVh0ZGF0ZTpjcmVhdGUAMjAyMC0xMC0wNFQyMzoyMjowOCswMTowMDak+a4AAAAldEVYdGRhdGU6bW9kaWZ5ADIwMjAtMTAtMDRUMjM6MjI6MDgrMDE6MDBH+UESAAAAAElFTkSuQmCC"></td>
       <td align="center">82
 (98.8%)</td>
       <td align="center">1
@@ -298,7 +302,7 @@ min < med < max:
 104 < 133 < 174
 IQR (CV) : 19.8 (0.1)</td>
       <td align="left" style="vertical-align:middle">42 distinct values</td>
-      <td align="left" style="vertical-align:middle;padding:0;background-color:transparent"><img style="border:none;background-color:transparent;padding:0" src="data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAJgAAABuBAMAAAApJ8cWAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAAD1BMVEX////9/v2mpqby8vL///8shn5hAAAAAnRSTlMAAHaTzTgAAAABYktHRACIBR1IAAAAB3RJTUUH4wofBxMuprjGPAAAAIlJREFUaN7t2MEJwCAMQFFXsBtUN6j779aLyaFBkJhSof+fRMm7SYspkaf87Ci9M883xFoPDAxsb0xvfonAZOMCAwMDA/sLpt+RCKyKAQYGBgYGBgYG9gVm/u1WMDMLFoGNX3AdmCzAwMDCMPvWuoDpCRgY2GuYXloPpsMdq8PZCUxPtsdKSIk83e1BX0n+ijYaAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDE5LTEwLTMxVDA3OjE5OjQ2KzAwOjAw6/UlzgAAACV0RVh0ZGF0ZTptb2RpZnkAMjAxOS0xMC0zMVQwNzoxOTo0NiswMDowMJqonXIAAAAASUVORK5CYII="></td>
+      <td align="left" style="vertical-align:middle;padding:0;background-color:transparent"><img style="border:none;background-color:transparent;padding:0" src="data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAJgAAABuBAMAAAApJ8cWAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAAD1BMVEX////9/v2mpqby8vL///8shn5hAAAAAnRSTlMAAHaTzTgAAAABYktHRACIBR1IAAAAB3RJTUUH5AoFABYILiwmQgAAAIlJREFUaN7t2MEJwCAMQFFXsBtUN6j779aLyaFBkJhSof+fRMm7SYspkaf87Ci9M883xFoPDAxsb0xvfonAZOMCAwMDA/sLpt+RCKyKAQYGBgYGBgYG9gVm/u1WMDMLFoGNX3AdmCzAwMDCMPvWuoDpCRgY2GuYXloPpsMdq8PZCUxPtsdKSIk83e1BX0n+ijYaAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDIwLTEwLTA0VDIzOjIyOjA4KzAxOjAwNqT5rgAAACV0RVh0ZGF0ZTptb2RpZnkAMjAyMC0xMC0wNFQyMzoyMjowOCswMTowMEf5QRIAAAAASUVORK5CYII="></td>
       <td align="center">82
 (98.8%)</td>
       <td align="center">1
@@ -306,13 +310,39 @@ IQR (CV) : 19.8 (0.1)</td>
     </tr>
   </tbody>
 </table>
-<p>Generated by <a href='https://github.com/dcomtois/summarytools'>summarytools</a> 0.9.3 (<a href='https://www.r-project.org/'>R</a> version 3.6.0)<br/>2019-10-31</p>
+<p>Generated by <a href='https://github.com/dcomtois/summarytools'>summarytools</a> 0.9.6 (<a href='https://www.r-project.org/'>R</a> version 3.6.3)<br/>2020-10-04</p>
 </div><!--/html_preserve-->
-
-We can see there are 4 SBP values per patient (row). These are the start and end values for each of the two periods. To visualize and analyze these data correctly, we need to convert the dataset so that it's "long", i.e. one row for each time point
 
 
 ```r
+# We should add labels for sex
+
+  data$sex <- factor(data$sex, labels = c("Males", "Females"))
+
+# Challange: Based on the information available in the dataset, how could you
+# confirm that 0 = Males and 1 = Females, as I have coded it here?
+```
+
+
+We can see there are 4 SBP values per patient (row). These are the start and end values for each of the two periods. To visualize and analyze these data correctly, we need to convert the dataset so that it's "long", i.e. one row for each patient/time-point (more on why we do this below).
+
+
+```r
+# Being able to switch between wide and long datasets is important for both
+# modeling and plotting data. 
+
+# "Wide" data:
+#  ID   Time1Measure  T2M  T3M   T4M
+#   1        85        82   83    81
+#   2        45        96   32    99
+
+# "Long" data:
+#  ID  Time  Measure
+#   1    1    85
+#   1    2    82
+#   1    3    83
+#   1    4    81
+
 # Reshape the data on 4 SBP values in order to plot the within period changes
 # by tx group, get missing values. See functions.R
 
@@ -333,7 +363,7 @@ Now let's clean up the data a bit.
 ```r
   data_long$time <- gsub("sbp__|sbp", "", data_long$time) # remove extraneous info
 
-# Just reordering the levels so they mactch time. This will help when we plot
+# Just reordering the levels so they match time. This will help when we plot
 # the data. 
   times <- c("b_p1", "ep_p1", "b_p2", "ep_p2")
 
@@ -371,13 +401,17 @@ Now let's clean up the data a bit.
            timing = factor(timing),
            tx  = factor(tx))
 
-  data_long$time2 <- factor(data_long$time, labels = c("p1_b", "p1_ep",
-                                         "p2_b", "p2_ep"))
+  data_long$time2 <- factor(
+    data_long$time, 
+    labels = c("p1_b", "p1_ep", "p2_b", "p2_ep")
+    )
 
 # View(data_long)
   
 # view(dfSummary(data_long))
 ```
+
+Now plot the data in a way that shows the overall structure. 
 
 
 ```r
@@ -406,6 +440,8 @@ Now let's clean up the data a bit.
 
 ![](Crossover_trials_files/figure-html/cross_over_plot-1.png)<!-- -->
 
+Here we can get a sense of the variability in SBP both within- and between-people. There seems to be quite a lot of both as it happens. We'll dig into this a bit more below. We can also see that the mean change for both groups in both periods is pretty similar.  
+
 
 ```r
 # Distribution plot
@@ -424,8 +460,589 @@ Now let's clean up the data a bit.
 ```
 
 ![](Crossover_trials_files/figure-html/distribution_plot-1.png)<!-- -->
+This is just another look at the overall distribution of SBP by period and treatment, showing a great deal of overlap. 
 
-## Modelling
+Note on long/wide data: 
+
+A key concept in plotting with ggplot is that we map variables onto different aesthetics. Aesthetics are things like distances along the x and y axes, colors, and facets. We needed to convert our data from wide to long, because we can only map one variable onto any one aesthetic. So by going from wide to long, we turned our 4 time-specific SBP variables into 2 variables - one for time and one for the actual SBP value. Then we could map the SBP values to the y axis, and time to the x axis. As an exercise, you might sit with a pen and paper and try to figure out how to map 4 separate SBP variables onto a set of aesthetics that would make for a sensible plot (but don't take too much time, because you can't!).  
+
+Being able to switch between long and wide also matters for modeling the data. For example, for a linear regression of an outcome where you want to also adjust for the baseline values of that variable, you need the data in a wide format, where each row is an observation (e.g. a patient) and there is only one row per observation. Thus the two measures at baseline and the end of the study are contained in two different columns. However, if we were doing a paired analysis, as we will below, we would need the data in a long format, where each row corresponds to a specific patient and time, and thus the information for the outcome and baseline measurements can be contained in a single column. 
+
+# Between vs within-person variance
+
+The main advantage of a crossover trial is that you get to evaluate your treatment against the backdrop of the within-person variability of the outcome, which is usually less variable than the between-person variability that comes into play in a parallel trial. Remember, the variance is just the average squared-distance between each measurement and the mean; and the larger it is, the more "spread out" the data are from the mean. 
+
+First, let's look at the between-person variability for the 4 SBP measurements. 
+
+
+```r
+  data_long %>%
+    group_by(time) %>%
+    summarise(
+      n = n(), 
+      variance = var(value, na.rm = TRUE)
+      )
+```
+
+```
+## # A tibble: 4 x 3
+##   time      n variance
+##   <fct> <int>    <dbl>
+## 1 b_p1     83     158.
+## 2 ep_p1    83     211.
+## 3 b_p2     83     150.
+## 4 ep_p2    83     196.
+```
+Now, let's look at all the within-person variances. There are 83 of them, so we'll plot them to make it easier to take them all in. I've also added reference lines at 150 and 210, the lowest and highest of the between-person variances above. 
+
+
+```r
+  data_long %>%
+    group_by(subj_id) %>%
+    summarise(
+      n = n(), 
+      variance = var(value, na.rm = TRUE)
+      ) %>%
+  ggplot(aes(x = variance)) +
+    geom_histogram() +
+    geom_vline(xintercept = c(150, 210))
+```
+
+![](Crossover_trials_files/figure-html/unnamed-chunk-3-1.png)<!-- -->
+It should be clear that the within-person variances are well below the observed between-person variances. 
+
+We can also look at this from the perspective of a linear model, and adjust for person (just like we might adjust for any other categorical variable). This model will thus report 82 (83 - 1) different means (i.e. person-specific intercepts). Take note of the R2 value, which is the % of the outcome variance explained. 
+
+
+```r
+  lm(value ~ subj_id, data = data_long) %>%
+  tab_model()
+```
+
+<table style="border-collapse:collapse; border:none;">
+<tr>
+<th style="border-top: double; text-align:center; font-style:normal; font-weight:bold; padding:0.2cm;  text-align:left; ">&nbsp;</th>
+<th colspan="3" style="border-top: double; text-align:center; font-style:normal; font-weight:bold; padding:0.2cm; ">value</th>
+</tr>
+<tr>
+<td style=" text-align:center; border-bottom:1px solid; font-style:italic; font-weight:normal;  text-align:left; ">Predictors</td>
+<td style=" text-align:center; border-bottom:1px solid; font-style:italic; font-weight:normal;  ">Estimates</td>
+<td style=" text-align:center; border-bottom:1px solid; font-style:italic; font-weight:normal;  ">CI</td>
+<td style=" text-align:center; border-bottom:1px solid; font-style:italic; font-weight:normal;  ">p</td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">(Intercept)</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">146.25</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">138.69&nbsp;&ndash;&nbsp;153.81</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "><strong>&lt;0.001</td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">subj_id [R002]</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-16.58</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-28.13&nbsp;&ndash;&nbsp;-5.03</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "><strong>0.005</strong></td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">subj_id [R003]</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-10.75</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-21.44&nbsp;&ndash;&nbsp;-0.06</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "><strong>0.049</strong></td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">subj_id [R004]</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">9.50</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-1.19&nbsp;&ndash;&nbsp;20.19</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">0.081</td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">subj_id [R005]</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-3.50</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-14.19&nbsp;&ndash;&nbsp;7.19</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">0.520</td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">subj_id [R006]</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-5.25</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-15.94&nbsp;&ndash;&nbsp;5.44</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">0.334</td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">subj_id [R007]</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-6.25</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-16.94&nbsp;&ndash;&nbsp;4.44</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">0.251</td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">subj_id [R008]</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-26.25</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-36.94&nbsp;&ndash;&nbsp;-15.56</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "><strong>&lt;0.001</td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">subj_id [R009]</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">1.50</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-9.19&nbsp;&ndash;&nbsp;12.19</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">0.783</td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">subj_id [R010]</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-14.25</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-24.94&nbsp;&ndash;&nbsp;-3.56</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "><strong>0.009</strong></td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">subj_id [R011]</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-1.50</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-12.19&nbsp;&ndash;&nbsp;9.19</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">0.783</td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">subj_id [R012]</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-7.50</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-18.19&nbsp;&ndash;&nbsp;3.19</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">0.168</td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">subj_id [R013]</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">21.50</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">10.81&nbsp;&ndash;&nbsp;32.19</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "><strong>&lt;0.001</td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">subj_id [R014]</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">9.25</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-1.44&nbsp;&ndash;&nbsp;19.94</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">0.090</td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">subj_id [R015]</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-9.75</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-20.44&nbsp;&ndash;&nbsp;0.94</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">0.074</td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">subj_id [R016]</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">8.75</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-1.94&nbsp;&ndash;&nbsp;19.44</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">0.108</td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">subj_id [R017]</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-8.00</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-18.69&nbsp;&ndash;&nbsp;2.69</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">0.142</td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">subj_id [R018]</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-16.25</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-26.94&nbsp;&ndash;&nbsp;-5.56</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "><strong>0.003</strong></td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">subj_id [R019]</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-17.50</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-28.19&nbsp;&ndash;&nbsp;-6.81</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "><strong>0.001</strong></td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">subj_id [R020]</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-5.75</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-16.44&nbsp;&ndash;&nbsp;4.94</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">0.291</td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">subj_id [R021]</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-28.75</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-39.44&nbsp;&ndash;&nbsp;-18.06</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "><strong>&lt;0.001</td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">subj_id [R022]</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-20.50</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-31.19&nbsp;&ndash;&nbsp;-9.81</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "><strong>&lt;0.001</td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">subj_id [R023]</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-23.50</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-34.19&nbsp;&ndash;&nbsp;-12.81</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "><strong>&lt;0.001</td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">subj_id [R024]</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">6.00</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-4.69&nbsp;&ndash;&nbsp;16.69</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">0.270</td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">subj_id [R025]</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-9.50</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-20.19&nbsp;&ndash;&nbsp;1.19</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">0.081</td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">subj_id [R026]</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-33.00</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-43.69&nbsp;&ndash;&nbsp;-22.31</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "><strong>&lt;0.001</td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">subj_id [R027]</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-16.50</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-27.19&nbsp;&ndash;&nbsp;-5.81</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "><strong>0.003</strong></td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">subj_id [R028]</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-7.00</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-17.69&nbsp;&ndash;&nbsp;3.69</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">0.198</td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">subj_id [R029]</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-24.25</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-37.35&nbsp;&ndash;&nbsp;-11.15</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "><strong>&lt;0.001</td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">subj_id [R030]</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-12.25</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-22.94&nbsp;&ndash;&nbsp;-1.56</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "><strong>0.025</strong></td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">subj_id [R031]</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-16.75</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-27.44&nbsp;&ndash;&nbsp;-6.06</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "><strong>0.002</strong></td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">subj_id [R032]</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-21.25</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-31.94&nbsp;&ndash;&nbsp;-10.56</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "><strong>&lt;0.001</td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">subj_id [R033]</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-34.25</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-44.94&nbsp;&ndash;&nbsp;-23.56</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "><strong>&lt;0.001</td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">subj_id [R034]</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-5.50</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-16.19&nbsp;&ndash;&nbsp;5.19</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">0.312</td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">subj_id [R035]</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-22.25</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-32.94&nbsp;&ndash;&nbsp;-11.56</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "><strong>&lt;0.001</td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">subj_id [R036]</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-0.00</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-10.69&nbsp;&ndash;&nbsp;10.69</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">1.000</td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">subj_id [R037]</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-2.00</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-12.69&nbsp;&ndash;&nbsp;8.69</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">0.713</td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">subj_id [R038]</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-8.25</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-18.94&nbsp;&ndash;&nbsp;2.44</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">0.130</td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">subj_id [R039]</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-13.00</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-23.69&nbsp;&ndash;&nbsp;-2.31</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "><strong>0.017</strong></td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">subj_id [R040]</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-14.00</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-24.69&nbsp;&ndash;&nbsp;-3.31</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "><strong>0.010</strong></td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">subj_id [R041]</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-0.25</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-10.94&nbsp;&ndash;&nbsp;10.44</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">0.963</td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">subj_id [R042]</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-17.75</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-28.44&nbsp;&ndash;&nbsp;-7.06</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "><strong>0.001</strong></td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">subj_id [R043]</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-23.25</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-33.94&nbsp;&ndash;&nbsp;-12.56</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "><strong>&lt;0.001</td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">subj_id [R044]</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">1.25</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-9.44&nbsp;&ndash;&nbsp;11.94</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">0.818</td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">subj_id [R045]</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">6.00</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-4.69&nbsp;&ndash;&nbsp;16.69</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">0.270</td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">subj_id [R046]</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-13.25</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-23.94&nbsp;&ndash;&nbsp;-2.56</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "><strong>0.015</strong></td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">subj_id [R047]</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-5.75</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-16.44&nbsp;&ndash;&nbsp;4.94</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">0.291</td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">subj_id [R048]</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-17.75</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-28.44&nbsp;&ndash;&nbsp;-7.06</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "><strong>0.001</strong></td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">subj_id [R049]</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-16.50</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-27.19&nbsp;&ndash;&nbsp;-5.81</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "><strong>0.003</strong></td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">subj_id [R050]</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-17.75</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-28.44&nbsp;&ndash;&nbsp;-7.06</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "><strong>0.001</strong></td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">subj_id [R051]</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-12.25</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-22.94&nbsp;&ndash;&nbsp;-1.56</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "><strong>0.025</strong></td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">subj_id [R052]</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-19.00</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-29.69&nbsp;&ndash;&nbsp;-8.31</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "><strong>0.001</strong></td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">subj_id [R053]</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">7.00</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-3.69&nbsp;&ndash;&nbsp;17.69</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">0.198</td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">subj_id [R054]</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-27.00</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-37.69&nbsp;&ndash;&nbsp;-16.31</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "><strong>&lt;0.001</td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">subj_id [R055]</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-19.50</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-30.19&nbsp;&ndash;&nbsp;-8.81</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "><strong>&lt;0.001</td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">subj_id [R056]</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-12.25</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-22.94&nbsp;&ndash;&nbsp;-1.56</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "><strong>0.025</strong></td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">subj_id [R057]</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-4.00</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-14.69&nbsp;&ndash;&nbsp;6.69</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">0.462</td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">subj_id [R058]</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-24.00</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-34.69&nbsp;&ndash;&nbsp;-13.31</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "><strong>&lt;0.001</td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">subj_id [R059]</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-15.00</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-25.69&nbsp;&ndash;&nbsp;-4.31</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "><strong>0.006</strong></td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">subj_id [R060]</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-23.25</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-34.80&nbsp;&ndash;&nbsp;-11.70</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "><strong>&lt;0.001</td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">subj_id [R061]</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">4.25</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-6.44&nbsp;&ndash;&nbsp;14.94</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">0.434</td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">subj_id [R062]</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">6.00</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-4.69&nbsp;&ndash;&nbsp;16.69</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">0.270</td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">subj_id [R063]</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-1.25</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-11.94&nbsp;&ndash;&nbsp;9.44</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">0.818</td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">subj_id [R064]</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-5.00</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-15.69&nbsp;&ndash;&nbsp;5.69</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">0.358</td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">subj_id [R065]</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-7.00</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-17.69&nbsp;&ndash;&nbsp;3.69</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">0.198</td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">subj_id [R066]</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">0.50</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-10.19&nbsp;&ndash;&nbsp;11.19</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">0.927</td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">subj_id [R067]</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-24.75</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-35.44&nbsp;&ndash;&nbsp;-14.06</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "><strong>&lt;0.001</td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">subj_id [R068]</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">1.75</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-8.94&nbsp;&ndash;&nbsp;12.44</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">0.747</td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">subj_id [R069]</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">18.25</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">7.56&nbsp;&ndash;&nbsp;28.94</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "><strong>0.001</strong></td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">subj_id [R070]</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-14.75</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-25.44&nbsp;&ndash;&nbsp;-4.06</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "><strong>0.007</strong></td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">subj_id [R071]</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">4.25</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-6.44&nbsp;&ndash;&nbsp;14.94</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">0.434</td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">subj_id [R072]</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-6.00</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-16.69&nbsp;&ndash;&nbsp;4.69</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">0.270</td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">subj_id [R073]</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-12.50</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-23.19&nbsp;&ndash;&nbsp;-1.81</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "><strong>0.022</strong></td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">subj_id [R074]</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">13.00</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">2.31&nbsp;&ndash;&nbsp;23.69</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "><strong>0.017</strong></td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">subj_id [R075]</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-13.50</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-24.19&nbsp;&ndash;&nbsp;-2.81</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "><strong>0.014</strong></td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">subj_id [R076]</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-10.00</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-20.69&nbsp;&ndash;&nbsp;0.69</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">0.067</td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">subj_id [R077]</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-21.00</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-31.69&nbsp;&ndash;&nbsp;-10.31</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "><strong>&lt;0.001</td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">subj_id [R078]</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-4.00</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-14.69&nbsp;&ndash;&nbsp;6.69</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">0.462</td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">subj_id [R079]</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-17.50</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-28.19&nbsp;&ndash;&nbsp;-6.81</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "><strong>0.001</strong></td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">subj_id [R080]</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-28.50</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-39.19&nbsp;&ndash;&nbsp;-17.81</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "><strong>&lt;0.001</td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">subj_id [R081]</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-12.50</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-23.19&nbsp;&ndash;&nbsp;-1.81</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "><strong>0.022</strong></td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">subj_id [R082]</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-7.25</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-17.94&nbsp;&ndash;&nbsp;3.44</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">0.183</td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">subj_id [R083]</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-17.00</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-27.69&nbsp;&ndash;&nbsp;-6.31</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "><strong>0.002</strong></td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; padding-top:0.1cm; padding-bottom:0.1cm; border-top:1px solid;">Observations</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left; border-top:1px solid;" colspan="3">328</td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; padding-top:0.1cm; padding-bottom:0.1cm;">R<sup>2</sup> / R<sup>2</sup> adjusted</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left;" colspan="3">0.751 / 0.668</td>
+</tr>
+
+</table>
+
+Once we've scrolled to the bottom, you'll see that the model explains 75% of the variability. Just like we saw in the [change score tutorial](https://github.com/CRFCSDAU/EH6126_data_analysis_tutorials/tree/master/Unit_1_Review/Change_scores), adjusting for person like this (we call this using a "fixed-effect" for person), essentially eliminates all of that variability, leaving less variability against which to try and detect our treatment effect. Below we will use what's called a random effect for person, which is just a more sophisticated way of doing this. 
+
+
+# Modeling
 
 Now we can model the effect of the treatment, though I suspect that you already have some idea of what it might be! Below, we'll use a set of models to make different adjustments for things like prognostic covariates (sex), period specific effects, and period-specific baseline (start) values. 
 
@@ -454,12 +1071,13 @@ Now we can model the effect of the treatment, though I suspect that you already 
   me_sbp_bl  <- lmer(ep ~ tx + sex + period + bl + (1 | subj_id),
                      data = me_sbp_df)
 
-  labs <- c("Intercept", "Treatment", "Sex", "Period")
+  labs <- c("Intercept", "Active Tx (vs Control)", "Female (vs Male)", 
+            "Period (2 vs 1)")
 
   tab_model(
     me_sbp, me_sbp_p, me_sbp_bl,
+    show.se = TRUE,
     p.val = "kr",
-    file = "table_me_sbp.html",
     pred.labels = c(labs, "SBP Baseline"),
     dv.labels = c("Unadjusted", "+ Period effect", "+ Baselines")
     )
@@ -468,69 +1086,84 @@ Now we can model the effect of the treatment, though I suspect that you already 
 <table style="border-collapse:collapse; border:none;">
 <tr>
 <th style="border-top: double; text-align:center; font-style:normal; font-weight:bold; padding:0.2cm;  text-align:left; ">&nbsp;</th>
-<th colspan="3" style="border-top: double; text-align:center; font-style:normal; font-weight:bold; padding:0.2cm; ">Unadjusted</th>
-<th colspan="3" style="border-top: double; text-align:center; font-style:normal; font-weight:bold; padding:0.2cm; ">+ Period effect</th>
-<th colspan="3" style="border-top: double; text-align:center; font-style:normal; font-weight:bold; padding:0.2cm; ">+ Baselines</th>
+<th colspan="4" style="border-top: double; text-align:center; font-style:normal; font-weight:bold; padding:0.2cm; ">Unadjusted</th>
+<th colspan="4" style="border-top: double; text-align:center; font-style:normal; font-weight:bold; padding:0.2cm; ">+ Period effect</th>
+<th colspan="4" style="border-top: double; text-align:center; font-style:normal; font-weight:bold; padding:0.2cm; ">+ Baselines</th>
 </tr>
 <tr>
 <td style=" text-align:center; border-bottom:1px solid; font-style:italic; font-weight:normal;  text-align:left; ">Predictors</td>
 <td style=" text-align:center; border-bottom:1px solid; font-style:italic; font-weight:normal;  ">Estimates</td>
+<td style=" text-align:center; border-bottom:1px solid; font-style:italic; font-weight:normal;  ">std. Error</td>
 <td style=" text-align:center; border-bottom:1px solid; font-style:italic; font-weight:normal;  ">CI</td>
 <td style=" text-align:center; border-bottom:1px solid; font-style:italic; font-weight:normal;  ">p</td>
 <td style=" text-align:center; border-bottom:1px solid; font-style:italic; font-weight:normal;  ">Estimates</td>
-<td style=" text-align:center; border-bottom:1px solid; font-style:italic; font-weight:normal;  ">CI</td>
-<td style=" text-align:center; border-bottom:1px solid; font-style:italic; font-weight:normal;  col7">p</td>
-<td style=" text-align:center; border-bottom:1px solid; font-style:italic; font-weight:normal;  col8">Estimates</td>
-<td style=" text-align:center; border-bottom:1px solid; font-style:italic; font-weight:normal;  col9">CI</td>
-<td style=" text-align:center; border-bottom:1px solid; font-style:italic; font-weight:normal;  0">p</td>
+<td style=" text-align:center; border-bottom:1px solid; font-style:italic; font-weight:normal;  col7">std. Error</td>
+<td style=" text-align:center; border-bottom:1px solid; font-style:italic; font-weight:normal;  col8">CI</td>
+<td style=" text-align:center; border-bottom:1px solid; font-style:italic; font-weight:normal;  col9">p</td>
+<td style=" text-align:center; border-bottom:1px solid; font-style:italic; font-weight:normal;  0">Estimates</td>
+<td style=" text-align:center; border-bottom:1px solid; font-style:italic; font-weight:normal;  1">std. Error</td>
+<td style=" text-align:center; border-bottom:1px solid; font-style:italic; font-weight:normal;  2">CI</td>
+<td style=" text-align:center; border-bottom:1px solid; font-style:italic; font-weight:normal;  3">p</td>
 </tr>
 <tr>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">Intercept</td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">137.79</td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">133.78&nbsp;&ndash;&nbsp;141.80</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">2.05</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">133.73&nbsp;&ndash;&nbsp;141.85</td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "><strong>&lt;0.001</td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">138.21</td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">134.03&nbsp;&ndash;&nbsp;142.40</td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  col7"><strong>&lt;0.001</td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  col8">136.18</td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  col9">132.98&nbsp;&ndash;&nbsp;139.39</td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  0"><strong>&lt;0.001</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  col7">2.14</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  col8">133.98&nbsp;&ndash;&nbsp;142.44</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  col9"><strong>&lt;0.001</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  0">136.18</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  1">1.64</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  2">132.95&nbsp;&ndash;&nbsp;139.41</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  3"><strong>&lt;0.001</td>
 </tr>
 <tr>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">Treatment</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">Active Tx (vs Control)</td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">0.24</td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-2.12&nbsp;&ndash;&nbsp;2.61</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">1.21</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-2.16&nbsp;&ndash;&nbsp;2.65</td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">0.840</td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">0.25</td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-2.12&nbsp;&ndash;&nbsp;2.63</td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  col7">0.834</td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  col8">-0.08</td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  col9">-2.92&nbsp;&ndash;&nbsp;2.77</td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  0">0.957</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  col7">1.21</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  col8">-2.16&nbsp;&ndash;&nbsp;2.67</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  col9">0.834</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  0">-0.08</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  1">1.45</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  2">-2.97&nbsp;&ndash;&nbsp;2.81</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  3">0.957</td>
 </tr>
 <tr>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">Sex</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">Female (vs Male)</td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-2.94</td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-8.67&nbsp;&ndash;&nbsp;2.79</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">2.92</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-8.76&nbsp;&ndash;&nbsp;2.88</td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">0.317</td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-2.96</td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-8.69&nbsp;&ndash;&nbsp;2.77</td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  col7">0.315</td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  col8">0.80</td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  col9">-2.94&nbsp;&ndash;&nbsp;4.53</td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  0">0.677</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  col7">2.92</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  col8">-8.77&nbsp;&ndash;&nbsp;2.86</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  col9">0.315</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  0">0.80</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  1">1.91</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  2">-2.99&nbsp;&ndash;&nbsp;4.59</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  3">0.677</td>
 </tr>
 <tr>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">Period</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">Period (2 vs 1)</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "></td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "></td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "></td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "></td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-0.84</td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-3.21&nbsp;&ndash;&nbsp;1.54</td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  col7">0.491</td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  col8">0.51</td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  col9">-2.35&nbsp;&ndash;&nbsp;3.37</td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  0">0.726</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  col7">1.21</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  col8">-3.25&nbsp;&ndash;&nbsp;1.57</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  col9">0.491</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  0">0.51</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  1">1.46</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  2">-2.39&nbsp;&ndash;&nbsp;3.42</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  3">0.726</td>
 </tr>
 <tr>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">SBP Baseline</td>
@@ -540,57 +1173,64 @@ Now we can model the effect of the treatment, though I suspect that you already 
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "></td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "></td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  col7"></td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  col8">0.71</td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  col9">0.57&nbsp;&ndash;&nbsp;0.85</td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  0"><strong>&lt;0.001</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  col8"></td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  col9"></td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  0">0.71</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  1">0.07</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  2">0.57&nbsp;&ndash;&nbsp;0.86</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  3"><strong>&lt;0.001</td>
 </tr>
 <tr>
-<td colspan="10" style="font-weight:bold; text-align:left; padding-top:.8em;">Random Effects</td>
+<td colspan="13" style="font-weight:bold; text-align:left; padding-top:.8em;">Random Effects</td>
 </tr>
 
 <tr>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; padding-top:0.1cm; padding-bottom:0.1cm;">&sigma;<sup>2</sup></td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left;" colspan="3">59.31</td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left;" colspan="3">59.68</td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left;" colspan="3">85.50</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left;" colspan="4">59.31</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left;" colspan="4">59.68</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left;" colspan="4">85.50</td>
 
 <tr>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; padding-top:0.1cm; padding-bottom:0.1cm;">&tau;<sub>00</sub></td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left;" colspan="3">144.89 <sub>subj_id</sub></td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left;" colspan="3">144.76 <sub>subj_id</sub></td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left;" colspan="3">27.63 <sub>subj_id</sub></td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left;" colspan="4">144.89 <sub>subj_id</sub></td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left;" colspan="4">144.76 <sub>subj_id</sub></td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left;" colspan="4">27.63 <sub>subj_id</sub></td>
 
 <tr>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; padding-top:0.1cm; padding-bottom:0.1cm;">ICC</td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left;" colspan="3">0.71</td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left;" colspan="3">0.71</td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left;" colspan="3">0.24</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left;" colspan="4">0.71</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left;" colspan="4">0.71</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left;" colspan="4">0.24</td>
 
 <tr>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; padding-top:0.1cm; padding-bottom:0.1cm;">N</td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left;" colspan="3">83 <sub>subj_id</sub></td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left;" colspan="3">83 <sub>subj_id</sub></td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left;" colspan="3">83 <sub>subj_id</sub></td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left;" colspan="4">83 <sub>subj_id</sub></td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left;" colspan="4">83 <sub>subj_id</sub></td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left;" colspan="4">83 <sub>subj_id</sub></td>
 <tr>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; padding-top:0.1cm; padding-bottom:0.1cm; border-top:1px solid;">Observations</td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left; border-top:1px solid;" colspan="3">164</td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left; border-top:1px solid;" colspan="3">164</td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left; border-top:1px solid;" colspan="3">163</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left; border-top:1px solid;" colspan="4">164</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left; border-top:1px solid;" colspan="4">164</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left; border-top:1px solid;" colspan="4">163</td>
 </tr>
 <tr>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; padding-top:0.1cm; padding-bottom:0.1cm;">Marginal R<sup>2</sup> / Conditional R<sup>2</sup></td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left;" colspan="3">0.010 / 0.713</td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left;" colspan="3">0.011 / 0.711</td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left;" colspan="3">0.404 / 0.549</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left;" colspan="4">0.010 / 0.713</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left;" colspan="4">0.011 / 0.711</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left;" colspan="4">0.404 / 0.549</td>
 </tr>
 
 </table>
 
-So that confirms what we probably should have expected from the plotting, which is that there was no appreciable effect on the outcome. But just for fun, now we will add an effect. We are going to make is pretty big, equal to -10 mmHg (almost a full SD of the observed SBP values), and add it to the active tx values. 
+When interpreting these tables, the top half (every thing above "Random Effects") is what you are more used to seeing in a regression table. These are the "fixed effects" for all the predictors in the model, and they are interpreted the same way you are used to: the difference in the mean outcome for a 1 unit increase in the predictor. So based on the first model, women have a mean SBP that is 2.94 mmHg lower than males (though the estimate has a very wide CI and a large p-value). 
+
+All of the stuff below "Random Effects" are what we call the variance components of the model. Looking at the first model, you see $\sigma^{2}$ and $\tau{00}$. The latter of these, 144.89 is the variance explained by the random effect of patient (subj_id); while $\sigma^{2}$ is the residual variance (the outcome variance not explained by the patient level random effect). The ratio of $\tau{00}$ to the total variance ($\tau{00} + \sigma^{2}$) is 0.71, which is labeled as the ICC, which we can now interpret at the % of total variance explained by the patient level effect. This is, not coincidentally, close to the 75% of variance explained in the regression model we looked at before with a fixed effect for person.  
+
+Returning back to the fixed effects of the model, they confirm what we probably should have expected from the plotting, which is that there was no appreciable effect on the outcome. But just for fun, now we will add an effect. We are going to make it pretty big, equal to -10 mmHg (almost a full SD of the observed SBP values), and add it to the active tx end of period values. 
 
 
 ```r
-  effect <- -3
+  effect <- -10
 
   data_long$value_2 <- data_long$value
 
@@ -681,7 +1321,6 @@ Now just repeat everything we did before, replacing value_2 for value.
   tab_model(
     me_sbp, me_sbp_p, me_sbp_bl,
     p.val = "kr",
-    file = "table_me_sbp.html",
     pred.labels = c(labs, "SBP Baseline"),
     dv.labels = c("Unadjusted", "+ Period effect", "+ Baselines")
     )
@@ -709,37 +1348,37 @@ Now just repeat everything we did before, replacing value_2 for value.
 <tr>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">Intercept</td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">137.79</td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">133.78&nbsp;&ndash;&nbsp;141.80</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">133.73&nbsp;&ndash;&nbsp;141.85</td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "><strong>&lt;0.001</td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">138.21</td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">134.03&nbsp;&ndash;&nbsp;142.40</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">133.98&nbsp;&ndash;&nbsp;142.44</td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  col7"><strong>&lt;0.001</td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  col8">136.18</td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  col9">132.98&nbsp;&ndash;&nbsp;139.39</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  col9">132.95&nbsp;&ndash;&nbsp;139.41</td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  0"><strong>&lt;0.001</td>
 </tr>
 <tr>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">Treatment</td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-2.76</td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-5.12&nbsp;&ndash;&nbsp;-0.39</td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "><strong>0.025</strong></td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-2.75</td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-5.12&nbsp;&ndash;&nbsp;-0.37</td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  col7"><strong>0.026</strong></td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  col8">-3.08</td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  col9">-5.92&nbsp;&ndash;&nbsp;-0.23</td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  0"><strong>0.037</strong></td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-9.76</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-12.16&nbsp;&ndash;&nbsp;-7.35</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "><strong>&lt;0.001</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-9.75</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-12.16&nbsp;&ndash;&nbsp;-7.33</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  col7"><strong>&lt;0.001</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  col8">-10.08</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  col9">-12.97&nbsp;&ndash;&nbsp;-7.19</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  0"><strong>&lt;0.001</td>
 </tr>
 <tr>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">Sex</td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-2.94</td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-8.67&nbsp;&ndash;&nbsp;2.79</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-8.76&nbsp;&ndash;&nbsp;2.88</td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">0.317</td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-2.96</td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-8.69&nbsp;&ndash;&nbsp;2.77</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-8.77&nbsp;&ndash;&nbsp;2.86</td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  col7">0.315</td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  col8">0.80</td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  col9">-2.94&nbsp;&ndash;&nbsp;4.53</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  col9">-2.99&nbsp;&ndash;&nbsp;4.59</td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  0">0.677</td>
 </tr>
 <tr>
@@ -748,10 +1387,10 @@ Now just repeat everything we did before, replacing value_2 for value.
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "></td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "></td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-0.84</td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-3.21&nbsp;&ndash;&nbsp;1.54</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-3.25&nbsp;&ndash;&nbsp;1.57</td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  col7">0.491</td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  col8">0.51</td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  col9">-2.35&nbsp;&ndash;&nbsp;3.37</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  col9">-2.39&nbsp;&ndash;&nbsp;3.42</td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  0">0.726</td>
 </tr>
 <tr>
@@ -763,7 +1402,7 @@ Now just repeat everything we did before, replacing value_2 for value.
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "></td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  col7"></td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  col8">0.71</td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  col9">0.57&nbsp;&ndash;&nbsp;0.85</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  col9">0.57&nbsp;&ndash;&nbsp;0.86</td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  0"><strong>&lt;0.001</td>
 </tr>
 <tr>
@@ -801,182 +1440,12 @@ Now just repeat everything we did before, replacing value_2 for value.
 </tr>
 <tr>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; padding-top:0.1cm; padding-bottom:0.1cm;">Marginal R<sup>2</sup> / Conditional R<sup>2</sup></td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left;" colspan="3">0.020 / 0.715</td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left;" colspan="3">0.020 / 0.714</td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left;" colspan="3">0.410 / 0.554</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left;" colspan="3">0.113 / 0.742</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left;" colspan="3">0.114 / 0.741</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left;" colspan="3">0.473 / 0.601</td>
 </tr>
 
 </table>
 
 
-```r
-  m_1 <- lm(ep_2 ~ tx, data = me_sbp_df)
-  summary(m_1)
-```
-
-```
-## 
-## Call:
-## lm(formula = ep_2 ~ tx, data = me_sbp_df)
-## 
-## Residuals:
-##     Min      1Q  Median      3Q     Max 
-## -32.790  -9.723  -2.723   8.277  41.210 
-## 
-## Coefficients:
-##             Estimate Std. Error t value Pr(>|t|)    
-## (Intercept)  136.790      1.584  86.344   <2e-16 ***
-## tx2           -3.067      2.227  -1.377     0.17    
-## ---
-## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-## 
-## Residual standard error: 14.26 on 162 degrees of freedom
-##   (1 observation deleted due to missingness)
-## Multiple R-squared:  0.01157,	Adjusted R-squared:  0.005473 
-## F-statistic: 1.897 on 1 and 162 DF,  p-value: 0.1703
-```
-
-
-```r
-  m_paired_fixed <- lm(ep_2 ~ tx + subj_id, data = me_sbp_df)
-  summary(m_paired_fixed)
-```
-
-```
-## 
-## Call:
-## lm(formula = ep_2 ~ tx + subj_id, data = me_sbp_df)
-## 
-## Residuals:
-##     Min      1Q  Median      3Q     Max 
-## -16.685  -3.315   0.000   3.315  16.685 
-## 
-## Coefficients:
-##               Estimate Std. Error t value Pr(>|t|)    
-## (Intercept)  1.468e+02  5.473e+00  26.824  < 2e-16 ***
-## tx2         -2.630e+00  1.209e+00  -2.175 0.032555 *  
-## subj_idR002 -1.750e+01  7.693e+00  -2.275 0.025593 *  
-## subj_idR003 -1.600e+01  7.693e+00  -2.080 0.040742 *  
-## subj_idR004  1.900e+01  7.693e+00   2.470 0.015646 *  
-## subj_idR005 -9.000e+00  7.693e+00  -1.170 0.245510    
-## subj_idR006 -4.500e+00  7.693e+00  -0.585 0.560224    
-## subj_idR007 -8.000e+00  7.693e+00  -1.040 0.301509    
-## subj_idR008 -3.550e+01  7.693e+00  -4.615 1.48e-05 ***
-## subj_idR009  1.500e+00  7.693e+00   0.195 0.845899    
-## subj_idR010 -2.150e+01  7.693e+00  -2.795 0.006499 ** 
-## subj_idR011 -6.000e+00  7.693e+00  -0.780 0.437727    
-## subj_idR012 -6.000e+00  7.693e+00  -0.780 0.437727    
-## subj_idR013  2.900e+01  7.693e+00   3.770 0.000311 ***
-## subj_idR014  2.000e+00  7.693e+00   0.260 0.795547    
-## subj_idR015 -1.400e+01  7.693e+00  -1.820 0.072520 .  
-## subj_idR016  7.500e+00  7.693e+00   0.975 0.332536    
-## subj_idR017 -8.500e+00  7.693e+00  -1.105 0.272508    
-## subj_idR018 -1.650e+01  7.693e+00  -2.145 0.035000 *  
-## subj_idR019 -1.500e+01  7.693e+00  -1.950 0.054697 .  
-## subj_idR020 -4.000e+00  7.693e+00  -0.520 0.604527    
-## subj_idR021 -3.150e+01  7.693e+00  -4.095 0.000100 ***
-## subj_idR022 -2.100e+01  7.693e+00  -2.730 0.007791 ** 
-## subj_idR023 -2.300e+01  7.693e+00  -2.990 0.003708 ** 
-## subj_idR024  1.200e+01  7.693e+00   1.560 0.122735    
-## subj_idR025 -6.500e+00  7.693e+00  -0.845 0.400666    
-## subj_idR026 -3.300e+01  7.693e+00  -4.290 4.97e-05 ***
-## subj_idR027 -1.000e+01  7.693e+00  -1.300 0.197368    
-## subj_idR028 -6.500e+00  7.693e+00  -0.845 0.400666    
-## subj_idR029 -3.319e+01  9.441e+00  -3.515 0.000727 ***
-## subj_idR030 -7.500e+00  7.693e+00  -0.975 0.332536    
-## subj_idR031 -1.900e+01  7.693e+00  -2.470 0.015646 *  
-## subj_idR032 -2.600e+01  7.693e+00  -3.380 0.001124 ** 
-## subj_idR033 -3.450e+01  7.693e+00  -4.485 2.41e-05 ***
-## subj_idR034 -5.000e+00  7.693e+00  -0.650 0.517586    
-## subj_idR035 -2.200e+01  7.693e+00  -2.860 0.005405 ** 
-## subj_idR036  6.245e-13  7.693e+00   0.000 1.000000    
-## subj_idR037 -4.500e+00  7.693e+00  -0.585 0.560224    
-## subj_idR038 -5.000e+00  7.693e+00  -0.650 0.517586    
-## subj_idR039 -1.050e+01  7.693e+00  -1.365 0.176112    
-## subj_idR040 -2.000e+01  7.693e+00  -2.600 0.011105 *  
-## subj_idR041 -2.500e+00  7.693e+00  -0.325 0.746048    
-## subj_idR042 -1.750e+01  7.693e+00  -2.275 0.025593 *  
-## subj_idR043 -2.800e+01  7.693e+00  -3.640 0.000482 ***
-## subj_idR044  9.500e+00  7.693e+00   1.235 0.220480    
-## subj_idR045  9.500e+00  7.693e+00   1.235 0.220480    
-## subj_idR046 -1.400e+01  7.693e+00  -1.820 0.072520 .  
-## subj_idR047 -6.000e+00  7.693e+00  -0.780 0.437727    
-## subj_idR048 -1.600e+01  7.693e+00  -2.080 0.040742 *  
-## subj_idR049 -1.550e+01  7.693e+00  -2.015 0.047280 *  
-## subj_idR050 -1.850e+01  7.693e+00  -2.405 0.018490 *  
-## subj_idR051 -1.550e+01  7.693e+00  -2.015 0.047280 *  
-## subj_idR052 -1.700e+01  7.693e+00  -2.210 0.029975 *  
-## subj_idR053  5.500e+00  7.693e+00   0.715 0.476724    
-## subj_idR054 -2.550e+01  7.693e+00  -3.315 0.001380 ** 
-## subj_idR055 -2.050e+01  7.693e+00  -2.665 0.009315 ** 
-## subj_idR056 -1.350e+01  7.693e+00  -1.755 0.083111 .  
-## subj_idR057 -6.000e+00  7.693e+00  -0.780 0.437727    
-## subj_idR058 -2.800e+01  7.693e+00  -3.640 0.000482 ***
-## subj_idR059 -1.800e+01  7.693e+00  -2.340 0.021786 *  
-## subj_idR060 -2.319e+01  9.441e+00  -2.456 0.016226 *  
-## subj_idR061 -3.000e+00  7.693e+00  -0.390 0.697595    
-## subj_idR062  1.250e+01  7.693e+00   1.625 0.108122    
-## subj_idR063  3.000e+00  7.693e+00   0.390 0.697595    
-## subj_idR064  1.500e+00  7.693e+00   0.195 0.845899    
-## subj_idR065 -8.500e+00  7.693e+00  -1.105 0.272508    
-## subj_idR066 -1.000e+00  7.693e+00  -0.130 0.896901    
-## subj_idR067 -2.950e+01  7.693e+00  -3.835 0.000249 ***
-## subj_idR068 -2.500e+00  7.693e+00  -0.325 0.746048    
-## subj_idR069  2.300e+01  7.693e+00   2.990 0.003708 ** 
-## subj_idR070 -1.750e+01  7.693e+00  -2.275 0.025593 *  
-## subj_idR071 -1.500e+00  7.693e+00  -0.195 0.845899    
-## subj_idR072 -3.500e+00  7.693e+00  -0.455 0.650366    
-## subj_idR073 -9.000e+00  7.693e+00  -1.170 0.245510    
-## subj_idR074  1.300e+01  7.693e+00   1.690 0.094946 .  
-## subj_idR075 -1.950e+01  7.693e+00  -2.535 0.013201 *  
-## subj_idR076 -1.300e+01  7.693e+00  -1.690 0.094946 .  
-## subj_idR077 -2.400e+01  7.693e+00  -3.120 0.002517 ** 
-## subj_idR078 -9.000e+00  7.693e+00  -1.170 0.245510    
-## subj_idR079 -2.450e+01  7.693e+00  -3.185 0.002065 ** 
-## subj_idR080 -2.700e+01  7.693e+00  -3.510 0.000740 ***
-## subj_idR081 -8.000e+00  7.693e+00  -1.040 0.301509    
-## subj_idR082 -1.200e+01  7.693e+00  -1.560 0.122735    
-## subj_idR083 -1.800e+01  7.693e+00  -2.340 0.021786 *  
-## ---
-## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-## 
-## Residual standard error: 7.693 on 80 degrees of freedom
-##   (1 observation deleted due to missingness)
-## Multiple R-squared:  0.8579,	Adjusted R-squared:  0.7105 
-## F-statistic: 5.819 on 83 and 80 DF,  p-value: 4.611e-14
-```
-
-
-```r
-  m_paired <- lmer(ep_2 ~ tx + (1 | subj_id), data = me_sbp_df)
-
-  summary(m_paired)
-```
-
-```
-## Linear mixed model fit by REML ['lmerMod']
-## Formula: ep_2 ~ tx + (1 | subj_id)
-##    Data: me_sbp_df
-## 
-## REML criterion at convergence: 1274.3
-## 
-## Scaled residuals: 
-##      Min       1Q   Median       3Q      Max 
-## -2.03830 -0.52129 -0.01784  0.51783  2.50876 
-## 
-## Random effects:
-##  Groups   Name        Variance Std.Dev.
-##  subj_id  (Intercept) 144.85   12.035  
-##  Residual              59.33    7.703  
-## Number of obs: 164, groups:  subj_id, 83
-## 
-## Fixed effects:
-##             Estimate Std. Error t value
-## (Intercept)  136.480      1.578  86.487
-## tx2           -2.757      1.208  -2.282
-## 
-## Correlation of Fixed Effects:
-##     (Intr)
-## tx2 -0.391
-```
 

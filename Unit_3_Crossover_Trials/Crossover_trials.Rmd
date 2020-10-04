@@ -5,11 +5,13 @@ output:
     keep_md: true
 ---
 
-# Crossover trials
+# Introduction 
 
-For this tutorial we will be working with a dataset from a standard 2 period, 2 intervention AB:BA crossover trial of a treatment aimed at lowering blood pressure in people who usually have mildly-evaluated values. In other words, each person in the trial gets exposured to each intervention (active vs placebo), but in one of two possible sequences (active first vs placebo first). 
+For this tutorial we will be working with a dataset from a standard 2-period, 2-treatment AB:BA crossover trial of a treatment aimed at lowering blood pressure in people who usually have mildly-evaluated values. In other words, each person in the trial gets exposed to each intervention (active vs placebo), but in one of two possible sequences (active first vs placebo first). 
 
-As usual, we will first load the neccessary packages and bring in the dataset. 
+# Getting the data ready
+
+As usual, we will first load the necessary packages and bring in the dataset. 
 
 ```{r setup, include = FALSE}
 
@@ -18,13 +20,13 @@ As usual, we will first load the neccessary packages and bring in the dataset.
 # Install/load packages
 
   packs <- c("tidyverse", "knitr", "viridis", "broom", "lme4", "sjPlot", 
-             "summarytools")
+             "summarytools", "readr")
   install.packages(packs[!packs %in% installed.packages()])
   lapply(packs, library, character.only = TRUE)
   
+# Import the dataset from github
+  data <- read_csv("https://raw.githubusercontent.com/CRFCSDAU/EH6126_data_analysis_tutorials/master/Unit_3_Crossover_Trials/data/data.csv")
 
-  data <- read_csv("data/data.csv")
-  
 ```
 
 Have a look at the dataset. 
@@ -32,6 +34,8 @@ Have a look at the dataset.
 ```{r inspect_data_1}
 
 # View(data)
+
+# view(dfSummary(data))
 
 ```
 
@@ -43,9 +47,36 @@ Have a look at the dataset.
 
 ```
 
-We can see there are 4 SBP values per patient (row). These are the start and end values for each of the two periods. To visualize and analyze these data correctly, we need to convert the dataset so that it's "long", i.e. one row for each time point
+```{r}
+
+# We should add labels for sex
+
+  data$sex <- factor(data$sex, labels = c("Males", "Females"))
+
+# Challange: Based on the information available in the dataset, how could you
+# confirm that 0 = Males and 1 = Females, as I have coded it here?
+
+```
+
+
+We can see there are 4 SBP values per patient (row). These are the start and end values for each of the two periods. To visualize and analyze these data correctly, we need to convert the dataset so that it's "long", i.e. one row for each patient/time-point (more on why we do this below).
 
 ```{r reshape}
+
+# Being able to switch between wide and long datasets is important for both
+# modeling and plotting data. 
+
+# "Wide" data:
+#  ID   Time1Measure  T2M  T3M   T4M
+#   1        85        82   83    81
+#   2        45        96   32    99
+
+# "Long" data:
+#  ID  Time  Measure
+#   1    1    85
+#   1    2    82
+#   1    3    83
+#   1    4    81
 
 # Reshape the data on 4 SBP values in order to plot the within period changes
 # by tx group, get missing values. See functions.R
@@ -68,7 +99,7 @@ Now let's clean up the data a bit.
 
   data_long$time <- gsub("sbp__|sbp", "", data_long$time) # remove extraneous info
 
-# Just reordering the levels so they mactch time. This will help when we plot
+# Just reordering the levels so they match time. This will help when we plot
 # the data. 
   times <- c("b_p1", "ep_p1", "b_p2", "ep_p2")
 
@@ -106,14 +137,19 @@ Now let's clean up the data a bit.
            timing = factor(timing),
            tx  = factor(tx))
 
-  data_long$time2 <- factor(data_long$time, labels = c("p1_b", "p1_ep",
-                                         "p2_b", "p2_ep"))
+  data_long$time2 <- factor(
+    data_long$time, 
+    labels = c("p1_b", "p1_ep", "p2_b", "p2_ep")
+    )
 
 # View(data_long)
   
 # view(dfSummary(data_long))
+  
 
 ```
+
+Now plot the data in a way that shows the overall structure. 
 
 ```{r cross_over_plot}
 
@@ -141,6 +177,8 @@ Now let's clean up the data a bit.
 
 ```
 
+Here we can get a sense of the variability in SBP both within- and between-people. There seems to be quite a lot of both as it happens. We'll dig into this a bit more below. We can also see that the mean change for both groups in both periods is pretty similar.  
+
 ```{r distribution_plot}
 
 # Distribution plot
@@ -158,8 +196,61 @@ Now let's clean up the data a bit.
     xlab("SBP mmHg")
 
 ```
+This is just another look at the overall distribution of SBP by period and treatment, showing a great deal of overlap. 
 
-## Modelling
+Note on long/wide data: 
+
+A key concept in plotting with ggplot is that we map variables onto different aesthetics. Aesthetics are things like distances along the x and y axes, colors, and facets. We needed to convert our data from wide to long, because we can only map one variable onto any one aesthetic. So by going from wide to long, we turned our 4 time-specific SBP variables into 2 variables - one for time and one for the actual SBP value. Then we could map the SBP values to the y axis, and time to the x axis. As an exercise, you might sit with a pen and paper and try to figure out how to map 4 separate SBP variables onto a set of aesthetics that would make for a sensible plot (but don't take too much time, because you can't!).  
+
+Being able to switch between long and wide also matters for modeling the data. For example, for a linear regression of an outcome where you want to also adjust for the baseline values of that variable, you need the data in a wide format, where each row is an observation (e.g. a patient) and there is only one row per observation. Thus the two measures at baseline and the end of the study are contained in two different columns. However, if we were doing a paired analysis, as we will below, we would need the data in a long format, where each row corresponds to a specific patient and time, and thus the information for the outcome and baseline measurements can be contained in a single column. 
+
+# Between vs within-person variance
+
+The main advantage of a crossover trial is that you get to evaluate your treatment against the backdrop of the within-person variability of the outcome, which is usually less variable than the between-person variability that comes into play in a parallel trial. Remember, the variance is just the average squared-distance between each measurement and the mean; and the larger it is, the more "spread out" the data are from the mean. 
+
+First, let's look at the between-person variability for the 4 SBP measurements. 
+
+```{r}
+
+  data_long %>%
+    group_by(time) %>%
+    summarise(
+      n = n(), 
+      variance = var(value, na.rm = TRUE)
+      )
+
+```
+Now, let's look at all the within-person variances. There are 83 of them, so we'll plot them to make it easier to take them all in. I've also added reference lines at 150 and 210, the lowest and highest of the between-person variances above. 
+
+```{r}
+
+  data_long %>%
+    group_by(subj_id) %>%
+    summarise(
+      n = n(), 
+      variance = var(value, na.rm = TRUE)
+      ) %>%
+  ggplot(aes(x = variance)) +
+    geom_histogram() +
+    geom_vline(xintercept = c(150, 210))
+    
+
+```
+It should be clear that the within-person variances are well below the observed between-person variances. 
+
+We can also look at this from the perspective of a linear model, and adjust for person (just like we might adjust for any other categorical variable). This model will thus report 82 (83 - 1) different means (i.e. person-specific intercepts). Take note of the R2 value, which is the % of the outcome variance explained. 
+
+```{r}
+
+  lm(value ~ subj_id, data = data_long) %>%
+  tab_model()
+
+```
+
+Once we've scrolled to the bottom, you'll see that the model explains 75% of the variability. Just like we saw in the [change score tutorial](https://github.com/CRFCSDAU/EH6126_data_analysis_tutorials/tree/master/Unit_1_Review/Change_scores), adjusting for person like this (we call this using a "fixed-effect" for person), essentially eliminates all of that variability, leaving less variability against which to try and detect our treatment effect. Below we will use what's called a random effect for person, which is just a more sophisticated way of doing this. 
+
+
+# Modeling
 
 Now we can model the effect of the treatment, though I suspect that you already have some idea of what it might be! Below, we'll use a set of models to make different adjustments for things like prognostic covariates (sex), period specific effects, and period-specific baseline (start) values. 
 
@@ -188,23 +279,28 @@ Now we can model the effect of the treatment, though I suspect that you already 
   me_sbp_bl  <- lmer(ep ~ tx + sex + period + bl + (1 | subj_id),
                      data = me_sbp_df)
 
-  labs <- c("Intercept", "Treatment", "Sex", "Period")
+  labs <- c("Intercept", "Active Tx (vs Control)", "Female (vs Male)", 
+            "Period (2 vs 1)")
 
   tab_model(
     me_sbp, me_sbp_p, me_sbp_bl,
+    show.se = TRUE,
     p.val = "kr",
-    file = "table_me_sbp.html",
     pred.labels = c(labs, "SBP Baseline"),
     dv.labels = c("Unadjusted", "+ Period effect", "+ Baselines")
     )
 
 ```
 
-So that confirms what we probably should have expected from the plotting, which is that there was no appreciable effect on the outcome. But just for fun, now we will add an effect. We are going to make is pretty big, equal to -10 mmHg (almost a full SD of the observed SBP values), and add it to the active tx values. 
+When interpreting these tables, the top half (every thing above "Random Effects") is what you are more used to seeing in a regression table. These are the "fixed effects" for all the predictors in the model, and they are interpreted the same way you are used to: the difference in the mean outcome for a 1 unit increase in the predictor. So based on the first model, women have a mean SBP that is 2.94 mmHg lower than males (though the estimate has a very wide CI and a large p-value). 
+
+All of the stuff below "Random Effects" are what we call the variance components of the model. Looking at the first model, you see $\sigma^{2}$ and $\tau{00}$. The latter of these, 144.89 is the variance explained by the random effect of patient (subj_id); while $\sigma^{2}$ is the residual variance (the outcome variance not explained by the patient level random effect). The ratio of $\tau{00}$ to the total variance ($\tau{00} + \sigma^{2}$) is 0.71, which is labeled as the ICC, which we can now interpret at the % of total variance explained by the patient level effect. This is, not coincidentally, close to the 75% of variance explained in the regression model we looked at before with a fixed effect for person.  
+
+Returning back to the fixed effects of the model, they confirm what we probably should have expected from the plotting, which is that there was no appreciable effect on the outcome. But just for fun, now we will add an effect. We are going to make it pretty big, equal to -10 mmHg (almost a full SD of the observed SBP values), and add it to the active tx end of period values. 
 
 ```{r}
 
-  effect <- -3
+  effect <- -10
 
   data_long$value_2 <- data_long$value
 
@@ -294,32 +390,11 @@ Now just repeat everything we did before, replacing value_2 for value.
   tab_model(
     me_sbp, me_sbp_p, me_sbp_bl,
     p.val = "kr",
-    file = "table_me_sbp.html",
     pred.labels = c(labs, "SBP Baseline"),
     dv.labels = c("Unadjusted", "+ Period effect", "+ Baselines")
     )
 
 ```
 
-```{r naive_test}
 
-  m_1 <- lm(ep_2 ~ tx, data = me_sbp_df)
-  summary(m_1)
-
-```
-
-```{r within_person_fixed}
-
-  m_paired_fixed <- lm(ep_2 ~ tx + subj_id, data = me_sbp_df)
-  summary(m_paired_fixed)
-  
-```
-
-```{r}
-
-  m_paired <- lmer(ep_2 ~ tx + (1 | subj_id), data = me_sbp_df)
-
-  summary(m_paired)
-  
-```
 
