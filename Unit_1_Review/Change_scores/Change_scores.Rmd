@@ -665,8 +665,67 @@ The estimated treatment effects are identical. Can you figure out why?
 Please ask any questions on the discussion board. 
 
 
+# Extra
 
+With the code below we can consider the value of baseline adjustment in terms of the distribution of errors in our estimates (the difference between the value we observe in one particular study, and the known "truth", which is only known because we simulated it). 
 
+```{r}
 
+  pull_squared_error <- function(x, y){
+    
+    y <- as.formula(y)
+    
+    res <- filter(diffs, size == 100 & rep == x) %>% # Get the sims where n = 100
+      lm(y, data = .) %>%                            # Run regression with those data
+      summary() %>%                                  # Summarise the its results
+      coef()                                        
+    
+    return((res["armActive", "Estimate"] + 11))   # Pull out the error 
+                                                     
+    
+  }  
 
+# This code creates a new dataset that is only the errors for the  for the 2
+# different models run using all the different simulated datasets (1000 of them)
 
+  data_se <- full_join( 
+    filter(diffs, size == 100), 
+    data_frame(
+      error_eos =                                  # Model 1
+        map_dbl(1:1000, 
+                function(x) pull_squared_error(x, "sbp_eos_plus ~ arm")),
+      error_bla =                                  # Model 3
+        map_dbl(1:1000, 
+                function(x) pull_squared_error(x, "sbp_eos_plus ~ arm + sbp_bl")),
+      rep = 1:1000
+      ), 
+    by = "rep"
+  ) %>% 
+    select(starts_with("error")) %>%
+    distinct()
+  
+
+```
+
+```{r}
+
+  gather(data_se, type, value) %>%
+  ggplot(aes(y = value, x = type, color = type)) +
+    geom_jitter(width = 0.2, alpha = 0.5) +
+    geom_boxplot(alpha = 0.3, width = 0.2, outlier.alpha = 0) +
+    geom_violin(alpha = 0.3, width = 0.4) +
+    scale_color_viridis(guide = FALSE, discrete = TRUE, end = 0.8)
+
+```
+
+What % of simulations give an estimate that is within 2.5 mmHG of the true effect of 11 mmHg?
+
+```{r}
+
+  length(data_se$error_eos[data_se$error_eos < 2.5 & data_se$error_eos > -2.5])/
+    1000
+
+  length(data_se$error_bla[data_se$error_bla < 2.5 & data_se$error_bla > -2.5])/
+    1000
+
+```
