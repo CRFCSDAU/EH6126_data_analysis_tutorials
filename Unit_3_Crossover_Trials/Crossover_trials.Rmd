@@ -196,6 +196,7 @@ Here we can get a sense of the variability in SBP both within- and between-peopl
     xlab("SBP mmHg")
 
 ```
+
 This is just another look at the overall distribution of SBP by period and treatment, showing a great deal of overlap. 
 
 Note on long/wide data: 
@@ -236,6 +237,7 @@ Now, let's look at all the within-person variances. There are 83 of them, so we'
     
 
 ```
+
 It should be clear that the within-person variances are well below the observed between-person variances. 
 
 We can also look at this from the perspective of a linear model, and adjust for person (just like we might adjust for any other categorical variable). This model will thus report 82 (83 - 1) different means (i.e. person-specific intercepts). Take note of the R2 value, which is the % of the outcome variance explained. 
