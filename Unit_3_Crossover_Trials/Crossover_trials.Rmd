@@ -20,7 +20,7 @@ As usual, we will first load the necessary packages and bring in the dataset.
 # Install/load packages
 
   packs <- c("tidyverse", "knitr", "viridis", "broom", "lme4", "sjPlot", 
-             "summarytools", "readr")
+             "summarytools", "readr", "flextable")
   install.packages(packs[!packs %in% installed.packages()])
   lapply(packs, library, character.only = TRUE)
   
@@ -249,10 +249,82 @@ We can also look at this from the perspective of a linear model, and adjust for 
 
 Once we've scrolled to the bottom, you'll see that the model explains 75% of the variability. Just like we saw in the [change score tutorial](https://github.com/CRFCSDAU/EH6126_data_analysis_tutorials/tree/master/Unit_1_Review/Change_scores), adjusting for person like this (we call this using a "fixed-effect" for person), essentially eliminates all of that variability, leaving less variability against which to try and detect our treatment effect. Below we will use what's called a random effect for person, which is just a more sophisticated way of doing this. 
 
+# Tests
 
-# Modeling
+Now we can model the effect of the treatment, though I suspect that you already have some idea of what it might be! Before we move on to full models though, let's have a look in terms of statistical tests - [namely the t-test and paired t-test](https://www.bmj.com/about-bmj/resources-readers/publications/statistics-square-one/7-t-tests). 
 
-Now we can model the effect of the treatment, though I suspect that you already have some idea of what it might be! Below, we'll use a set of models to make different adjustments for things like prognostic covariates (sex), period specific effects, and period-specific baseline (start) values. 
+In this design we have a set of end-of-period SBP values for 2 periods. Thus every participant has 2 outcomes - one at the end of a period where they were on the active treatment and one where they were on the control. 
+
+First let's ignore the fact that we have paired measures (2 per participant) and just use the good old t-test (since our outcome is continuously measured without any excessive skewness). 
+
+```{r}
+
+# Get rid of period specific start values
+  dta <- filter(data_long, timing == "EoP")  
+
+  t.test(dta$value[dta$tx == 1], dta$value[dta$tx == 2])
+
+```
+
+Very quickly, what happens if we use a linear regression instead of the t-test?
+
+```{r}
+
+  summary(lm(value ~ tx, data = dta))
+
+```
+
+Same! All tests can be recast as special cases of a linear model, which is why we focus on models so much.
+ 
+Now let's look at the paired t-test. This will respect the fact that we have multiple measurements (2) per person. 
+
+```{r}
+
+  dta <- filter(data_long, timing == "EoP") %>%
+    arrange(subj_id) 
+# I am just making sure they are in the right order since the function for the
+# paired t-test just wants 2 vectors of values and *assumes* they are in the
+# same order. So we want to double check this.
+
+# table(dta$subj_id[dta$tx == 1] == dta$subj_id[dta$tx == 2]) # All true
+
+  t.test(dta$value[dta$tx == 1], dta$value[dta$tx == 2], paired = TRUE)
+
+```
+
+Same basic result (no difference in the means comparing the two sets of observations), but you can see that the CI is now much narrower. This is because the paired t-test is based on the within-participant difference in outcomes under each treatment regime. By taking differences like this, we eliminate the between person variation. For example, the following two pairs of values [(150, 153); (89, 92)] are different in that one pair is clearly much larger than the other, but the within-pair difference is the same. So let's make a simple table with the values under each treatment and their differences, by patient. 
+
+```{r}
+
+  table <- data_frame(
+    id = unique(dta$subj_id), 
+    tx_1_sbp = dta$value[dta$tx == 1], 
+    tx_2_sbp = dta$value[dta$tx == 2], 
+    diff = tx_2_sbp - tx_1_sbp
+  ) 
+
+  flextable(table)
+
+```
+
+Now lets look at the standard errors of each of the 3 columns of outcome data (the SBP under each tx, and their difference)
+
+```{r}
+
+  map(table[2:4], function(x)sd(x, na.rm = TRUE)/sqrt(83))
+
+```
+
+Challenge: Go back and compare those SE values to the CIs from the unpaired and paired t-tests, remembering that the upper limit of the 95% CI will be the estimate + (1.96 * SE). Do they match?
+
+This is the strength of the crossover design - a smaller SE, which means a more precise estimate of our treatment effect. 
+
+
+# Models
+
+Now we've demonstrated the basics of why the crossover design works by looking at the paired t-test. However, we also want to incorporate other information, like covariates. To do this, we'll used what are called [mixed-effects models or multi-level models](https://en.wikipedia.org/wiki/Multilevel_model). They are pretty much just like the linear regression models you are used to, but they include an effect for "clustering", which is where you have more than one observation per unit (e.g. 2 measurements for each participant). Just like the regression model above where we included a fixed effect for participant (effectively fitting a separate intercept for each patient), using the mixed-effects model also removes the between-participant variability from the outcome, resulting in effect estimates with narrower SEs. 
+
+Now we'll use these models to make different adjustments for things like prognostic covariates (sex), period specific effects, and period-specific baseline (start) values. 
 
 ```{r models}
 
