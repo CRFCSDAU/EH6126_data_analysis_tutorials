@@ -82,10 +82,11 @@ We can see there are 4 SBP values per patient (row). These are the start and end
 # by tx group, get missing values. See functions.R
 
   data_long <- gather(data, time, value, starts_with("sbp")) %>%
-    select(sequence, treatment_p1, treatment_p2, time, value, subj_id, sex, 
+    select(subj_id, time, value,sequence, treatment_p1, treatment_p2, sex, 
            everything()) %>%
     mutate(sequence = factor(sequence), treatment_p1 = factor(treatment_p1),
-           treatment_p2 = factor(treatment_p2))
+           treatment_p2 = factor(treatment_p2)) %>%
+    arrange(subj_id)
 
 # view(dfSummary(data_long))
 
@@ -154,24 +155,34 @@ Now plot the data in a way that shows the overall structure.
 ```{r cross_over_plot}
 
   ggplot(data_long, aes(x = time2, y = value, group = subj_id)) +
+  
     geom_line(data = filter(data_long, as.numeric(time) < 3), alpha = 0.2,
               aes(color = treatment_p1)) +
+  
     geom_smooth(data = filter(data_long, as.numeric(time) < 3), method = "lm",
                 aes(color = treatment_p1, linetype = treatment_p1,
                 group = treatment_p1),
                 se = FALSE, size = 2) +
+  
     geom_line(data = filter(data_long, as.numeric(time) > 2), alpha = 0.2,
               aes(color = treatment_p2)) +
+  
     geom_smooth(data = filter(data_long, as.numeric(time) > 2), method = "lm",
                 aes(color = treatment_p2, linetype = treatment_p2,
                     group = treatment_p2),
                 se = FALSE, size = 2) +
+  
     scale_linetype(guide = FALSE) +
+  
     theme_minimal() +
+  
     scale_color_brewer("Tx", palette = "Set1") +
+  
     theme(panel.grid.major = element_blank(),
         panel.grid.minor = element_blank()) +
+  
     scale_x_discrete(labels = c("Start P1", "End P1", "Start P2", "End P2")) +
+  
     xlab("") +
     ylab("SBP mmHg")
 
@@ -205,7 +216,7 @@ A key concept in plotting with ggplot is that we map variables onto different ae
 
 Being able to switch between long and wide also matters for modeling the data. For example, for a linear regression of an outcome where you want to also adjust for the baseline values of that variable, you need the data in a wide format, where each row is an observation (e.g. a patient) and there is only one row per observation. Thus the two measures at baseline and the end of the study are contained in two different columns. However, if we were doing a paired analysis, as we will below, we would need the data in a long format, where each row corresponds to a specific patient and time, and thus the information for the outcome and baseline measurements can be contained in a single column. 
 
-# Between vs within-person variance
+# Between vs within-person variance       
 
 The main advantage of a crossover trial is that you get to evaluate your treatment against the backdrop of the within-person variability of the outcome, which is usually less variable than the between-person variability that comes into play in a parallel trial. Remember, the variance is just the average squared-distance between each measurement and the mean; and the larger it is, the more "spread out" the data are from the mean. 
 
