@@ -16,7 +16,7 @@ output:
 
 For this tutorial we will be analyzing data from an actual clinical trial conducted here in Cork. You can read more about the study [here](https://doi.org/10.1016/j.ahj.2018.03.018), but in a nutshell the study enrolled patients who had suffered a very serious heart attack (known as a [STEMI](https://en.wikipedia.org/wiki/Myocardial_infarction)) and randomized them into one of 3 groups. Two of the groups received an injection of [IGF1](https://en.wikipedia.org/wiki/Insulin-like_growth_factor_1) right into their heart (at two different doses) while the third group received an inactive placebo injection. The goal of the study of course was to understand the causal effects on this IGF injection, especially with respect to [global left ventricular ejection faction](https://en.wikipedia.org/wiki/Ejection_fraction) (GLVEF), which is one of many indicators of heart function. 
 
-For the analysis that follows, we are going to focus on the high-dose (HD) and placebo (P) groups - just to simplify things a bit. We will be using and comparing t-tests, ANOVA, and linear models, as well as doing lots of data visualization to make sure that the models and tests make sense with respect to what we "see" in the data. Along the way, we will also point out various aspects of coding with R and RStudio. 
+For the analysis that follows, we will be using and comparing t-tests, ANOVA, and linear models, as well as doing lots of data visualization to make sure that the models and tests make sense with respect to what we "see" in the data. Along the way, we will also point out various aspects of coding with R and RStudio. 
 
 # R Markdown files
 
