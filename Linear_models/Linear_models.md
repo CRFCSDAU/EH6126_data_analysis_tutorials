@@ -10,21 +10,25 @@ output:
 
 # Overview
 
-For this tutorial we will be analyzing data from an actual clinical trial conducted here in Cork. You can read more about the study [here](https://doi.org/10.1016/j.ahj.2018.03.018), but in a nutshell the study enrolled patients who had suffered a very serious heart attack (known as a [STEMI](https://en.wikipedia.org/wiki/Myocardial_infarction)) and randomized them into one of 3 groups. Two of the groups received an injection of IGF right into their heart (at 2 different doses) while the third group received an inactive placebo injection. The goal of the study of course was to understand the causal effects on this IGF injection, especially with respect to [global left ventricular ejection faction](https://en.wikipedia.org/wiki/Ejection_fraction) (GLVEF), which is one of many indicators of heart function. 
+For this tutorial we will be analyzing data from an actual clinical trial conducted here in Cork. You can read more about the study [here](https://doi.org/10.1016/j.ahj.2018.03.018), but in a nutshell the study enrolled patients who had suffered a very serious heart attack (known as a [STEMI](https://en.wikipedia.org/wiki/Myocardial_infarction)) and randomized them into one of 3 groups. Two of the groups received an injection of [IGF1](https://en.wikipedia.org/wiki/Insulin-like_growth_factor_1) right into their heart (at two different doses) while the third group received an inactive placebo injection. The goal of the study of course was to understand the causal effects on this IGF injection, especially with respect to [global left ventricular ejection faction](https://en.wikipedia.org/wiki/Ejection_fraction) (GLVEF), which is one of many indicators of heart function. 
 
-For the analysis that follows, we are going to focus no the high-dose and placebo groups - just to simplify things a bit. We will be using and comparing t-tests, ANOVA, and linear models, as well as doing lots of data visualization to make sure that the models and tests make sense with respect to what we "see" in the data. Along the way, we will also point out various aspects of coding with R and RStudio. 
+For the analysis that follows, we are going to focus on the high-dose and placebo groups - just to simplify things a bit. We will be using and comparing t-tests, ANOVA, and linear models, as well as doing lots of data visualization to make sure that the models and tests make sense with respect to what we "see" in the data. Along the way, we will also point out various aspects of coding with R and RStudio. 
 
 # R Markdown files
 
 The first thing to point out is that this tutorial was made using a special kind of script, called a Rmd file. You can access this file [here](https://raw.githubusercontent.com/CRFCSDAU/EH6126_data_analysis_tutorials/master/Linear_models/Linear_models.Rmd), and the easiest thing for you to do at this stage is just to copy and paste the code from that link into a new Rmd file (File -> New File -> R Markdown).
 
-RMarkdown files are an example of ["literate programming"](https://en.wikipedia.org/wiki/Literate_programming), where we combine "human readable" text (like this overview), "computer readable" code, and all of the resulting outputs (e.g. tables and figures) into a single document. Further, this document can be "knit" into different formats for sharing, including html files, Word docx, and PDFs. This makes it very easy to share high quality statistical reports without having to cut and paste a bunch of stuff from different documents into the a single report. 
+RMarkdown files are an example of ["literate programming"](https://en.wikipedia.org/wiki/Literate_programming), where we combine "human readable" text (like this overview), "computer readable" code, and all of the resulting outputs (e.g. tables and figures) into a single document. Further, this document can be "knit" into different formats for sharing, including html files, Word docx, and PDFs. This makes it very easy to share high quality statistical reports without having to cut and paste a bunch of stuff from different documents into the a single report. To learn more about RMarkdown, [check our the resouces here](https://rmarkdown.rstudio.com/). 
 
-To learn more about RMarkdown, [check our the resouces here](https://rmarkdown.rstudio.com/). 
+
+For now, the most important thing to know is that code in a Rmd file is contained in a chunk, like this:
+
+
+
 
 # Download the dataset
 
-The first thing we need to do to analyze some data is to get some data! The data for this tutorial are contained in a comma-separated-values (csv) file on the github page for this project. We can download the data using the code contained in the chuck below. 
+The first thing we need to do in order to analyze some data is to get some data! The data for this tutorial are contained in a comma-separated-values (csv) file on the github page for this project. We can download the data using the code contained in the chuck below. 
 
 
 ```r
@@ -33,10 +37,90 @@ The first thing we need to do to analyze some data is to get some data! The data
   data <- read_csv(file = "https://raw.githubusercontent.com/CRFCSDAU/EH6126_data_analysis_tutorials/master/Linear_models/example.csv")
 ```
 
-`read_csv` is a function from the `readr` package, which is one of the `tidyverse` packages that you installed earlier It accepts a web address for the `file` argument, and returns a dataframe (or tibble). In this case we have assigned that dataframe to an objected called `data`, with the assignment operator `<-`.
+To help understand that code, you need to recognize that `read_csv` is a function from the `readr` **package**, which is one of the `tidyverse` packages that you installed earlier. If you want, you can learn more about this function by typing `?read_csv` into your console. The most important things to know are that it accepts a web address for the `file` argument, and returns a **dataframe** (or tibble). In this case we have assigned that dataframe to an object called `data`, with the **assignment** operator `<-`.
+
+Remember that almost all of R scripting (or coding) is just taking [objects](https://vimeo.com/220493412) (a character vector with a web address in this case), putting them into a [function](https://vimeo.com/220490105), which in turn creates new objects (a dataframe in this example) which we can assign a name in our work space (in this case, the object called `data`). 
 
 
+# Explore the data
 
+Now that we have the data, we need to check it out a bit and make sure it all looks ok.
+
+First, properly constructed datasets should include a row for each observation (e.g. a person, or a mouse, or a country, etc); and each column should contain exactly one characteristic about the observations (e.g. their height, weight, or GDP, etc). Importantly, each of these characteristics should only include a single type of information (a number, or a date, or a character value. etc.) - that means no mixing and matching within a variable. For example, you shouldn't ever have a variable for blood pressure where you might include "High, 162" as an entry. This should instead be two different variables, one reflecting the actual blood pressure value (e.g. 162) and a separate column for the categorized version (e.g. high vs low).
+
+I have a very small video about this (here)[https://www.youtube.com/watch?v=Ry2xjTBtNFE] which basically just overviews the main points from [this really important paper](https://www.tandfonline.com/doi/full/10.1080/00031305.2017.1375989). 
+
+So the first thing we should check is how many rows and columns the data has. Let's do that using so called "in line" code, where I will call 2 functions, `nrow` and `ncol` to get this information. Importantly, this code will be rendered out here in the human readable part of the file, not in a code chunk, so you'll only see it if you are looking at the actual Rmd file. 
+
+The number of columns in this dataset is 13, and the number of rows is 62.
+
+Sometimes the easiest thing to do with smaller dataset is just "look" at it with the `View` function. 
+
+
+```r
+# View(data)
+
+# Running this code will open a viewer where you can see the data. You could
+# achieve the same thing by clicking on the object in the environment widow.
+```
+
+Because we'll be working with different variables (columns) in the dataset, it's useful to know what their names are. 
+
+
+```r
+  names(data)
+```
+
+```
+##  [1] "id"          "demo_age"    "demo_gender" "demo_ht_cm"  "demo_wt_kg" 
+##  [6] "bmi"         "arm"         "time"        "pre_timi"    "glvef"      
+## [11] "lvmass.a"    "bl_glvef"    "eos_glvef"
+```
+
+```r
+# Naming variable is generally recognized as a hard job! You want something
+# relatively short but that's still informative.
+```
+
+The most important variables in this dataset are `arm` which tells us which treatment each patient was allocated to, and `eos_glvef`, which is the primary outcome of interest measured at the end of the study. So let's have a look at them together. 
+
+
+```r
+# Make a nice plot the distribution of glvef by study arm. 
+# We use a dotplot to show the actual values of the outcome, glvef. 
+# We use a boxplot to help summarize the distribution of those values. 
+# We mark the mean value in each group with a red point. 
+ 
+  ggplot(data, aes(x = arm, y = eos_glvef)) +
+    geom_dotplot(binaxis = "y", stackdir = "centerwhole") +
+    geom_boxplot(width = 0.3, alpha = 0.5) +
+    stat_summary(fun.y = mean, geom = "point", shape = 20, size = 10,
+                 color = "red", fill = "red") 
+```
+
+![](Linear_models_files/figure-html/unnamed-chunk-5-1.png)<!-- -->
+
+We can see that patients in the active arm (arm C who received high dose IGF1) have a higher mean GLVEF at the end of the study, compared to patients who got the placebo. However, it's worth pointing out that people in the active arm didn't always have higher values - in fact the people with the some of the lowest values were in the active arm. 
+
+
+Next, let's see what the mean and standard deviation of GLVEF at the end of the study were for each arm. 
+
+
+```r
+  group_by(data, arm) %>%
+  summarise(
+    mean = round(mean(eos_glvef, na.rm = TRUE), 2), 
+    sd   = round(sd  (eos_glvef, na.rm = TRUE), 2)
+  ) 
+```
+
+```
+## # A tibble: 2 x 3
+##   arm         mean    sd
+##   <chr>      <dbl> <dbl>
+## 1 Arm A (P)   45.9  5.7 
+## 2 Arm C (HD)  50.2  9.38
+```
 
 
 
