@@ -12,7 +12,7 @@ output:
 
 For this tutorial we will be analyzing data from an actual clinical trial conducted here in Cork. You can read more about the study [here](https://doi.org/10.1016/j.ahj.2018.03.018), but in a nutshell the study enrolled patients who had suffered a very serious heart attack (known as a [STEMI](https://en.wikipedia.org/wiki/Myocardial_infarction)) and randomized them into one of 3 groups. Two of the groups received an injection of [IGF1](https://en.wikipedia.org/wiki/Insulin-like_growth_factor_1) right into their heart (at two different doses) while the third group received an inactive placebo injection. The goal of the study of course was to understand the causal effects on this IGF injection, especially with respect to [global left ventricular ejection faction](https://en.wikipedia.org/wiki/Ejection_fraction) (GLVEF), which is one of many indicators of heart function. 
 
-For the analysis that follows, we are going to focus on the high-dose and placebo groups - just to simplify things a bit. We will be using and comparing t-tests, ANOVA, and linear models, as well as doing lots of data visualization to make sure that the models and tests make sense with respect to what we "see" in the data. Along the way, we will also point out various aspects of coding with R and RStudio. 
+For the analysis that follows, we will be using and comparing t-tests, ANOVA, and linear models, as well as doing lots of data visualization to make sure that the models and tests make sense with respect to what we "see" in the data. Along the way, we will also point out various aspects of coding with R and RStudio. 
 
 # R Markdown files
 
@@ -37,9 +37,9 @@ The first thing we need to do in order to analyze some data is to get some data!
   data <- read_csv(file = "https://raw.githubusercontent.com/CRFCSDAU/EH6126_data_analysis_tutorials/master/Linear_models/example.csv")
 ```
 
-To help understand that code, you need to recognize that `read_csv` is a function from the `readr` **package**, which is one of the `tidyverse` packages that you installed earlier. If you want, you can learn more about this function by typing `?read_csv` into your console. The most important things to know are that it accepts a web address for the `file` argument, and returns a **dataframe** (or tibble). In this case we have assigned that dataframe to an object called `data`, with the **assignment** operator `<-`.
+To help understand that code, you need to recognize that `read_csv` is a function from the `readr` **package**, which is one of the `tidyverse` packages that you installed and loaded in the first chunk above. If you want, you can learn more about this function by typing `?read_csv` into your console. The most important things to know are that it accepts a web address for the `file` argument, and returns a **dataframe** (or tibble). In this case we have assigned that dataframe to an object called `data`, with the **assignment** operator `<-`.
 
-Remember that almost all of R scripting (or coding) is just taking [objects](https://vimeo.com/220493412) (a character vector with a web address in this case), putting them into a [function](https://vimeo.com/220490105), which in turn creates new objects (a dataframe in this example) which we can assign a name in our work space (in this case, the object called `data`). 
+Remember that almost all of R scripting (or coding) is just taking [objects](https://vimeo.com/220493412) (a character vector containing a web address in this case), putting them into a [function](https://vimeo.com/220490105), which in turn creates new objects (a dataframe in this example) which we can assign a name in our work space (in this case, the object called `data`). 
 
 
 # Explore the data
@@ -48,17 +48,20 @@ Now that we have the data, we need to check it out a bit and make sure it all lo
 
 First, properly constructed datasets should include a row for each observation (e.g. a person, or a mouse, or a country, etc); and each column should contain exactly one characteristic about the observations (e.g. their height, weight, or GDP, etc). Importantly, each of these characteristics should only include a single type of information (a number, or a date, or a character value. etc.) - that means no mixing and matching within a variable. For example, you shouldn't ever have a variable for blood pressure where you might include "High, 162" as an entry. This should instead be two different variables, one reflecting the actual blood pressure value (e.g. 162) and a separate column for the categorized version (e.g. high vs low).
 
-I have a very small video about this (here)[https://www.youtube.com/watch?v=Ry2xjTBtNFE] which basically just overviews the main points from [this really important paper](https://www.tandfonline.com/doi/full/10.1080/00031305.2017.1375989). 
+I have a very small video about this (here)[https://www.youtube.com/watch?v=Ry2xjTBtNFE] which basically just parrots the main points from [this really important paper](https://www.tandfonline.com/doi/full/10.1080/00031305.2017.1375989). 
 
 So the first thing we should check is how many rows and columns the data has. Let's do that using so called "in line" code, where I will call 2 functions, `nrow` and `ncol` to get this information. Importantly, this code will be rendered out here in the human readable part of the file, not in a code chunk, so you'll only see it if you are looking at the actual Rmd file. 
 
-The number of columns in this dataset is 13, and the number of rows is 62.
+The number of columns in this dataset is 10, and the number of rows is 47.
 
 Sometimes the easiest thing to do with smaller dataset is just "look" at it with the `View` function. 
 
 
 ```r
-# View(data)
+# View(data) 
+# I have "commented out" the code just above to view the data to stop it from
+# running when I knit the Rmd file. So either highlight the code and click run,
+# or remove the # from the start of the line and run the chunk.
 
 # Running this code will open a viewer where you can see the data. You could
 # achieve the same thing by clicking on the object in the environment widow.
@@ -73,12 +76,11 @@ Because we'll be working with different variables (columns) in the dataset, it's
 
 ```
 ##  [1] "id"          "demo_age"    "demo_gender" "demo_ht_cm"  "demo_wt_kg" 
-##  [6] "bmi"         "arm"         "time"        "pre_timi"    "glvef"      
-## [11] "lvmass.a"    "bl_glvef"    "eos_glvef"
+##  [6] "bmi"         "arm"         "pre_timi"    "eos_glvef"   "bl_glvef"
 ```
 
 ```r
-# Naming variable is generally recognized as a hard job! You want something
+# Naming variables is generally recognized as a hard job! You want something
 # relatively short but that's still informative.
 ```
 
@@ -100,14 +102,23 @@ The most important variables in this dataset are `arm` which tells us which trea
 
 ![](Linear_models_files/figure-html/unnamed-chunk-5-1.png)<!-- -->
 
-We can see that patients in the active arm (arm C who received high dose IGF1) have a higher mean GLVEF at the end of the study, compared to patients who got the placebo. However, it's worth pointing out that people in the active arm didn't always have higher values - in fact the people with the some of the lowest values were in the active arm. 
+We can see that patients in the active arm C, who received high dose IGF1, have a higher mean GLVEF at the end of the study, compared to patients who got the placebo (with the patients in arm B who got the low dose of IGF1 somewhere in the middle). However, it's worth pointing out that people in the two active arms didn't always have higher values - in fact the people with the some of the lowest values were in the active arm. 
+
+For the next part, we are going to focus on the HD and placebo arms (we'll come back to the LD arm shortly). 
+
+
+```r
+  data_2 <- filter(data, arm != "Arm B (LD)")
+  # This creates a new dataframe object called data_2 that has removed the rows
+  # of data for the patient in arm B. 
+```
 
 
 Next, let's see what the mean and standard deviation of GLVEF at the end of the study were for each arm. 
 
 
 ```r
-  group_by(data, arm) %>%
+  group_by(data_2, arm) %>%
   summarise(
     mean = round(mean(eos_glvef, na.rm = TRUE), 2), 
     sd   = round(sd  (eos_glvef, na.rm = TRUE), 2)
@@ -118,547 +129,432 @@ Next, let's see what the mean and standard deviation of GLVEF at the end of the 
 ## # A tibble: 2 x 3
 ##   arm         mean    sd
 ##   <chr>      <dbl> <dbl>
-## 1 Arm A (P)   45.9  5.7 
-## 2 Arm C (HD)  50.2  9.38
+## 1 Arm A (P)   45.9  5.81
+## 2 Arm C (HD)  50.2  9.56
 ```
 
+So we can see that the difference in means is about 4 percentage points (the unit of measurement for glvef is "percentage points" - please note how that's very different from saying that the difference in mean values was 5 percent). We can also see that the SD was larger as well, reflecting the increased spread of the data around the mean, which was evident in the plots above. 
 
+# The t-test
 
+Now we want to use a statistical test to help use understand how to interpret this difference in mean outcome. Remember that the entire study was set up in such a way that we can interpret this between-arm difference in means as the causal effect of the treatment with respect to the outcome. **But**...this is still just an **estimate** of that causal effect in a sample of observations, and because of sampling error, we should expect some error (or noise) in that estimate. A frequentist statistical test, like the t-test, is just asking, "Assuming there was no effect of this treatment, how often would I expect to see an effect like the one I actually saw just because of sampling error?" Despite what others may argue, this is a very reasonable question to ask, and one very important way to help us stop from fooling ourselves. 
 
-## Part 1. Estimands, estimators, and estimates
-
-The primary aim of a clinical trial is to arrive at some number that tells us something useful about the "true" causal effect of the treatment we are testing. This number, which is calculated from the study data, is called an **estimate** of some corresponding "truth" called an **estimand**. The actual calculation or algorithm we used to provided this estimate of the estimand is called the **estimator**. 
-
-Much of clinical science is about deciding what the important estimands are, asking, "What do we want to know?" On the other hand, much of statistics is about understanding and evaluating the properties of estimators, asking "What is the optimal way to learn it?" 
-
-### A simple example. 
-
-Let's say we want to estimate the mean systolic blood pressure in the population of Irish women, to help plan health services. One way to do this would be to take a random sample from this population, measure their blood pressures, and calculate the mean of the observed values. In this example, the estimand, estimator, and estimate are as follows:
-
-- Estimand - The mean systolic blood pressure in the **population** of Irish women.
-- Estimator - The mean systolic blood pressure in our **sample** of this population.
-- Estimate - The actual value that arises from our estimator. 
-
-Estimators have different properties that we can use to evaluate how useful they are. Importantly, our understanding of an estimator's properties will usually rely on assumptions, for example, that the sample was truly a random draw from the population. 
-
-To better understand all of this, let's simulate a large number of SBP measurements from a normal distribution with a known mean and standard deviation. This will be our population.  
-
+Here is what a t-test looks like in R:
 
 ```r
-# First we will simulate our population
+  our_t_test <- t.test(eos_glvef ~ arm, data = data_2)
 
-# Set the seed for the random number generator to preserve reproducability
-  set.seed(1209) 
-
-  pop_sbp <- rnorm(1e7, 124.5, 18.0) # Simulate a large population of values
-
-  hist(pop_sbp)                      # Plot the distribution of those values
-```
-
-![](Linear_models_files/figure-html/simulate_population-1.png)<!-- -->
-
-```r
-  summary(pop_sbp)                   # Summarize the distribution
-```
-
-```
-##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-##   28.42  112.36  124.50  124.51  136.65  216.28
-```
-
-Next, let's draw a random sample from this population, and calculate the mean. The full procedure of taking a random sample of the population and calculating the mean of that sample is our estimator **for** the population mean. The actual number that results is our estimate **of** the population mean. 
-
-
-```r
-  sample_sbp <- sample(pop_sbp, 50, replace = FALSE) # Draw a sample of n = 50
-
-  mean(sample_sbp) # Calculate the mean of the sample
-```
-
-```
-## [1] 122.8668
-```
-
-We can immediately see that the sample mean is close to, but not exactly, the population mean (which we know was 124.5, from our simulation). Importantly, if we were to repeat the process using the **same** estimator, we would expect a **different** estimate. 
-
-
-```r
-# Draw another sample of n = 50 and calculate the mean
-  mean(sample(pop_sbp, 50, replace = FALSE))
-```
-
-```
-## [1] 124.215
-```
-
-So what happens if we repeat this process many times? We get a **sampling distribution** of sample means. This concept of a sampling distribution is critical to understanding the **frequentist** school of statistical inference that is most often used to interpret the results of clinical trials, as we will see below.
-
-
-```r
-# This is a custom function that drwas a sample from a population and then 
-# calcuates the mean of those values. It takes 2 arguments: pop, which is a 
-# dataframe object containing the population data we simulated; and n, which is 
-# the size of the sample we want to draw.
-
-  rep_means <- function(pop, n, ...){     
-    round(mean(sample(pop, n, replace = FALSE)), 2)
-  }                                       
-
-# Use this new function 100 times and keep the results from each replicate
-  many_sample_means <- replicate(100, rep_means(pop_sbp, 50)) 
-
-  hist(many_sample_means)    # Plot the resulting distribution
-```
-
-![](Linear_models_files/figure-html/many_sample_means-1.png)<!-- -->
-
-```r
-  summary(many_sample_means) # Summarize it
-```
-
-```
-##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-##   117.6   123.0   124.5   124.6   126.6   130.5
-```
-
-### Try it yourself
-
-What do you think would happen to the distribution of the sample mean if we increased the number of observations that we sample from the population? Copy and modify the code above to see what would happen for samples of n = 100, 200, and 500.
-
-## Part 2. Pesky p-values
-
-Now we are going to simulate a clinical trial with a known effect of the intervention, and evaluate our estimate of that effect using the ubiquitous p-value. 
-
-
-```r
-  set.seed(0236)
-
-# Simulate some study data into a dataframe. Tx effect = 0.5
-  study_df <- data_frame(
-    y = c(rnorm(20, 0, 1),                       # Control arm outcomes
-          rnorm(20, 0, 1) + 0.5),                # Active arm outcomes
-    arm = rep(c("Control", "Active"), each = 20) # Arm labels
-  )
-  
-  study_df$arm <- relevel(factor(study_df$arm), ref = "Control")
-
-# Plot the distribtion of outcomes in each arm
-  ggplot(study_df, aes(x = y, fill = arm)) +
-    geom_histogram() +
-    facet_wrap(~arm, ncol = 1) +
-    scale_fill_viridis(guide = FALSE, discrete = TRUE, end = 0.85)
-```
-
-![](Linear_models_files/figure-html/sim_t_test_data-1.png)<!-- -->
-
-```r
-# Note: When we plotted the distribution before, we used so-called "base" R 
-# plotting. Going forward, we will more often used a package called ggplot2 
-# (which is included in the tidyverse family of packages).  
-```
-
-Now we will pretend that we don't know what the true effect of the treatment is (0.5). The difference in means between the two arms in this sample is 0.65. This of course isn't exactly 0.5, since the tx effect is added to a variable outcome that is measured in a random sample. Thus some sampling variability should be expected.  
-
-The actual test statistic we will use is called Student's t. It is a ratio of this difference in means to the standard error (which is what we, somewhat confusingly, call the standard deviation of a sampling distribution). You can think of it as a "signal to noise ratio".  
-
-Let's do it "by hand" so we can see how the p-value is calculated. 
-
-The first step is to calculate the value for t from our sample data. This is our estimate. 
-
-
-```r
-# https://en.wikipedia.org/wiki/Welch's_t-test
-
-# First, just to see how eveCalcuate T "by hand"
-  m_act <- mean(study_df$y[study_df$arm == "Active"])
-  m_con <- mean(study_df$y[study_df$arm == "Control"])
-  v_act <-  var(study_df$y[study_df$arm == "Active"])
-  v_con <-  var(study_df$y[study_df$arm == "Control"])
-  n <- 20 # Sample size in each group
-  se <- sqrt(v_act/n + v_con/n)
-  df_s <- (v_act/n + v_con/n)^2 / # Need this for the sampling dist. below
-          ((v_act^2 / (n^2 * (n - 1))) + 
-           (v_con^2 / (n^2 * (n - 1))))
-  
-  t_sample <- round((m_act - m_con) / se, 2)
-  
-  t_sample
-```
-
-```
-## [1] 2.35
-```
-
-Then we want to plot the sampling distribution of t under the null hypothesis that there is no different in the means (i.e. t = 0). The key parameter for this distribution is the degrees of freedom we calculated above (df_s). 
-
-
-```r
-# Get the expected sampling distibution under a null hypotheis of no difference
-  
-  g1 <- ggplot(data_frame(x = c(-4 , 4)), aes(x = x)) + 
-    stat_function(fun = dt, args = list(df = df_s), 
-                  geom = "area", fill = viridis(1), alpha = 0.3) +
-    xlim(c(-4 , 4)) +
-    xlab("t") +
-    ylab("Density") +
-    theme_minimal()
-
-  g1
-```
-
-![](Linear_models_files/figure-html/t_null_dist-1.png)<!-- -->
-
-Then we plot the position of t for our sample, and calculate the area of the t distribution (under the null) for values of t as big or bigger than the value we actually observed. 
-
-
-```r
-  g2 <- g1 +
-    geom_vline(xintercept = t_sample) +
-    stat_function(xlim = c(t_sample , 4), 
-                  fun = dt, args = list(df = df_s), 
-                  geom = "area", fill = viridis(1)) +
-    scale_x_continuous(breaks = c(-3, -1.5, 0, 1.5, t_sample, 3)) +
-    theme(panel.grid.minor = element_blank()) +
-    ggtitle(paste0("The proportion of the total area in the darker part of the distribution\n for t (given the null is true) is ", signif(pt(t_sample, df_s, lower.tail = FALSE), 2)))
-
-  g2
-```
-
-![](Linear_models_files/figure-html/t_one_sided-1.png)<!-- -->
-
-This means that **IF** there was no treatment effect, **AND** the assumptions underlying our calculation of t distribution under the null hold, **AND** we were able repeat our experiment many, many times, **THEN** we would only expect to see a value as large or larger than the one we calculated in *our* sample, 1.2% of the time. This is our p-value. Please note that there is no way to correctly explain what this p-value is in a single sentence. 
-
-So what can we do with this p-value? That's where things start to get tricky. At the risk of over-simplifying things, Fisher saw the p-value as a continuous measure of how surprised we should be if the data were truly generated under a mechanism of "no effect". So then a small p-value indicates there might be an effect worth further exploring or looking for in continued experiments. Then, if you were able able to repeat an experiment several times and consistently produce a small p-value, you might finally conclude that your intervention "works". 
-
-Others would use the p-value as a hypothesis test. In the example above, it would be the null hypothesis of t ≤ 0 vs the alternative of t > 0. Then you would set some threshold for p (e.g. 5%) for which you would "reject the null". We'll come back to this way of thinking when we discuss power, and type 1 and 2 errors below.    
-
-In the example above, we only considered our estimate of t with respect to one tail of the sampling distribution of t under the null. This is what we refer to as a one-sided test. However, it usually makes more sense to make it relative to both tails, so that the null is t = 0 vs. t < 0 or t > 0. 
-
-
-```r
-  g3 <- g2 +
-    stat_function(xlim = c(t_sample , 4), 
-                  fun = dt, args = list(df = df_s), 
-                  geom = "area", fill = viridis(1)) +
-    stat_function(xlim = c(-4, -t_sample), 
-                  fun = dt, args = list(df = df_s), 
-                  geom = "area", fill = viridis(1)) +
-    ggtitle(paste0("The proportion of the total area in the darker part of the distribution\n for t is ", signif(2 * pt(t_sample, df_s, lower.tail = FALSE), 3)))
-
-  g3
-```
-
-![](Linear_models_files/figure-html/t_two_sidedd-1.png)<!-- -->
-
-Now this was a fair bit of work just to do a simple t-test. So now let's R do this for us (and confirm our result).
-
-
-```r
-  t_1 <- t.test(y ~ arm, data = study_df)
-
-  t_1
+  our_t_test
 ```
 
 ```
 ## 
 ## 	Welch Two Sample t-test
 ## 
-## data:  y by arm
-## t = -2.3472, df = 34.049, p-value = 0.02487
+## data:  eos_glvef by arm
+## t = -1.4409, df = 21.451, p-value = 0.164
 ## alternative hypothesis: true difference in means is not equal to 0
 ## 95 percent confidence interval:
-##  -1.21698902 -0.08755436
+##  -10.515374   1.901088
 ## sample estimates:
-## mean in group Control  mean in group Active 
-##            0.05376083            0.70603252
+##  mean in group Arm A (P) mean in group Arm C (HD) 
+##                 45.91429                 50.22143
 ```
 
-### Side-note: Linear models
+What does this tell us? First, it gives a t statistic (-1.44) and the degrees of freedom (df) for the test (21.45). You can revisit this other tutorial for more explanation, but the key thing is that the df determines the nature of the sampling distribution under the null, against which we compare our observed t statistic in order to get a p-value (0.16).  
 
-We noted in EH6124 that most commonly used statistical tests can be represented by linear models. The advantage of this is two-fold. First, linear models can incorporate covariate information which often leads to more efficient estimators by integrating out variability in the outcome predicted by the covariates. It's also useful to think in terms of linear models because it's much easier than trying to remember a multitude statistical tests. 
-
-For example, the t-test is used when we are interested in a difference in means and when we have a fairly small sample size (the specific problem the t-test addresses is that when we have a small sample and we need to use the sample standard deviation to work our the distribution of the sample mean, then we should have more uncertainty in that distribution, i.e. it should be wider - it should have "fatter tails").
+If you look at the Rmd file, you will see that I used in line code to give these numbers in the text above. That way, if something about the data changes, I can just re-run the code and the numbers will all be appropriately updated. Trust me...things almost always change at some point, at least at bit, so this is very handy. In fact, now I want to "re-code" by variable for study arm for that the results we see are for the active arm relative to the placebo arm. That way my t statistic will be positive, reflecting that mean GLVEF was higher in the active arm, which is better. 
 
 
 ```r
-  lm_1 <- lm(y ~ arm, data = study_df)
+  our_t_test <- data_2 %>%                                       
+  mutate(arm = factor(arm, levels = levels(factor(arm))[c(2, 1)])) %>% 
+  t.test(eos_glvef ~ arm, data = .)                            
 
-  pvalue <- filter(tidy(lm_1), term == "armActive")$p.value
+  our_t_test
+```
+
+```
+## 
+## 	Welch Two Sample t-test
+## 
+## data:  eos_glvef by arm
+## t = 1.4409, df = 21.451, p-value = 0.164
+## alternative hypothesis: true difference in means is not equal to 0
+## 95 percent confidence interval:
+##  -1.901088 10.515374
+## sample estimates:
+## mean in group Arm C (HD)  mean in group Arm A (P) 
+##                 50.22143                 45.91429
+```
+
+Now it gives us a positive t statistic (1.44) and 95% confidence interval for the difference in means (-1.9 to 10.52) which is centered on a mean difference of 4.31 percentage points, comparing the HD arm to the placebo arm. 
+
+# Z-test
+
+Just for comparison, let's calculate a Z-test. It's the exact same idea as the t-test, except the sampling disruption under the null is based on a normal distribution (instead of a t-distribution). 
+
+The test statistic, Z, is the difference in means of the outcome between the two groups, divided by the **standard error**. The standard error then is a function of the sample standard deviation of the outcome in each group and the sample size in each group. I've calculated the appropriate standard error in the following code:
+
+
+```r
+# The first thing we need is the "pooled" standard deviation from the two
+# samples. We know this will be based on the arm specific sample sizes and
+# standard deviations for the outcome, so let's save that information as
+# different objects.
+
+  sd1 <- sd    (data_2$eos_glvef[data_2$arm == "Arm A (P)"], na.rm = TRUE)
+  n1  <- length(data_2$eos_glvef[data_2$arm == "Arm A (P)"])
   
-  summary(lm_1)
+  sd2 <- sd    (data_2$eos_glvef[data_2$arm == "Arm C (HD)"], na.rm = TRUE)
+  n2  <- length(data_2$eos_glvef[data_2$arm == "Arm C (HD)"])
+  
+  se <- sqrt( # take the square root of...
+    (sd1^2 / n1) + (sd2^2 / n2)
+    #... the sums of the variances (the SDs squared) in each arm divided by 
+    # their respective sample sizes
+  )
+```
+
+And now we can calculate Z:
+
+
+```r
+  mean1 <- mean(data_2$eos_glvef[data_2$arm == "Arm A (P)"],  na.rm = TRUE)
+  mean2 <- mean(data_2$eos_glvef[data_2$arm == "Arm C (HD)"], na.rm = TRUE)
+
+
+  z <- (mean2 - mean1) / se
+```
+
+So our value for the Z statistics in our study is 1.53. What do we do with this information? Just like the t-test, we just compare it to the sampling distribution under the null hypothesis of "no difference", which is normally distributed with a mean of zero and a standard deviation of 1. 
+
+
+```r
+# Get the expected sampling distribution under a null hypothesis of no difference
+  
+  g1 <- ggplot(data_frame(x = c(-4 , 4)), aes(x = x)) + 
+    stat_function(fun = dnorm, args = list(0, 1), 
+                  geom = "area", fill = viridis(1), alpha = 0.3) +
+    xlim(c(-4 , 4)) +
+    xlab("Z") +
+    ylab("Density") +
+    theme_minimal() 
+
+  g1
+```
+
+![](Linear_models_files/figure-html/unnamed-chunk-12-1.png)<!-- -->
+
+Next, we can can highlight the middle 95% of this distribution. Values for Z falling outside of this area are the ones we would call "significant" for a 2-sided test. 
+
+
+```r
+    g2 <- g1 +
+    stat_function(
+      xlim = c(1.96 , 4), 
+      fun = dnorm, 
+      args = list(0, 1), 
+      geom = "area", fill = viridis(1)
+      ) +
+    stat_function(
+      xlim = c(-4, -1.96), 
+      fun = dnorm, 
+      args = list(0, 1), 
+      geom = "area", fill = viridis(1)
+      )
+    
+  g2
+```
+
+![](Linear_models_files/figure-html/unnamed-chunk-13-1.png)<!-- -->
+
+And finally we can add our value for Z and compare it to this sampling distribution. 
+
+
+```r
+  g3 <- g2 +
+    geom_vline(xintercept = z, color = viridis(1, begin = 0.5), size = 2)
+
+  g3
+```
+
+![](Linear_models_files/figure-html/unnamed-chunk-14-1.png)<!-- -->
+
+
+So we can see that If the Z were generated under the null model (i.e. a normal distribution with a mean of 0 and a SD of 1), then the value of Z we observed would be out into the right hand tail of that distribution, but not among the "most extreme" 5% of values (if we are counting "extreme" in both directions, i.e. using a 2 sided test). Finally, the actual p-value for the value of Z we observed in our study is:
+
+
+```r
+  p_ztest <- pnorm(z, mean = 0, sd = 1, lower.tail = FALSE) * 2
+  # This code says: given a normal distribution with a mean of zero and a SD of
+  # one, what is the probability of seeing a value for Z as extreme or more
+  # extreme as the one we observed? We then multiply this by 2 to reflect the 2
+  # sided test.
+
+  round(p_ztest, 2)
+```
+
+```
+## [1] 0.13
+```
+
+One thing you might notice is that the p-values for our Z test (0.1268176) and t test (0.16) are different, with the Z test suggesting a "more significant" result. The reason for this is that the Z-test assumes that the pooled SD of the outcome in our sample is the same as the underlying population SD. However, the t-test doesn't make this **assumption**, which is why that result reflects a bit more uncertainty (i.e. results in a slightly higher p-value), which is reflected in the "fatter tails" of the t distribution compared to the normal distribution that the Z test is based on. However, as the sample size increases, the t and Normal distributions become more and more alike, and so the Z test becomes an increasingly good approximation of the t-test. It's important to note that this kind of Z test, one that's based on a normal distribution, can also be used to approximate other important test statistics, such as differences in proportions (for binary outcomes), which is why we've introduced it here.  
+
+# Linear models
+
+Now we will use a linear regression model to estimate and test our treatment effect in this study. First we'll do the test, and then we'll explain what everything means. Running a linear regression model in R is very simple. The function is called `lm` and it needs 2 arguments. The first argument is a formula that specifies the outcome (which some will refer to as the **dependent variable**), and one or more predictors (sometimes called **independent variables**), which in this case is just the study arm. The other argument is just the dataset we are using. 
+
+So here is what it looks like:
+
+
+```r
+  form1 <- as.formula("eos_glvef ~ arm")
+
+  m1 <- lm(formula = form1, data = data_2)
+  
+# We can also just do all of this in one step, and without naming the arguments,
+# which is what people usually do.
+  
+  m1 <- lm(eos_glvef ~ arm, data_2)
+  
+  summary(m1)
 ```
 
 ```
 ## 
 ## Call:
-## lm(formula = y ~ arm, data = study_df)
+## lm(formula = eos_glvef ~ arm, data = data_2)
 ## 
 ## Residuals:
 ##      Min       1Q   Median       3Q      Max 
-## -1.72700 -0.62341 -0.09427  0.73933  1.93982 
+## -17.6214  -4.1696   0.8286   5.6786  12.5786 
 ## 
 ## Coefficients:
-##             Estimate Std. Error t value Pr(>|t|)  
-## (Intercept)  0.05376    0.19650   0.274   0.7859  
-## armActive    0.65227    0.27789   2.347   0.0242 *
+##               Estimate Std. Error t value Pr(>|t|)    
+## (Intercept)     45.914      2.114  21.723   <2e-16 ***
+## armArm C (HD)    4.307      2.989   1.441    0.162    
 ## ---
 ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ## 
-## Residual standard error: 0.8788 on 38 degrees of freedom
-## Multiple R-squared:  0.1266,	Adjusted R-squared:  0.1036 
-## F-statistic: 5.509 on 1 and 38 DF,  p-value: 0.02423
+## Residual standard error: 7.908 on 26 degrees of freedom
+##   (3 observations deleted due to missingness)
+## Multiple R-squared:  0.07395,	Adjusted R-squared:  0.03834 
+## F-statistic: 2.076 on 1 and 26 DF,  p-value: 0.1615
 ```
 
-So here we get a p-value of 0.0242 vs. 0.025 from the t-test. Of course the difference in means, the effect estimate, is exactly the same (-0.65). It's the sampling distributions of the two estimators of that effect (t vs the regression coefficient) that are different.
-
-## Part 3. Error control and power
-
-In the example above, we focused mostly on Fisher's interpretations of the  p-value given by a particular set of set of observations as a continuous measure of evidence for/against a null hypothesis/model (though he still viewed being able to repeatedly procure a small p-value as an important step before declaring the existence of an experimental effect). However, this idea was met with resistance from the very beginning. Much of this resistance came from the Neyman-Pearson (NP) school of thought, whose proponents instead thought that p-values should be used to conduct the binary hypothesis tests we noted above. 
-
-When we choose to use such tests, we are using a relaxed version of the following logic (called [modus tollens](https://en.wikipedia.org/wiki/Modus_tollens)):
-
-If A, then B | Not B, then not A
-
-These hypothesis tests are used to make a similar argument: **If** the null hypothesis/model is true, **then** the data should be more likely to look one way. If however the data **don't** look that way, **then** we should consider rejecting the null. 
-
-This means we can incorrectly reject the null then it's true; or incorrectly fail to reject the null when it isn't. From this point of view, our goal when using statistics is to control the probability of making these errors. 
-
-Let's look at some simulations. 
-
-First we will generate some data under a null, normal model, with a random allocation to study arms. 
+That summary is a bit messy, so I like to use a function called `tab_model` from the `sjPlot` package to produce nicer regression tables. 
 
 
 ```r
-  n <- 100
+  tab_model(m1)
+```
 
-  data <- data_frame(
-    sbp = rnorm(n, 124.5, 18.0), 
-    arm = sample(c("Active", "Control"), size = n, replace = TRUE)
-  )
+<table style="border-collapse:collapse; border:none;">
+<tr>
+<th style="border-top: double; text-align:center; font-style:normal; font-weight:bold; padding:0.2cm;  text-align:left; ">&nbsp;</th>
+<th colspan="3" style="border-top: double; text-align:center; font-style:normal; font-weight:bold; padding:0.2cm; ">eos glvef</th>
+</tr>
+<tr>
+<td style=" text-align:center; border-bottom:1px solid; font-style:italic; font-weight:normal;  text-align:left; ">Predictors</td>
+<td style=" text-align:center; border-bottom:1px solid; font-style:italic; font-weight:normal;  ">Estimates</td>
+<td style=" text-align:center; border-bottom:1px solid; font-style:italic; font-weight:normal;  ">CI</td>
+<td style=" text-align:center; border-bottom:1px solid; font-style:italic; font-weight:normal;  ">p</td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">(Intercept)</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">45.91</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">41.57&nbsp;&ndash;&nbsp;50.26</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "><strong>&lt;0.001</td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">arm [Arm C (HD)]</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">4.31</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-1.84&nbsp;&ndash;&nbsp;10.45</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">0.162</td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; padding-top:0.1cm; padding-bottom:0.1cm; border-top:1px solid;">Observations</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left; border-top:1px solid;" colspan="3">28</td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; padding-top:0.1cm; padding-bottom:0.1cm;">R<sup>2</sup> / R<sup>2</sup> adjusted</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left;" colspan="3">0.074 / 0.038</td>
+</tr>
+
+</table>
+
+The main thing of interest here is the Estimate (2nd column) for arm (2nd row under predictors). We see that the value for this is 4.31. This reflects the difference in mean GLVEF at the end of the study in the active HD arm compared to the placebo arm. This matches exactly what we observed before. More generally, these **regression coefficients** that we have estimated are interpreted as follows: they are the increase in the mean outcome associated with a one unit increase in the predictor. In this case, we have the predictor, **study arm**, which can take 2 values, HD or placebo. The computer however converts these into numbers, so that the placebo arm observations are coded as a 0 for this variable, and the active arm observations are coded as 1. Thus a "one unit increase" in study arm predictor is equivalent to saying "comparing the active arm to the placebo arm". We will see another example below where a predictor is continuously measured, rather than binary. 
+
+Another way to think of this linear model is that it gives us the straight line through the data points that gives the closet fit to them (we'll come back to what this means in a moment). You might remember that the equation for a straight line is Y = Intercept + Slope*X. In this example, the Slope is the regression coefficient for treatment arm, which we just discussed. The intercept value is, perhaps not surprisingly, the regression coefficient labeled "(Intercept)" in table just above. Remember, the intercept of a line is where it crosses the Y axis, which is where X is equal to zero. We just pointed out that the regression is treating the variable `arm` as zero for the placebo group, and thus the intercept value from our regression is the mean GLVEF for patients in the placebo arm (45.91), which matches what we observed earlier. If I wanted to know what the mean GLVEF value was for those in the active arm, then, following the equation for a line, I would just take the intercept (45.91) and add the slope (4.31) multiplied by 1 (the difference between 0 and 1), resulting in 50.22. Again, that matches what we observed above. 
+
+# Linear model for 3 groups
+
+In the example above, we left out the low dose arm, and focused on the difference in means comparing two groups. However, there will be plenty of situation where you want to test for differences among more than 2 groups. The "classic" test for this is called ANOVA (analysis of variance). The basic idea behind ANOVA is that we can take the total variance for an outcome and decompose it into the within-group and between-group components. The ratio of these two quantities is called F. 
+
+
+```r
+  overall_mean <- mean(data$eos_glvef, na.rm = TRUE)
+  # Group specific means
+  m_p  <- mean(data$eos_glvef[data$arm == "Arm A (P)" ],  na.rm = TRUE)
+  m_ld <- mean(data$eos_glvef[data$arm == "Arm B (LD)"], na.rm = TRUE)
+  m_hd <- mean(data$eos_glvef[data$arm == "Arm C (HD)"], na.rm = TRUE)
+  # Group sample sizes
+  n_p  <- length(
+    data$eos_glvef[data$arm == "Arm A (P)" & !is.na(data$eos_glvef)]
+    )
+  n_ld <- length(
+    data$eos_glvef[data$arm == "Arm B (LD)" & !is.na(data$eos_glvef)]
+    )
+  n_hd <- length(
+    data$eos_glvef[data$arm == "Arm C (HD)" & !is.na(data$eos_glvef)]
+    )
   
-# Plot the distribtion of outcomes in each arm
-  ggplot(data, aes(x = sbp, fill = arm)) +
-    geom_histogram() +
-    facet_wrap(~arm, ncol = 1) +
-    scale_fill_viridis(guide = FALSE, discrete = TRUE, end = 0.85)
+  k <- 3 # 3 groups
+  
+  n <- length(data$eos_glvef[!is.na(data$eos_glvef)]) # Total sample size
+
+  # This is the between group variability
+  between <- sum(
+    n_p  * (m_p  - overall_mean)^2, 
+    n_ld * (m_ld - overall_mean)^2, 
+    n_hd * (m_hd - overall_mean)^2
+    ) / (k - 1)
+
+  # This is the within group variability
+  within <- sum(
+    (data$eos_glvef[data$arm == "Arm A (P)"  & !is.na(data$eos_glvef)] - m_p)^2, 
+    (data$eos_glvef[data$arm == "Arm B (LD)" & !is.na(data$eos_glvef)] - m_ld)^2,
+    (data$eos_glvef[data$arm == "Arm C (HD)" & !is.na(data$eos_glvef)] - m_hd)^2
+  ) / (n - k)
+  
+  # This is the F statistic
+  f_stat <- between / within
+  
+  df1 <- k - 1
+  df2 <- n - k
+
+  f_pvalue <- pf(f_stat, df1, df2, lower.tail = FALSE)
 ```
 
-![](Linear_models_files/figure-html/null_data-1.png)<!-- -->
 
 ```r
-# Regress SBP on the treatment arm  
-  summary(lm(sbp ~ arm, data = data))
+# Get the expected sampling distribution under a null hypothesis of no difference
+  
+  g1 <- ggplot(data_frame(x = c(0, 4)), aes(x = x)) + 
+    stat_function(fun = df, args = list(df1, df2), 
+                  geom = "area", fill = viridis(1), alpha = 0.3) +
+    xlim(c(0 , 4)) +
+    xlab("F") +
+    ylab("Density") +
+    theme_minimal() +
+    geom_vline(xintercept = f_stat, color = viridis(1, begin = 0.5), size = 2)
+
+  g1
+```
+
+![](Linear_models_files/figure-html/unnamed-chunk-19-1.png)<!-- -->
+
+The good news is that, like with most things in R, there is a function that does all of this for us, which is helpfully named `anova`. 
+
+
+```r
+  anova(lm(eos_glvef ~ arm, data))
+```
+
+```
+## Analysis of Variance Table
+## 
+## Response: eos_glvef
+##           Df Sum Sq Mean Sq F value Pr(>F)
+## arm        2  131.3  65.656  0.6527 0.5261
+## Residuals 40 4023.8 100.594
+```
+Looking above, you can see the "Mean sq" values for between ("arm") and within "Residuals" groups that we calculated above, as well as the F statistic and p-value we already arrived at. 
+
+You might have noticed that when we called the function `anova`, the only argument was another call to the linear model function, `lm`. That's because running an anova and a linear model is basically the same thing. So let's look more closely at that linear model, which is just like the one we ran previously, but now our predictor has 3 values, not 2.
+
+
+```r
+  summary(lm(eos_glvef ~ arm, data))
 ```
 
 ```
 ## 
 ## Call:
-## lm(formula = sbp ~ arm, data = data)
+## lm(formula = eos_glvef ~ arm, data = data)
 ## 
 ## Residuals:
 ##     Min      1Q  Median      3Q     Max 
-## -48.069 -13.951   2.747  13.127  42.172 
+## -22.053  -4.814   1.279   7.036  21.447 
 ## 
 ## Coefficients:
-##             Estimate Std. Error t value Pr(>|t|)    
-## (Intercept)  124.014      2.579  48.094   <2e-16 ***
-## armControl    -2.872      4.027  -0.713    0.477    
+##               Estimate Std. Error t value Pr(>|t|)    
+## (Intercept)     45.914      2.681  17.129   <2e-16 ***
+## armArm B (LD)    2.539      3.727   0.681    0.500    
+## armArm C (HD)    4.307      3.791   1.136    0.263    
 ## ---
 ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ## 
-## Residual standard error: 19.81 on 98 degrees of freedom
-## Multiple R-squared:  0.005163,	Adjusted R-squared:  -0.004989 
-## F-statistic: 0.5086 on 1 and 98 DF,  p-value: 0.4774
+## Residual standard error: 10.03 on 40 degrees of freedom
+##   (4 observations deleted due to missingness)
+## Multiple R-squared:  0.0316,	Adjusted R-squared:  -0.01682 
+## F-statistic: 0.6527 on 2 and 40 DF,  p-value: 0.5261
 ```
 
-Now let's look at what happens if we repeat this process many times.
+If you look at the bottom of that output, we see the same F test and p-value that we've already seen twice before. However, we also get an estimate for the treatment effect both both of the active arms (low does and high dose), relative to the placebo arm. 
+
+# A linear model with a continuous predictor
+
+Now let's go back to looking at the placebo vs the high dose arms only. We are going to add one more predictor to this model, which is the outcome measured at baseline (`bl_glvef`). 
 
 
 ```r
-  make_pvalues <- function(n, ...){
+  m2 <- lm(eos_glvef ~ arm + scale(bl_glvef, scale = FALSE), data_2)
 
-    data <- data_frame(
-      sbp = rnorm(n, 124.5, 18.0), 
-      arm = sample(c("Active", "Control"), size = n, replace = TRUE)
-    )
-    
-    data$arm <- relevel(factor(data$arm), ref = "Control")
-
-    result <- tidy(lm(sbp ~ arm, data = data)) %>%
-      filter(term == "armActive")
-    
-    return(result$p.value)
-
-  }
-
-  k <- 2000
-  results <- as_data_frame(replicate(k, make_pvalues(100))) %>%
-    rename(p_value = value)
-
-  ggplot(results, aes(x = p_value)) +
-    geom_histogram() +
-    geom_vline(xintercept = 0.05, color = "red", linepype = "dashed")
-```
-
-![](Linear_models_files/figure-html/null_data_repeat-1.png)<!-- -->
-
-As some of you might have expected, about 5% of the p-values fall below the nominal 5% level (6% in this set of simulations)
-
-Just for fun, what will happen to the distribution of p-values if I decrease the sample size of the individual replicates?
-
-
-```r
-  k <- 2000
-  results <- as_data_frame(replicate(k, make_pvalues(20))) %>% # n = 20
-    rename(p_value = value)
-
-  ggplot(results, aes(x = p_value)) +
-    geom_histogram() +
-    geom_vline(xintercept = 0.05, color = "red", linepype = "dashed")
-```
-
-![](Linear_models_files/figure-html/p_distribution_null_1-1.png)<!-- -->
-
-Again, about 5% of the p-values fall below the nominal 5% level (4.4% - the difference is just simulation error - if we ran more simulations, this would be 5% for sure)
-
-And if I increase the sample size?
-
-
-```r
-  k <- 2000
-  results <- as_data_frame(replicate(k, make_pvalues(1000))) %>% # n = 1000
-    rename(p_value = value)
-
-  ggplot(results, aes(x = p_value)) +
-    geom_histogram() +
-    geom_vline(xintercept = 0.05, color = "red", linepype = "dashed")
-```
-
-![](Linear_models_files/figure-html/p_distribution_null_2-1.png)<!-- -->
-
-The same result (4.8%). To put a finer point on this, **when the data are indeed generated by a null model**, the distribution of p-values is constant; and because p is based on a sampling distribution, which is in turn partly determined by the sample size (via the standard error), then 5% of p values will be below the 5% threshold, regardless of sample size. 
-
-The other important addition from the NP view is the introduction of some alternative hypothesis, so that when we reject the null (based on a small p-value) then we are implicitly accepting some alternative. Thus we can restate the two types of possible error we noted above: 
-
-- We can reject the null when it's true, thus declaring there is an effect (the alternative) when there isn't: a false positive. 
-
-- We can accept the null when it's false, thus declaring there is no effect (the alternative) when there actually is: a false negative. 
-
-The first of these is what we just looked at above, when we simulated data under the null and say how many times we would reject it when it was in fact true - and that we could "control" this error rate using the p-value. If I'm happy accepting making this kind of mistake 5% of the time, then my p-value for "significance" should be 0.05. If I want to make that more or less stringent, I can. However, this only really makes sense if I am also happy thinking of what I'm doing as one experiment in a long succession of such experiments, like a machine making widgets. 
-
-So now let's look at the second kind of error, and generate some data with a known effect. 
-
-
-```r
-  make_pvalues <- function(n, effect, ...){
-
-    data <- data_frame(
-      sbp = rnorm(n, 124.5, 18.0), 
-      arm = sample(c("Active", "Control"), size = n, replace = TRUE)
-    )
-    
-    data$arm <- relevel(factor(data$arm), ref = "Control")
-
-    
-    data$sbp[data$arm == "Active"] <- data$sbp[data$arm == "Active"] + effect
-  
-    result <- tidy(lm(sbp ~ arm, data = data)) %>%
-      filter(term == "armActive")
-    
-    return(result$p.value)
-
-  }
-
-  k <- 2000
-  results <- as_data_frame(replicate(k, make_pvalues(100, -2))) %>%
-    rename(p_value = value)
-
-  ggplot(results, aes(x = p_value)) +
-    geom_histogram() +
-    geom_vline(xintercept = 0.05, color = "red", linepype = "dashed")
-```
-
-![](Linear_models_files/figure-html/alt_data_repeat-1.png)<!-- -->
-
-Now if I use p = 0.05 to reject the null, which is now the correct decision (since I know I simulated data with "an effect"), I will do so 10.35% of the time. That is my **power**. Alternately, I will accept the null (wrongly) 89.65% of the time. That is my type 2 error rate. 
-
-Most of the time people recommend a power of at least 80% (more on this later), so clearly this is a very low power. That's because our effect (= -2) is small relative to the variability in the outcome. So we need a bigger effect or a bigger sample to overcome that variability and increase the power. So let's greatly increase the sample size. 
-
-
-```r
-  k <- 2000
-  results <- as_data_frame(replicate(k, make_pvalues(2000, -2))) %>%
-    rename(p_value = value)
-
-  ggplot(results, aes(x = p_value)) +
-    geom_histogram() +
-    geom_vline(xintercept = 0.05, color = "red", linepype = "dashed")
-```
-
-![](Linear_models_files/figure-html/alt_data_2-1.png)<!-- -->
-
-Whoa! What just happened? Now if I use p = 0.05 to (correctly) reject the null, my power is 68.55%, and my type 2 error rate is 31.45%. 
- 
-Here is an important point - there is no such thing as **A** study's power. Power is specific to both a study's design, and **AN** effect size. Thus the same study will produce a different power for different effect sizes. In these simulated examples, we **know** what the alternative hypothesis is (effect = -2), while for a real study, there are many plausible alternative hypotheses (i.e. many plausible potential effect sizes) and we can't know which is true, or else we wouldn't need to run the study. 
-
-However, one of these hypothetical effect sizes stands out among all the rest. It's the one Senn refers to as the smallest possible effect that we'd like to not miss. In other words, many of these plausible effect sizes are so small that we don't really care if they exist or not (when we are talking about clinical research where the goal is to intervene on people), but there are other, larger effect sizes we certainly would like to be able to detect with a high power - and if we design the study to have high power for the smallest of these, then we will have high power to detect all of them. So let's plan a study to detect an effect = 2, given what we know about the distribution of the outcome we used in the simulation. 
-
-
-```r
-   effect_size <- -2
-   sd <- 18
-   d <- effect_size / sd
-
-   pwr.t.test(d = d, sig.level = .05, power = 0.90)
+  summary(m2)
 ```
 
 ```
 ## 
-##      Two-sample t test power calculation 
+## Call:
+## lm(formula = eos_glvef ~ arm + scale(bl_glvef, scale = FALSE), 
+##     data = data_2)
 ## 
-##               n = 1703.163
-##               d = 0.1111111
-##       sig.level = 0.05
-##           power = 0.9
-##     alternative = two.sided
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -14.3637  -2.7452   0.3848   2.7841   8.8719 
 ## 
-## NOTE: n is number in *each* group
+## Coefficients:
+##                                Estimate Std. Error t value Pr(>|t|)    
+## (Intercept)                    47.92372    1.63594  29.294  < 2e-16 ***
+## armArm C (HD)                  -0.01405    2.41704  -0.006    0.995    
+## scale(bl_glvef, scale = FALSE)  0.69938    0.15031   4.653 9.16e-05 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 5.904 on 25 degrees of freedom
+##   (3 observations deleted due to missingness)
+## Multiple R-squared:  0.5037,	Adjusted R-squared:  0.464 
+## F-statistic: 12.69 on 2 and 25 DF,  p-value: 0.0001572
 ```
 
-```r
-# I am being a bit lazy here, using the power based on a t-test when I know
-# that I am going to analyze the data with a linear model - but sample sizes are
-# an educated guess at best - so close enough for now!   
-```
+One of the things you might now notice is that the estimate for the treatment effect is not practically zero, whereas before it was about 4 percentage points. The answer is that the high dose arm patients, just by "luck of the draw" happened to have higher GLVEF values at baseline, before any treatment was given. You can also see from the regression result that there is a strong positive association between GLVEF measured at baseline with GEVEF measured at the end of the study, which of course makes sense. More specifically, for every one unit increase in baseline GLVEF, we would predict that GLVEF at the end of the study would be 0.7 units higher. So if the patients in the HD arm happened to have higher values at baseline, we should also expect them to have higher values at the end of the study, even if there was no effect of the treatment. In other words, those patients have had a sort of a head start! However, by including baseline GLVEF in the model, it "adjusts" for it, effectively removing it's influence on the outcome, and thus erasing the head start. Thus what treatment effect there was is now explained away. 
 
-Ha! So to detect an effect this small (relative to the SD of the SBP distribution), I need 3400 people in my study for achieve a power of 90% (i.e. to produce a study that will detect this effect, based on a binary hypothesis test vs the null, 90% of the time). Now, let's confirm this with a simulation. 
-
-
-```r
-  k <- 2000
-  results <- as_data_frame(replicate(k, make_pvalues(3400, 2))) %>%
-    rename(p_value = value)
-
-  ggplot(results, aes(x = p_value)) +
-    geom_histogram() +
-    geom_vline(xintercept = 0.05, color = "red", linepype = "dashed")
-```
-
-![](Linear_models_files/figure-html/power_sim-1.png)<!-- -->
-
-From the above I can see that 89.6% of p-values from the simulations fall below 5% - that's my power, which is just what I expected (with a bit of simulation error). 
-
-I want to point out one more thing, which is the distribution of p-values that fall under 0.05 when the alternative is in fact true and we have a high power test, as we just simulated.
+Finally, we can look at the model by plotting baseline and end of study against each other, and then fitting the regression lines for each arm. 
 
 
 ```r
-  filter(results, p_value <= 0.05) %>%
-  ggplot(aes(x = p_value)) +
-    geom_histogram() +
-    geom_vline(xintercept = 0.05, color = "red", linepype = "dashed")
+  data_2$predm2[!is.na(data_2$eos_glvef) & !is.na(data_2$bl_glvef)] <- predict(m2)
+
+  ggplot(data_2, aes(x = bl_glvef, y = eos_glvef, color = arm)) +
+    geom_point() +
+    geom_line(aes(y = predm2)) +
+    scale_color_brewer("", palette = "Set1") +
+    xlab("Baseline GLVEF (%)") +
+    ylab("End of Study GLVEF (%)")
 ```
 
-![](Linear_models_files/figure-html/alt_data_le_05-1.png)<!-- -->
+![](Linear_models_files/figure-html/unnamed-chunk-23-1.png)<!-- -->
 
-So how many of those p-values are close to 0.05? Very few! What does this mean? It means that when some alternative effect is true and the trial is very well powered to detect that effect, the distribution of p-values is heavily skewed towards very small values, values much smaller than 0.05. This is why many people are skeptical of papers and bodies of literature that report many "just significant" p-values, as it suggests publication bias and p-hacking. 
-
+If you only see one line, that's because there was basically no difference between the two arms, so their lines are sitting on top of each other. If there was a notable difference, we would see to parallel lines and the vertical distance between then would be the estimated treatment effect. We can also see that the slope of those lines is positive, but less that one. Of course we know from the model results that it equal to anout 0.7 (the coefficient for baseline GLVEF). 
