@@ -12,7 +12,7 @@ output:
 
 For this tutorial we will be analyzing data from an actual clinical trial conducted here in Cork. You can read more about the study [here](https://doi.org/10.1016/j.ahj.2018.03.018), but in a nutshell the study enrolled patients who had suffered a very serious heart attack (known as a [STEMI](https://en.wikipedia.org/wiki/Myocardial_infarction)) and randomized them into one of 3 groups. Two of the groups received an injection of [IGF1](https://en.wikipedia.org/wiki/Insulin-like_growth_factor_1) right into their heart (at two different doses) while the third group received an inactive placebo injection. The goal of the study of course was to understand the causal effects on this IGF injection, especially with respect to [global left ventricular ejection faction](https://en.wikipedia.org/wiki/Ejection_fraction) (GLVEF), which is one of many indicators of heart function. 
 
-For the analysis that follows, we will be using and comparing t-tests, ANOVA, and linear models, as well as doing lots of data visualization to make sure that the models and tests make sense with respect to what we "see" in the data. Along the way, we will also point out various aspects of coding with R and RStudio. 
+For the analysis that follows, we will be using and comparing t-tests, ANOVA, and linear models, as well as doing some data visualization to make sure that the models and tests make sense with respect to what we "see" in the data. Along the way, we will also point out various aspects of coding with R and RStudio. 
 
 # R Markdown files
 
@@ -24,11 +24,29 @@ RMarkdown files are an example of ["literate programming"](https://en.wikipedia.
 For now, the most important thing to know is that code in a Rmd file is contained in a chunk, like this:
 
 
+```r
+# In a code chunk, comments that you don't want R to try and run should be
+# proceeded by a hashmark #.
+
+# Install/load packages
+
+# Create a character vector object with the names of the packages you will need. 
+  packs <- c("tidyverse", "knitr", "viridis", "broom", "pwr", "sjPlot") 
+
+# Install those packages but only if they aren't already installed
+  install.packages(packs[!packs %in% installed.packages()])
+  
+# Load all the pakages (i.e. check them out from your library of downloaded
+# packages)
+  lapply(packs, library, character.only = TRUE)
+  
+# Don't worry about what all this means - you'll learn!
+```
 
 
 # Download the dataset
 
-The first thing we need to do in order to analyze some data is to get some data! The data for this tutorial are contained in a comma-separated-values (csv) file on the github page for this project. We can download the data using the code contained in the chuck below. 
+The first thing we need to do in order to analyze some data is to get some data! The data for this tutorial are contained in a comma-separated-values (csv) file on the github page for this project. We can download the data using the code contained in the chunk below. 
 
 
 ```r
@@ -37,7 +55,9 @@ The first thing we need to do in order to analyze some data is to get some data!
   data <- read_csv(file = "https://raw.githubusercontent.com/CRFCSDAU/EH6126_data_analysis_tutorials/master/Linear_models/example.csv")
 ```
 
-To help understand that code, you need to recognize that `read_csv` is a function from the `readr` **package**, which is one of the `tidyverse` packages that you installed and loaded in the first chunk above. If you want, you can learn more about this function by typing `?read_csv` into your console. The most important things to know are that it accepts a web address for the `file` argument, and returns a **dataframe** (or tibble). In this case we have assigned that dataframe to an object called `data`, with the **assignment** operator `<-`.
+To help understand that code, you need to recognize that `read_csv` is a function from the `readr` **package**, which is one of the `tidyverse` packages that you installed and loaded in the first chunk above.
+
+If you want, you can learn more about this function by typing `?read_csv` into your console. The most important things to know are that it accepts a web address for the `file` argument, and returns a **dataframe** (or tibble). In this case we have assigned that dataframe to an object called `data`, with the **assignment** operator `<-`.
 
 Remember that almost all of R scripting (or coding) is just taking [objects](https://vimeo.com/220493412) (a character vector containing a web address in this case), putting them into a [function](https://vimeo.com/220490105), which in turn creates new objects (a dataframe in this example) which we can assign a name in our work space (in this case, the object called `data`). 
 
@@ -48,7 +68,7 @@ Now that we have the data, we need to check it out a bit and make sure it all lo
 
 First, properly constructed datasets should include a row for each observation (e.g. a person, or a mouse, or a country, etc); and each column should contain exactly one characteristic about the observations (e.g. their height, weight, or GDP, etc). Importantly, each of these characteristics should only include a single type of information (a number, or a date, or a character value. etc.) - that means no mixing and matching within a variable. For example, you shouldn't ever have a variable for blood pressure where you might include "High, 162" as an entry. This should instead be two different variables, one reflecting the actual blood pressure value (e.g. 162) and a separate column for the categorized version (e.g. high vs low).
 
-I have a very small video about this (here)[https://www.youtube.com/watch?v=Ry2xjTBtNFE] which basically just parrots the main points from [this really important paper](https://www.tandfonline.com/doi/full/10.1080/00031305.2017.1375989). 
+I have a very small video about this [here](https://www.youtube.com/watch?v=Ry2xjTBtNFE) which basically just parrots the main points from [this really important paper](https://www.tandfonline.com/doi/full/10.1080/00031305.2017.1375989). 
 
 So the first thing we should check is how many rows and columns the data has. Let's do that using so called "in line" code, where I will call 2 functions, `nrow` and `ncol` to get this information. Importantly, this code will be rendered out here in the human readable part of the file, not in a code chunk, so you'll only see it if you are looking at the actual Rmd file. 
 
@@ -84,7 +104,7 @@ Because we'll be working with different variables (columns) in the dataset, it's
 # relatively short but that's still informative.
 ```
 
-The most important variables in this dataset are `arm` which tells us which treatment each patient was allocated to, and `eos_glvef`, which is the primary outcome of interest measured at the end of the study. So let's have a look at them together. 
+The most important variables in this dataset are `arm`, which tells us which treatment each patient was allocated to, and `eos_glvef`, which is the primary outcome of interest measured at the end of the study. So let's have a look at them together. 
 
 
 ```r
@@ -102,7 +122,7 @@ The most important variables in this dataset are `arm` which tells us which trea
 
 ![](Linear_models_files/figure-html/unnamed-chunk-5-1.png)<!-- -->
 
-We can see that patients in the active arm C, who received high dose IGF1, have a higher mean GLVEF at the end of the study, compared to patients who got the placebo (with the patients in arm B who got the low dose of IGF1 somewhere in the middle). However, it's worth pointing out that people in the two active arms didn't always have higher values - in fact the people with the some of the lowest values were in the active arm. 
+We can see that patients in the active arm C, who received high dose IGF1, have a higher mean GLVEF at the end of the study, compared to patients who got the placebo (with the patients in arm B who got the low dose of IGF1 somewhere in the middle). However, it's worth pointing out that people in the two active arms didn't always have higher values - in fact the people with the some of the lowest values were in the active arms. 
 
 For the next part, we are going to focus on the HD and placebo arms (we'll come back to the LD arm shortly). 
 
@@ -133,13 +153,14 @@ Next, let's see what the mean and standard deviation of GLVEF at the end of the 
 ## 2 Arm C (HD)  50.2  9.56
 ```
 
-So we can see that the difference in means is about 4 percentage points (the unit of measurement for glvef is "percentage points" - please note how that's very different from saying that the difference in mean values was 5 percent). We can also see that the SD was larger as well, reflecting the increased spread of the data around the mean, which was evident in the plots above. 
+So we can see that the difference in means is about 4 percentage points (note that the unit of measurement for GLVEF is "percentage points" - that's very different from saying that the difference in mean values was 5 percent, which would reflect a relative difference, i.e. a **5%** reduction in 50 would be 47.5, which is a difference of **2.5 percentage points**). We can also see that the SD was larger as well, reflecting the increased spread of the data around the mean, which was evident in the plots above. 
 
 # The t-test
 
 Now we want to use a statistical test to help use understand how to interpret this difference in mean outcome. Remember that the entire study was set up in such a way that we can interpret this between-arm difference in means as the causal effect of the treatment with respect to the outcome. **But**...this is still just an **estimate** of that causal effect in a sample of observations, and because of sampling error, we should expect some error (or noise) in that estimate. A frequentist statistical test, like the t-test, is just asking, "Assuming there was no effect of this treatment, how often would I expect to see an effect like the one I actually saw just because of sampling error?" Despite what others may argue, this is a very reasonable question to ask, and one very important way to help us stop from fooling ourselves. 
 
 Here is what a t-test looks like in R:
+
 
 ```r
   our_t_test <- t.test(eos_glvef ~ arm, data = data_2)
@@ -161,9 +182,9 @@ Here is what a t-test looks like in R:
 ##                 45.91429                 50.22143
 ```
 
-What does this tell us? First, it gives a t statistic (-1.44) and the degrees of freedom (df) for the test (21.45). You can revisit this other tutorial for more explanation, but the key thing is that the df determines the nature of the sampling distribution under the null, against which we compare our observed t statistic in order to get a p-value (0.16).  
+What does this tell us? First, it gives a t statistic (-1.44) and the degrees of freedom (df) for the test (21.45). You can revisit this [other tutorial for more explanation](https://github.com/CRFCSDAU/EH6126_data_analysis_tutorials/blob/master/Unit_1_Review/Frequentist_inference.md), but the key thing is that the df determines the nature of the sampling distribution under the null, against which we compare our observed t statistic in order to get a p-value (0.16).  
 
-If you look at the Rmd file, you will see that I used in line code to give these numbers in the text above. That way, if something about the data changes, I can just re-run the code and the numbers will all be appropriately updated. Trust me...things almost always change at some point, at least at bit, so this is very handy. In fact, now I want to "re-code" by variable for study arm for that the results we see are for the active arm relative to the placebo arm. That way my t statistic will be positive, reflecting that mean GLVEF was higher in the active arm, which is better. 
+If you look at the Rmd file for this tutorial, you will see that I used in-line code to give these numbers in the text above. That way, if something about the data changes, I can just re-run the code and the numbers will all be appropriately updated. Trust me...things almost always change at some point, at least at bit, so this is very handy. In fact, now I want to "re-code" by variable for study arm for that the results we see are for the active arm relative to the placebo arm. That way my t statistic will be positive, reflecting that mean GLVEF was higher in the active arm, which is better. 
 
 
 ```r
@@ -188,11 +209,20 @@ If you look at the Rmd file, you will see that I used in line code to give these
 ##                 50.22143                 45.91429
 ```
 
+```r
+  # Note the use of the function factor() above. R has a special object types 
+  # for categorical variables called "factor". It's basically an underlying 
+  # number, which can be used in calculations, with an attached character label, 
+  # that can be understood by the humans. Each value in a factor is called a 
+  # level, and the order of the levels can dictate how the variable is used in 
+  # other functions. You can learn more here: https://r4ds.had.co.nz/factors.html
+```
+
 Now it gives us a positive t statistic (1.44) and 95% confidence interval for the difference in means (-1.9 to 10.52) which is centered on a mean difference of 4.31 percentage points, comparing the HD arm to the placebo arm. 
 
 # Z-test
 
-Just for comparison, let's calculate a Z-test. It's the exact same idea as the t-test, except the sampling disruption under the null is based on a normal distribution (instead of a t-distribution). 
+Just for comparison, let's calculate a Z-test. It's the exact same idea as the t-test, except the sampling disruption under the null is based on a **normal distribution** (instead of a t-distribution). 
 
 The test statistic, Z, is the difference in means of the outcome between the two groups, divided by the **standard error**. The standard error then is a function of the sample standard deviation of the outcome in each group and the sample size in each group. I've calculated the appropriate standard error in the following code:
 
@@ -227,7 +257,7 @@ And now we can calculate Z:
   z <- (mean2 - mean1) / se
 ```
 
-So our value for the Z statistics in our study is 1.53. What do we do with this information? Just like the t-test, we just compare it to the sampling distribution under the null hypothesis of "no difference", which is normally distributed with a mean of zero and a standard deviation of 1. 
+So our value for the Z statistics in our study is 1.53. What do we do with this information? Just like the t-test, we just compare it to the sampling distribution under the null hypothesis of "no difference", which is normally distributed with a mean of zero and a standard deviation of 1. That distribution looks like this:
 
 
 ```r
@@ -281,7 +311,6 @@ And finally we can add our value for Z and compare it to this sampling distribut
 
 ![](Linear_models_files/figure-html/unnamed-chunk-14-1.png)<!-- -->
 
-
 So we can see that If the Z were generated under the null model (i.e. a normal distribution with a mean of 0 and a SD of 1), then the value of Z we observed would be out into the right hand tail of that distribution, but not among the "most extreme" 5% of values (if we are counting "extreme" in both directions, i.e. using a 2 sided test). Finally, the actual p-value for the value of Z we observed in our study is:
 
 
@@ -303,7 +332,7 @@ One thing you might notice is that the p-values for our Z test (0.1268176) and t
 
 # Linear models
 
-Now we will use a linear regression model to estimate and test our treatment effect in this study. First we'll do the test, and then we'll explain what everything means. Running a linear regression model in R is very simple. The function is called `lm` and it needs 2 arguments. The first argument is a formula that specifies the outcome (which some will refer to as the **dependent variable**), and one or more predictors (sometimes called **independent variables**), which in this case is just the study arm. The other argument is just the dataset we are using. 
+Now we will use a linear regression model to estimate our treatment effect in this study. First we'll do the test, and then we'll explain what everything means. Running a linear regression model in R is very simple. The function is called `lm` and it needs 2 arguments. The first argument is a formula that specifies the outcome (which some will refer to as the **dependent variable**), and one or more predictors (sometimes called **independent variables**), which in this case is just the study arm. The other argument is just the dataset we are using. 
 
 So here is what it looks like:
 
@@ -388,9 +417,27 @@ The main thing of interest here is the Estimate (2nd column) for arm (2nd row un
 
 Another way to think of this linear model is that it gives us the straight line through the data points that gives the closet fit to them (we'll come back to what this means in a moment). You might remember that the equation for a straight line is Y = Intercept + Slope*X. In this example, the Slope is the regression coefficient for treatment arm, which we just discussed. The intercept value is, perhaps not surprisingly, the regression coefficient labeled "(Intercept)" in table just above. Remember, the intercept of a line is where it crosses the Y axis, which is where X is equal to zero. We just pointed out that the regression is treating the variable `arm` as zero for the placebo group, and thus the intercept value from our regression is the mean GLVEF for patients in the placebo arm (45.91), which matches what we observed earlier. If I wanted to know what the mean GLVEF value was for those in the active arm, then, following the equation for a line, I would just take the intercept (45.91) and add the slope (4.31) multiplied by 1 (the difference between 0 and 1), resulting in 50.22. Again, that matches what we observed above. 
 
+If we return to the plot above, just for the two groups in this model, we can add a fit line that starts at the mean value in the placebo group (45.91) and has a slope of 4.31.
+
+
+```r
+  ggplot(data_2, aes(x = arm, y = eos_glvef)) +
+    geom_jitter(width = 0.01, alpha = 0.9) +
+    stat_summary(fun.y = mean, geom = "point", shape = 20, size = 10,
+                 color = "red", fill = "red") +
+    geom_smooth(aes(as.numeric(factor(arm))), method = "lm", se = FALSE,
+                color = "black", size = 2) +
+    xlab("") +
+    ylab("End of Study GLVEF (%)")
+```
+
+![](Linear_models_files/figure-html/unnamed-chunk-18-1.png)<!-- -->
+
+
+
 # Linear model for 3 groups
 
-In the example above, we left out the low dose arm, and focused on the difference in means comparing two groups. However, there will be plenty of situation where you want to test for differences among more than 2 groups. The "classic" test for this is called ANOVA (analysis of variance). The basic idea behind ANOVA is that we can take the total variance for an outcome and decompose it into the within-group and between-group components. The ratio of these two quantities is called F. 
+In the example above, we left out the low dose arm, and focused on the difference in means comparing two groups. However, there will be plenty of situations where you want to test for differences among more than 2 groups. The "classic" test for this is called ANOVA (analysis of variance). The basic idea behind ANOVA is that we can take the total variance for an outcome and decompose it into the within-group and between-group components. The ratio of these two quantities is called F. If F is zero, then none of variance is "explained" by group membership, i.e. there is no difference between the groups. 
 
 
 ```r
@@ -431,11 +478,15 @@ In the example above, we left out the low dose arm, and focused on the differenc
   # This is the F statistic
   f_stat <- between / within
   
-  df1 <- k - 1
-  df2 <- n - k
+  # Degree of freedome, which are the parameters that determines the sampling
+  # distribution under the null
+  df1 <- k - 1 # Number of groups - 1
+  df2 <- n - k # Total sample minus the number of groups
 
   f_pvalue <- pf(f_stat, df1, df2, lower.tail = FALSE)
 ```
+
+So the F statistics is 0.6526787, which has a p-value of 0.5261046. Let's look at this against the backdrop of the sampling distribution under the null:
 
 
 ```r
@@ -453,7 +504,7 @@ In the example above, we left out the low dose arm, and focused on the differenc
   g1
 ```
 
-![](Linear_models_files/figure-html/unnamed-chunk-19-1.png)<!-- -->
+![](Linear_models_files/figure-html/unnamed-chunk-20-1.png)<!-- -->
 
 The good news is that, like with most things in R, there is a function that does all of this for us, which is helpfully named `anova`. 
 
@@ -470,7 +521,7 @@ The good news is that, like with most things in R, there is a function that does
 ## arm        2  131.3  65.656  0.6527 0.5261
 ## Residuals 40 4023.8 100.594
 ```
-Looking above, you can see the "Mean sq" values for between ("arm") and within "Residuals" groups that we calculated above, as well as the F statistic and p-value we already arrived at. 
+Looking above, you can see the "Mean sq" values for `between` ("arm") and `within` ("Residuals") groups that we calculated above, as well as the F statistic and p-value we already arrived at. 
 
 You might have noticed that when we called the function `anova`, the only argument was another call to the linear model function, `lm`. That's because running an anova and a linear model is basically the same thing. So let's look more closely at that linear model, which is just like the one we ran previously, but now our predictor has 3 values, not 2.
 
@@ -506,11 +557,20 @@ If you look at the bottom of that output, we see the same F test and p-value tha
 
 # A linear model with a continuous predictor
 
-Now let's go back to looking at the placebo vs the high dose arms only. We are going to add one more predictor to this model, which is the outcome measured at baseline (`bl_glvef`). 
+Now let's go back to looking at the placebo vs the high dose arms only. We are going to add one more predictor to this model, which is the GLVEF measured at baseline (`bl_glvef`). 
 
 
 ```r
   m2 <- lm(eos_glvef ~ arm + scale(bl_glvef, scale = FALSE), data_2)
+  # Note that I have rescaled the baseline GLVEF variable by "mean-centering" 
+  # it. This is the improve the interpretation of the intercept in the model 
+  # below. Remember that the intercept is the value of the mean of the outcome
+  # when all the predictors are equal to zero. However, setting the predictor
+  # baseline GLVEF to zero is nonsensical. So by subtracting the mean (which
+  # is what mean-centering does), now a zero value for baseline GLVEF is equal
+  # to zero, meaning that the intercept in the model below would be the 
+  # predicted outcome value for a person in the placebo arm AND with the mean
+  # value for baseline GLVEF. 
 
   summary(m2)
 ```
@@ -539,7 +599,7 @@ Now let's go back to looking at the placebo vs the high dose arms only. We are g
 ## F-statistic: 12.69 on 2 and 25 DF,  p-value: 0.0001572
 ```
 
-One of the things you might now notice is that the estimate for the treatment effect is not practically zero, whereas before it was about 4 percentage points. The answer is that the high dose arm patients, just by "luck of the draw" happened to have higher GLVEF values at baseline, before any treatment was given. You can also see from the regression result that there is a strong positive association between GLVEF measured at baseline with GEVEF measured at the end of the study, which of course makes sense. More specifically, for every one unit increase in baseline GLVEF, we would predict that GLVEF at the end of the study would be 0.7 units higher. So if the patients in the HD arm happened to have higher values at baseline, we should also expect them to have higher values at the end of the study, even if there was no effect of the treatment. In other words, those patients have had a sort of a head start! However, by including baseline GLVEF in the model, it "adjusts" for it, effectively removing it's influence on the outcome, and thus erasing the head start. Thus what treatment effect there was is now explained away. 
+One of the things you might notice is that the estimate for the treatment effect is not practically zero, whereas before it was about 4 percentage points. The reason for this is that the high dose arm patients, just by "luck of the draw", happened to have higher GLVEF values at baseline, before any treatment was given. You can also see from the regression result that there is a strong positive association between GLVEF measured at baseline with GEVEF measured at the end of the study, which of course makes sense. More specifically, for every one unit increase in baseline GLVEF, we would predict that GLVEF at the end of the study would be 0.7 units higher. So if the patients in the HD arm happened to have higher values at baseline, we should also expect them to have higher values at the end of the study, even if there was no effect of the treatment. In other words, those patients have had a sort of a head start with respect to the outcome. However, by including baseline GLVEF in the model, it "adjusts" for it, effectively removing it's influence on the outcome, and thus erasing the head start.  
 
 Finally, we can look at the model by plotting baseline and end of study against each other, and then fitting the regression lines for each arm. 
 
@@ -555,6 +615,8 @@ Finally, we can look at the model by plotting baseline and end of study against 
     ylab("End of Study GLVEF (%)")
 ```
 
-![](Linear_models_files/figure-html/unnamed-chunk-23-1.png)<!-- -->
+![](Linear_models_files/figure-html/unnamed-chunk-24-1.png)<!-- -->
 
-If you only see one line, that's because there was basically no difference between the two arms, so their lines are sitting on top of each other. If there was a notable difference, we would see to parallel lines and the vertical distance between then would be the estimated treatment effect. We can also see that the slope of those lines is positive, but less that one. Of course we know from the model results that it equal to anout 0.7 (the coefficient for baseline GLVEF). 
+If you only see one line, that's because there was basically no difference between the two arms, which we learned from the model above, so their lines are sitting on top of each other. If there was a notable difference, the vertical distance between the lines correspond with the estimated treatment effect. We can also see that the slope of those lines is positive, but less that one. Of course we know from the model results that it equal to about 0.7 (the coefficient for baseline GLVEF). 
+
+On a final point, you might be interested in how the model "decides" where the line goes. In a nutshell, it puts the line in a place where the sum of squared differences from the line (i.e. all the vertical differences between each observed points and the line) is minimized. You can see a [nice visualization of this here](https://joshualoftus.com/posts/2020-11-23-least-squares-as-springs/). 
