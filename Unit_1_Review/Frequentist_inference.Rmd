@@ -33,7 +33,7 @@ Let's say we want to estimate the mean systolic blood pressure in the population
 
 Estimators have different properties that we can use to evaluate how useful they are. Importantly, our understanding of an estimator's properties will usually rely on assumptions, for example, that the sample was truly a random draw from the population. 
 
-To better understand all of this, let's simulate a large number of SBP measurements from a normal distribution with a known mean and standard deviation. This will be our population.  
+To better understand all of this, let's simulate a large number of SBP measurements from a normal distribution with a known mean and standard deviation. This will be our population. The idea of simulating data might sound a little advanced to the unwary, but it's actually really easy to do. We will use simulations a lot in this module, since we can generate data with "known" properties (like the mean and SD of SBP in a population), against which we can compare the results of various statistical methods. Hopefully the examples that follow will make this clear.
 
 ```{r simulate_population}
 
@@ -42,7 +42,9 @@ To better understand all of this, let's simulate a large number of SBP measureme
 # Set the seed for the random number generator to preserve reproducability
   set.seed(1209) 
 
-  pop_sbp <- rnorm(1e7, 124.5, 18.0) # Simulate a large population of values
+# Simulate a large population of values (10 million) from a normal distribution
+# with a mean of 124.5 and a SD of 18.
+  pop_sbp <- rnorm(n = 1e7, mean = 24.5, sd = 18.0) 
 
   hist(pop_sbp)                      # Plot the distribution of those values
   
@@ -66,15 +68,19 @@ We can immediately see that the sample mean is close to, but not exactly, the po
 
 # Draw another sample of n = 50 and calculate the mean
   mean(sample(pop_sbp, 50, replace = FALSE))
+# Notice how I've nested the call to the function `sample` within the call to
+# the function `mean`
 
 ```
 
 So what happens if we repeat this process many times? We get a **sampling distribution** of sample means. This concept of a sampling distribution is critical to understanding the **frequentist** school of statistical inference that is most often used to interpret the results of clinical trials, as we will see below.
 
+The **sampling distribution** for a **statistic** (anything we calculate from the observed data) is the probability distribution we would observe for that statistic if we were able to repeatedly sample from the underlying population an infinite number of times. 
+
 ```{r many_sample_means}
 
 # This is a custom function that drwas a sample from a population and then 
-# calcuates the mean of those values. It takes 2 arguments: pop, which is a 
+# calculates the mean of those values. It takes 2 arguments: pop, which is a 
 # dataframe object containing the population data we simulated; and n, which is 
 # the size of the sample we want to draw.
 
@@ -138,12 +144,12 @@ The first step is to calculate the value for t from our sample data. This is our
 # https://en.wikipedia.org/wiki/Welch's_t-test
 
 # First, just to see how eveCalcuate T "by hand"
-  m_act <- mean(study_df$y[study_df$arm == "Active"])
-  m_con <- mean(study_df$y[study_df$arm == "Control"])
-  v_act <-  var(study_df$y[study_df$arm == "Active"])
-  v_con <-  var(study_df$y[study_df$arm == "Control"])
+  m_act <- mean(study_df$y[study_df$arm == "Active"])  # mean outcome active arm
+  m_con <- mean(study_df$y[study_df$arm == "Control"]) # mean outcome control arm
+  v_act <-  var(study_df$y[study_df$arm == "Active"])  # outcome variance active
+  v_con <-  var(study_df$y[study_df$arm == "Control"]) # outcome variance control
   n <- 20 # Sample size in each group
-  se <- sqrt(v_act/n + v_con/n)
+  se <- sqrt(v_act/n + v_con/n) # Pooled standard error
   df_s <- (v_act/n + v_con/n)^2 / # Need this for the sampling dist. below
           ((v_act^2 / (n^2 * (n - 1))) + 
            (v_con^2 / (n^2 * (n - 1))))
@@ -158,7 +164,7 @@ Then we want to plot the sampling distribution of t under the null hypothesis th
 
 ```{r t_null_dist}
 
-# Get the expected sampling distibution under a null hypotheis of no difference
+# Get the expected sampling distribution under a null hypothesis of no difference
   
   g1 <- ggplot(data_frame(x = c(-4 , 4)), aes(x = x)) + 
     stat_function(fun = dt, args = list(df = df_s), 
@@ -194,7 +200,6 @@ This means that **IF** there was no treatment effect, **AND** the assumptions un
 So what can we do with this p-value? That's where things start to get tricky. At the risk of over-simplifying things, Fisher saw the p-value as a continuous measure of how surprised we should be if the data were truly generated under a mechanism of "no effect". So then a small p-value indicates there might be an effect worth further exploring or looking for in continued experiments. Then, if you were able able to repeat an experiment several times and consistently produce a small p-value, you might finally conclude that your intervention "works". 
 
 Others would use the p-value as a hypothesis test. In the example above, it would be the null hypothesis of t ≤ 0 vs the alternative of t > 0. Then you would set some threshold for p (e.g. 5%) for which you would "reject the null". We'll come back to this way of thinking when we discuss power, and type 1 and 2 errors below.    
-
 In the example above, we only considered our estimate of t with respect to one tail of the sampling distribution of t under the null. This is what we refer to as a one-sided test. However, it usually makes more sense to make it relative to both tails, so that the null is t = 0 vs. t < 0 or t > 0. 
 
 ```{r t_two_sidedd}
@@ -224,7 +229,7 @@ Now this was a fair bit of work just to do a simple t-test. So now let's R do th
 
 ### Side-note: Linear models
 
-We noted in EH6124 that most commonly used statistical tests can be represented by linear models. The advantage of this is two-fold. First, linear models can incorporate covariate information which often leads to more efficient estimators by integrating out variability in the outcome predicted by the covariates. It's also useful to think in terms of linear models because it's much easier than trying to remember a multitude statistical tests. 
+Next week we will learn that most commonly used statistical tests can be represented by linear models. The advantage of this is two-fold. First, linear models can incorporate covariate information which often leads to more efficient estimators by integrating out variability in the outcome predicted by the covariates. It's also useful to think in terms of linear models because it's much easier than trying to remember a multitude statistical tests. 
 
 For example, the t-test is used when we are interested in a difference in means and when we have a fairly small sample size (the specific problem the t-test addresses is that when we have a small sample and we need to use the sample standard deviation to work our the distribution of the sample mean, then we should have more uncertainty in that distribution, i.e. it should be wider - it should have "fatter tails").
 
@@ -444,4 +449,76 @@ I want to point out one more thing, which is the distribution of p-values that f
 ```
 
 So how many of those p-values are close to 0.05? Very few! What does this mean? It means that when some alternative effect is true and the trial is very well powered to detect that effect, the distribution of p-values is heavily skewed towards very small values, values much smaller than 0.05. This is why many people are skeptical of papers and bodies of literature that report many "just significant" p-values, as it suggests publication bias and p-hacking. 
+
+## Part 4: Confidence intervals
+
+In the previous sections, we discussed how to calculate and use p-values to make inferences, either by using the p-value directly, or by using it to perform binary hypothesis tests and focus on controlling errors. Another common way to use p-values is to create frequentist confidence intervals (CI). 
+
+To do this, first we take some level of alpha, our acceptable type 1 error rate (usually 0.05 (5%) due to thoughtless convention). Then we set the null to be the effect estimate we actually observed. Then we take the collection of values for which we would fail to reject that null at the set alpha level. This collection of values is our CI.  Another way to think of it is that it is the middle 95% of values (for alpha = 0.05) from the estimator's sampling distribution, centered on our observed effect estimate. This can be tricky to think about, so let's work through it.  
+
+First, let's look at the two-sided p-value from a normal sampling distribution with an effect = 0 and an standard error (SE) = 1 (remember, an SE is just what we call the standard deviation for a sampling distribution).
+
+```{r t_two_sided}
+
+  g1 <- ggplot(data_frame(x = c(-4 , 4)), aes(x = x)) + 
+    stat_function(fun = dnorm, args = list(0, 1), 
+                  geom = "area", fill = viridis(1), alpha = 0.3) +
+    xlim(c(-4 , 4)) +
+    xlab("z") +
+    ylab("Density") +
+    theme_minimal() +
+    stat_function(xlim = c(1.96 , 4), 
+                  fun = dnorm, args = list(0, 1), 
+                  geom = "area", fill = viridis(1)) +
+    stat_function(xlim = c(-4, -1.96), 
+                  fun = dnorm, args = list(0, 1), 
+                  geom = "area", fill = viridis(1)) +
+    geom_errorbarh(aes(x = 0, xmax = 1.96, xmin = -1.96, y = 0.1), 
+                   height = 0.05, size = 2, color = viridis(1)) +
+    geom_point(aes(x = 0, y = 0.1), size = 4, color = viridis(1)) +
+    ggtitle(paste0("The proportion of the total area in the darker part of the distribution\n for t is ", signif(2 * pnorm(1.96, 0, 1, lower.tail = FALSE), 3)))
+
+  g1
+
+```
+
+We can thus see the middle 95% of values, which would be our 95% CI. Values falling outside of this range are in the rejection region of the distribution. 
+
+Now, for sampling distributions where we are happy to assume a normal model (this is often true), we can just slide this same range over so that it's centered on our observed effect estimate. So let's see this for an effect = 2. 
+
+```{r shift_to_effect}
+
+  g2 <- g1 +
+    stat_function(fun = dnorm, args = list(2, 1), 
+                  geom = "area", fill = viridis(1, direction = -1), alpha = 0.3) +
+    xlim(c(-4 , 6)) +
+    xlab("z") +
+    ylab("Density") +
+    theme_minimal() +
+    stat_function(xlim = c(2 + 1.96 , 6), 
+                  fun = dnorm, args = list(2, 1), 
+                  geom = "area", fill = viridis(1, direction = -1)) +
+    stat_function(xlim = c(-4, -1.96 + 2), 
+                  fun = dnorm, args = list(2, 1), 
+                  geom = "area", fill = viridis(1, direction = -1)) +
+    geom_errorbarh(aes(x = 2, xmax = 2 + 1.96, xmin = 2 + -1.96, y = 0.15), 
+                   height = 0.05, size = 2, 
+                   color = viridis(1, direction = -1)) +
+    geom_point(aes(x = 2, y = 0.15), size = 4, 
+               color = viridis(1, direction = -1)) +
+    ggtitle("")
+
+  g2
+
+```
+
+So now the have the same interval centered on our observed effect = 2 (yellow). 
+
+Because this effect of 2 is > 1.96 (1.96 being the critical value we used the calculate the p-value if we want alpha = 0.05; see the purple sampling distribution), we would thus "reject the null hypothesis of 0 effect". 
+
+We can also see that zero falls (just barely) outside of the yellow 95% CI. This means that if we set the null to 2, rather than 0, then we would reject this new null if we actually observed a 0 effect, just like we reject a null of 0 when we observe a 2. One test is just the mirror image of the other. We will use the same idea when we get to equivalence tests below. 
+
+So how should we interpret a CI centered on our observed effect? Many people think that an X% CI says that there is an X% chance that the "true" effect falls in the interval. This is incorrect, and reflects a Bayesian interpretation that is unwarranted here. 
+
+Instead, an X% CI will contain the "true" effect X% of the time over many replications of the procedure that led to the CI. In other words, the CI is still a completely frequentist tool, and one way to think of it is as a collection of statistical tests. You can also think of it as a "compatibility interval" - a collection of values that our observed data would be compatible with (at some pre-specified alpha) had the data indeed been generated by (any one of) those values. We will come back to Bayesian intervals, where can *can* conclude some % that the "truth" falls in our interval (given other assumptions), when we get to Bayesian statistics later in the module. 
 
