@@ -33,7 +33,7 @@ To better understand all of this, let's simulate a large number of SBP measureme
   set.seed(1209) 
 
 # Simulate a large population of values (10 million) from a normal distribution
-# with a mean of 124.5 and a SD of 18.
+# with a mean of 24.5 and a SD of 18.
   pop_sbp <- rnorm(n = 1e7, mean = 24.5, sd = 18.0) 
 
   hist(pop_sbp)                      # Plot the distribution of those values
@@ -63,7 +63,7 @@ Next, let's draw a random sample from this population, and calculate the mean. T
 ## [1] 22.86683
 ```
 
-We can immediately see that the sample mean is close to, but not exactly, the population mean (which we know was 124.5, from our simulation). Importantly, if we were to repeat the process using the **same** estimator, we would expect a **different** estimate. 
+We can immediately see that the sample mean is close to, but not exactly, the population mean (which we know was 24.5, from our simulation). Importantly, if we were to repeat the process using the **same** estimator, we would expect a **different** estimate. 
 
 
 ```r
