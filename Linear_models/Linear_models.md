@@ -300,64 +300,52 @@ Next, we can can highlight the middle 95% of this distribution. Values for Z fal
 ![](Linear_models_files/figure-html/unnamed-chunk-13-1.png)<!-- -->
 
 
-
-
 ```r
-  g3 <- g2 +
-    geom_vline(xintercept = 1.96, color = "black", linetype = "dashed") +
-    stat_function(
-      xlim = c(-4 , 8), 
-      fun = dnorm, 
-      args = list(1.96, 1), 
-      geom = "area", 
-      fill = viridis(1, begin = 0.8), 
-      alpha = 0.5
-      ) +
-    xlim(-4, 6)
-
-  g3
+  # Ignore but keep
+  # g3 <- g2 +
+  #   geom_vline(xintercept = 1.96, color = "black", linetype = "dashed") +
+  #   stat_function(
+  #     xlim = c(-4 , 8), 
+  #     fun = dnorm, 
+  #     args = list(1.96, 1), 
+  #     geom = "area", 
+  #     fill = viridis(1, begin = 0.8), 
+  #     alpha = 0.5
+  #     ) +
+  #   xlim(-4, 6)
+  # 
+  # g3
+  # 
+  #   g3 <- g2 +
+  #   geom_vline(xintercept = 1.96, color = "black", linetype = "dashed") +
+  #   geom_vline(xintercept = 2.8, color = "black", linetype = "dashed") +
+  #   stat_function(
+  #     xlim = c(-4 , 8), 
+  #     fun = dnorm, 
+  #     args = list(2.8, 1), 
+  #     geom = "area", 
+  #     fill = viridis(1, begin = 0.8), 
+  #     alpha = 0.5
+  #     ) +
+  #   xlim(-4, 6)
+  # 
+  # g3 # pnorm(1.96, 2.8, 1) # -qnorm(0.20, 0, 1, lower.tail = T) + 1.96 # = Z
+  # 
+  #     g3 <- g2 +
+  #   geom_vline(xintercept = 1.96, color = "black", linetype = "dashed") +
+  #   geom_vline(xintercept = 3.6, color = "black", linetype = "dashed") +
+  #   stat_function(
+  #     xlim = c(-4 , 8), 
+  #     fun = dnorm, 
+  #     args = list(3.6, 1), 
+  #     geom = "area", 
+  #     fill = viridis(1, begin = 0.8), 
+  #     alpha = 0.5
+  #     ) +
+  #   xlim(-4, 6)
+  # 
+  # g3 # -qnorm(0.05, 0, 1, lower.tail = T) + 1.96 # = Z # # pnorm(1.96, 3.6, 1) 
 ```
-
-![](Linear_models_files/figure-html/unnamed-chunk-14-1.png)<!-- -->
-
-```r
-    g3 <- g2 +
-    geom_vline(xintercept = 1.96, color = "black", linetype = "dashed") +
-    geom_vline(xintercept = 2.8, color = "black", linetype = "dashed") +
-    stat_function(
-      xlim = c(-4 , 8), 
-      fun = dnorm, 
-      args = list(2.8, 1), 
-      geom = "area", 
-      fill = viridis(1, begin = 0.8), 
-      alpha = 0.5
-      ) +
-    xlim(-4, 6)
-
-  g3 # pnorm(1.96, 2.8, 1) # -qnorm(0.20, 0, 1, lower.tail = T) + 1.96 # = Z
-```
-
-![](Linear_models_files/figure-html/unnamed-chunk-14-2.png)<!-- -->
-
-```r
-      g3 <- g2 +
-    geom_vline(xintercept = 1.96, color = "black", linetype = "dashed") +
-    geom_vline(xintercept = 3.6, color = "black", linetype = "dashed") +
-    stat_function(
-      xlim = c(-4 , 8), 
-      fun = dnorm, 
-      args = list(3.6, 1), 
-      geom = "area", 
-      fill = viridis(1, begin = 0.8), 
-      alpha = 0.5
-      ) +
-    xlim(-4, 6)
-
-  g3 # -qnorm(0.05, 0, 1, lower.tail = T) + 1.96 # = Z # # pnorm(1.96, 3.6, 1) 
-```
-
-![](Linear_models_files/figure-html/unnamed-chunk-14-3.png)<!-- -->
-
 
 And finally we can add our value for Z and compare it to this sampling distribution. 
 
