@@ -299,6 +299,66 @@ Next, we can can highlight the middle 95% of this distribution. Values for Z fal
 
 ![](Linear_models_files/figure-html/unnamed-chunk-13-1.png)<!-- -->
 
+
+
+
+```r
+  g3 <- g2 +
+    geom_vline(xintercept = 1.96, color = "black", linetype = "dashed") +
+    stat_function(
+      xlim = c(-4 , 8), 
+      fun = dnorm, 
+      args = list(1.96, 1), 
+      geom = "area", 
+      fill = viridis(1, begin = 0.8), 
+      alpha = 0.5
+      ) +
+    xlim(-4, 6)
+
+  g3
+```
+
+![](Linear_models_files/figure-html/unnamed-chunk-14-1.png)<!-- -->
+
+```r
+    g3 <- g2 +
+    geom_vline(xintercept = 1.96, color = "black", linetype = "dashed") +
+    geom_vline(xintercept = 2.8, color = "black", linetype = "dashed") +
+    stat_function(
+      xlim = c(-4 , 8), 
+      fun = dnorm, 
+      args = list(2.8, 1), 
+      geom = "area", 
+      fill = viridis(1, begin = 0.8), 
+      alpha = 0.5
+      ) +
+    xlim(-4, 6)
+
+  g3 # pnorm(1.96, 2.8, 1) # -qnorm(0.20, 0, 1, lower.tail = T) + 1.96 # = Z
+```
+
+![](Linear_models_files/figure-html/unnamed-chunk-14-2.png)<!-- -->
+
+```r
+      g3 <- g2 +
+    geom_vline(xintercept = 1.96, color = "black", linetype = "dashed") +
+    geom_vline(xintercept = 3.6, color = "black", linetype = "dashed") +
+    stat_function(
+      xlim = c(-4 , 8), 
+      fun = dnorm, 
+      args = list(3.6, 1), 
+      geom = "area", 
+      fill = viridis(1, begin = 0.8), 
+      alpha = 0.5
+      ) +
+    xlim(-4, 6)
+
+  g3 # -qnorm(0.05, 0, 1, lower.tail = T) + 1.96 # = Z # # pnorm(1.96, 3.6, 1) 
+```
+
+![](Linear_models_files/figure-html/unnamed-chunk-14-3.png)<!-- -->
+
+
 And finally we can add our value for Z and compare it to this sampling distribution. 
 
 
@@ -309,7 +369,7 @@ And finally we can add our value for Z and compare it to this sampling distribut
   g3
 ```
 
-![](Linear_models_files/figure-html/unnamed-chunk-14-1.png)<!-- -->
+![](Linear_models_files/figure-html/unnamed-chunk-15-1.png)<!-- -->
 
 So we can see that If the Z were generated under the null model (i.e. a normal distribution with a mean of 0 and a SD of 1), then the value of Z we observed would be out into the right hand tail of that distribution, but not among the "most extreme" 5% of values (if we are counting "extreme" in both directions, i.e. using a 2 sided test). Finally, the actual p-value for the value of Z we observed in our study is:
 
@@ -431,7 +491,7 @@ If we return to the plot above, just for the two groups in this model, we can ad
     ylab("End of Study GLVEF (%)")
 ```
 
-![](Linear_models_files/figure-html/unnamed-chunk-18-1.png)<!-- -->
+![](Linear_models_files/figure-html/unnamed-chunk-19-1.png)<!-- -->
 
 
 
@@ -504,7 +564,7 @@ So the F statistics is 0.6526787, which has a p-value of 0.5261046. Let's look a
   g1
 ```
 
-![](Linear_models_files/figure-html/unnamed-chunk-20-1.png)<!-- -->
+![](Linear_models_files/figure-html/unnamed-chunk-21-1.png)<!-- -->
 
 The good news is that, like with most things in R, there is a function that does all of this for us, which is helpfully named `anova`. 
 
@@ -615,7 +675,7 @@ Finally, we can look at the model by plotting baseline and end of study against 
     ylab("End of Study GLVEF (%)")
 ```
 
-![](Linear_models_files/figure-html/unnamed-chunk-24-1.png)<!-- -->
+![](Linear_models_files/figure-html/unnamed-chunk-25-1.png)<!-- -->
 
 If you only see one line, that's because there was basically no difference between the two arms, which we learned from the model above, so their lines are sitting on top of each other. If there was a notable difference, the vertical distance between the lines correspond with the estimated treatment effect. We can also see that the slope of those lines is positive, but less that one. Of course we know from the model results that it equal to about 0.7 (the coefficient for baseline GLVEF). 
 
