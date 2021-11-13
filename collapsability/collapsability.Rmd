@@ -25,6 +25,7 @@ output:
 
 ```{r}
   proj <- rprojroot::find_rstudio_root_file()
+knitr::opts_knit$set(root.dir = proj)
 ```
 
 
