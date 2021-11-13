@@ -25,7 +25,7 @@ output:
 
 ```{r}
   proj <- rprojroot::find_rstudio_root_file()
-knitr::opts_knit$set(root.dir = proj)
+  # knitr::opts_knit$set(root.dir = proj)
 ```
 
 
@@ -137,7 +137,7 @@ The vertical difference between the 2 lines is log(10) or \~ 2.3.
 
 ```{r, fig.width = 8}
 
-  knitr::include_graphics(paste0(proj, "/collapsability/pics/fig_1_a.JPG"))
+  knitr::include_graphics(paste0(proj, "/collapsability/collapsability_files/figure-html/fig_1_a.JPG"))
 
 ```
 
@@ -159,7 +159,7 @@ The vertical difference between the 2 lines is log(10) or \~ 2.3.
 
 ```{r, fig.width = 8}
 
-  knitr::include_graphics(paste0(proj, "/collapsability/pics/fig_1_b.JPG"))
+  knitr::include_graphics(paste0(proj, "/collapsability/collapsability_files/figure-html/fig_1_b.JPG"))
 
 ```
 
@@ -187,7 +187,7 @@ The vertical difference between the 2 lines is log(10) or \~ 2.3.
 
 
 ```{r}
-knitr::include_graphics(paste0(proj, "/collapsability/pics/eq_1.JPG"))
+  knitr::include_graphics(paste0(proj, "/collapsability/collapsability_files/figure-html/eq_1.JPG"))
 ```
 
 
