@@ -81,7 +81,7 @@ The vertical difference between the 2 lines is log(10) or \~ 2.3.
 
 ![](collapsability_files/figure-html/unnamed-chunk-5-1.png)<!-- -->
 
-<img src="G:/Shared drives/SDAU/teaching/msc_trials/EH6126_data_analysis_tutorials/collapsability/collapsability_files/figure-html/fig_1_a.JPG" width="725" />
+<img src="figs/fig_1_a.JPG" width="725" />
 
 
 
@@ -108,7 +108,7 @@ The vertical difference between the 2 lines is log(10) or \~ 2.3.
 ## [1] 10
 ```
 
-<img src="G:/Shared drives/SDAU/teaching/msc_trials/EH6126_data_analysis_tutorials/collapsability/collapsability_files/figure-html/fig_1_b.JPG" width="515" />
+<img src="figs/fig_1_b.JPG" width="515" />
 
 
 ```r
@@ -132,7 +132,7 @@ The vertical difference between the 2 lines is log(10) or \~ 2.3.
 ![](collapsability_files/figure-html/unnamed-chunk-9-1.png)<!-- -->
 
 
-<img src="G:/Shared drives/SDAU/teaching/msc_trials/EH6126_data_analysis_tutorials/collapsability/collapsability_files/figure-html/eq_1.JPG" width="619" />
+<img src="figs/eq_1.JPG" width="619" />
 
 
   g(x) is a probability, because it's odds/1+odds
